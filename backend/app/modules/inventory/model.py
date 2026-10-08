@@ -17,6 +17,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
+from app.db.constraints import enum_check
 from app.db.mixins import UUIDPrimaryKeyMixin
 
 
@@ -28,10 +29,6 @@ class StockMovementType(StrEnum):
     ADJUSTMENT = "ADJUSTMENT"
     WASTE = "WASTE"
     REMAKE = "REMAKE"
-
-
-def _in_list(column: str, values: type[StrEnum]) -> str:
-    return f"{column} IN ({', '.join(repr(v.value) for v in values)})"
 
 
 class Inventory(UUIDPrimaryKeyMixin, Base):
@@ -74,7 +71,7 @@ class StockMovement(UUIDPrimaryKeyMixin, Base):
     __tablename__ = "stock_movements"
     __table_args__ = (
         CheckConstraint("quantity <> 0", name="quantity_non_zero"),
-        CheckConstraint(_in_list("movement_type", StockMovementType), name="movement_type_valid"),
+        CheckConstraint(enum_check("movement_type", StockMovementType), name="movement_type_valid"),
         Index("ix_stock_movements_product_created", "product_id", "created_at"),
     )
 
@@ -93,3 +90,39 @@ class StockMovement(UUIDPrimaryKeyMixin, Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class ReservationStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    CONVERTED = "CONVERTED"
+    EXPIRED = "EXPIRED"
+    CANCELLED = "CANCELLED"
+
+
+class StockReservation(UUIDPrimaryKeyMixin, Base):
+    """Stok yang ditahan sementara selama checkout/pembayaran.
+    ACTIVE -> CONVERTED (dibayar) | EXPIRED (timeout) | CANCELLED (order batal)."""
+
+    __tablename__ = "stock_reservations"
+    __table_args__ = (
+        CheckConstraint("quantity > 0", name="quantity_positive"),
+        CheckConstraint(enum_check("status", ReservationStatus), name="status_valid"),
+        # Worker kedaluwarsa mencari: status ACTIVE & expires_at lewat.
+        Index("ix_stock_reservations_status_expires", "status", "expires_at"),
+    )
+
+    order_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("orders.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    product_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("products.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(20), server_default=ReservationStatus.ACTIVE.value, nullable=False
+    )
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    released_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

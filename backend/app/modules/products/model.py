@@ -35,6 +35,7 @@ class Product(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __table_args__ = (
         CheckConstraint("price >= 0", name="price_non_negative"),
         CheckConstraint("cost_price >= 0", name="cost_price_non_negative"),
+        Index("ix_products_is_available", "is_available"),
     )
 
     category_id: Mapped[uuid.UUID] = mapped_column(
