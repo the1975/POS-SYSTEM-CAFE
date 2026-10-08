@@ -1,4 +1,5 @@
 import logging
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
@@ -17,7 +18,7 @@ def liveness() -> dict:
 
 
 @router.get("/ready")
-def readiness(db: Session = Depends(get_db)) -> dict:
+def readiness(db: Annotated[Session, Depends(get_db)]) -> dict:
     """Siap melayani: database bisa dijangkau."""
     try:
         db.execute(text("SELECT 1"))
