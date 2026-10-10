@@ -4,9 +4,10 @@ Revision ID: 4bc4401ac8fb
 Revises: 
 Create Date: 2026-10-10 05:40:42.345810
 """
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 revision = '4bc4401ac8fb'
 down_revision = None

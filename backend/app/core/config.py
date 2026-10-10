@@ -2,7 +2,7 @@
 dibaca dari environment, bukan di-hardcode di banyak tempat."""
 from functools import lru_cache
 
-from pydantic import field_validator
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     # Disimpan sebagai string "a,b" agar mudah diisi lewat env var.
     cors_origins: str = "http://localhost:5173"
     reservation_timeout_minutes: int = 7
+    # Hanya dipakai skrip seed untuk membuat admin awal. Isi di .env, jangan di kode.
+    seed_admin_email: str | None = None
+    seed_admin_password: SecretStr | None = None
 
     @field_validator("reservation_timeout_minutes")
     @classmethod
