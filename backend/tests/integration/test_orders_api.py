@@ -15,7 +15,8 @@ def _body(menu, items=None, **override):
     body = {
         "customer_name": "Leonardo",
         "items": items
-        or [
+        if items is not None
+        else [
             {"product_id": str(menu["es_teh"]), "quantity": 2},
             {"product_id": str(menu["nasi"]), "quantity": 1},
         ],
@@ -186,3 +187,17 @@ def test_get_order_hides_existence_without_a_valid_token(client, menu):
     for r in attempts:
         assert r.status_code == 404
         assert r.json()["error"]["code"] == "ORDER_NOT_FOUND"
+
+
+def test_test_database_enforces_foreign_keys(db):
+    """Penjaga: tanpa ini, bug urutan simpan (FK) tidak akan terlihat di test."""
+    import uuid
+
+    import pytest
+    from sqlalchemy import text
+    from sqlalchemy.exc import IntegrityError
+
+    assert db.execute(text("PRAGMA foreign_keys")).scalar() == 1, "FK di database test MATI"
+    db.add(OrderStatusHistory(order_id=uuid.uuid4(), to_status="PENDING"))  # order tidak ada
+    with pytest.raises(IntegrityError):
+        db.flush()

@@ -10,7 +10,7 @@ from decimal import Decimal
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -26,10 +26,14 @@ from app.modules.orders.model import Order, OrderItem
 from app.modules.orders.repository import OrderRepository
 from app.modules.orders.service import OrderService
 from app.modules.products.model import Category, Product
+from app.modules.users.model import Role, User
 
 # Test API memakai SQLite in-memory dengan tabel yang dibutuhkan saja (cepat, tanpa Neon).
 # Perilaku khusus PostgreSQL (SEQUENCE, konkurensi, locking) diuji dengan Postgres asli di Phase 13.
+# Role & User ikut dibuat karena tabel lain punya foreign key ke sana (SQLite menolak insert
+# kalau tabel induk FK tidak ada, begitu pemeriksaan foreign key dinyalakan).
 TEST_TABLES = [
+    Role.__table__, User.__table__,
     Category.__table__, Product.__table__, Inventory.__table__,
     Order.__table__, OrderItem.__table__, OrderStatusHistory.__table__,
 ]
@@ -40,6 +44,13 @@ def db():
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
     )
+
+    # SQLite secara bawaan TIDAK memeriksa foreign key, padahal PostgreSQL memeriksanya.
+    # Dinyalakan supaya bug urutan penyimpanan tertangkap di test, bukan di database asli.
+    @event.listens_for(engine, "connect")
+    def _enforce_foreign_keys(dbapi_connection, _record):
+        dbapi_connection.execute("PRAGMA foreign_keys=ON")
+
     Base.metadata.create_all(engine, tables=TEST_TABLES)
     session = sessionmaker(bind=engine, expire_on_commit=False)()
     try:

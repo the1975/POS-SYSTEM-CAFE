@@ -40,8 +40,13 @@ class OrderRepository:
         return self.db.scalar(stmt)
 
     def add(self, *objects) -> None:
-        self.db.add_all(objects)
-        self.db.flush()  # kirim ke DB agar pelanggaran unique terdeteksi sebelum commit
+        """Simpan SESUAI URUTAN argumen (satu flush per objek).
+        Penting: tabel tanpa relationship ke induknya (mis. order_status_history) tidak dikenali
+        urutannya oleh SQLAlchemy, padahal PostgreSQL menegakkan foreign key. Jadi induk
+        harus diberikan lebih dulu."""
+        for obj in objects:
+            self.db.add(obj)
+            self.db.flush()  # kirim ke DB; pelanggaran unique/FK terdeteksi sebelum commit
 
     def commit(self) -> None:
         self.db.commit()
