@@ -64,6 +64,9 @@ class Order(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     order_number: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
     # Nama hanya untuk dibaca manusia, bukan identitas/kredensial.
     customer_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    # Kunci idempotensi dari client (header Idempotency-Key): mencegah order ganda saat
+    # double-click / retry jaringan. NULL untuk order yang tidak dibuat lewat checkout.
+    idempotency_key: Mapped[str | None] = mapped_column(String(100), unique=True)
     # Hanya HASH token yang disimpan; token asli cuma dipegang customer.
     tracking_token_hash: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
     status: Mapped[str] = mapped_column(

@@ -1,3 +1,10 @@
+import os
+
+# Harus di paling atas: diisi SEBELUM app di-import, karena get_settings() membaca env saat pertama dipanggil.
+os.environ.setdefault("TRACKING_TOKEN_SECRET", "rahasia-khusus-test-jangan-dipakai-di-produksi")
+os.environ.setdefault("TAX_RATE_PERCENT", "10")
+
+import itertools
 import uuid
 from decimal import Decimal
 
@@ -7,16 +14,25 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from app.core.config import get_settings
 from app.db import models  # noqa: F401  (mendaftarkan semua tabel)
 from app.db.base import Base
 from app.db.dependencies import get_db
 from app.main import create_app
 from app.modules.inventory.model import Inventory
+from app.modules.orders.dependencies import get_order_service
+from app.modules.orders.history_model import OrderStatusHistory
+from app.modules.orders.model import Order, OrderItem
+from app.modules.orders.repository import OrderRepository
+from app.modules.orders.service import OrderService
 from app.modules.products.model import Category, Product
 
-# Test API menu memakai SQLite in-memory dengan tabel yang dibutuhkan saja (cepat, tanpa Neon).
-# Perilaku khusus PostgreSQL (konkurensi, locking) diuji dengan Postgres asli di Phase 13.
-MENU_TABLES = [Category.__table__, Product.__table__, Inventory.__table__]
+# Test API memakai SQLite in-memory dengan tabel yang dibutuhkan saja (cepat, tanpa Neon).
+# Perilaku khusus PostgreSQL (SEQUENCE, konkurensi, locking) diuji dengan Postgres asli di Phase 13.
+TEST_TABLES = [
+    Category.__table__, Product.__table__, Inventory.__table__,
+    Order.__table__, OrderItem.__table__, OrderStatusHistory.__table__,
+]
 
 
 @pytest.fixture
@@ -24,7 +40,7 @@ def db():
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
     )
-    Base.metadata.create_all(engine, tables=MENU_TABLES)
+    Base.metadata.create_all(engine, tables=TEST_TABLES)
     session = sessionmaker(bind=engine, expire_on_commit=False)()
     try:
         yield session
@@ -37,6 +53,23 @@ def db():
 def client(db) -> TestClient:
     app = create_app()
     app.dependency_overrides[get_db] = lambda: db
+
+    counter = itertools.count(1)
+
+    class TestOrderRepository(OrderRepository):
+        # SQLite tidak punya SEQUENCE; di test, nomor urut dihitung manual.
+        def next_order_sequence(self) -> int:
+            return next(counter)
+
+    def _order_service() -> OrderService:
+        s = get_settings()
+        return OrderService(
+            TestOrderRepository(db),
+            tax_rate_percent=s.tax_rate_percent,
+            max_quantity_per_item=s.max_quantity_per_item,
+        )
+
+    app.dependency_overrides[get_order_service] = _order_service
     return TestClient(app, raise_server_exceptions=False)
 
 

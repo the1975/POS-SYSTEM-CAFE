@@ -222,6 +222,7 @@ Entitas utama transaksi customer.
 | order_number | VARCHAR | UNIQUE, NOT NULL | Nomor order customer |
 | customer_name | VARCHAR | NOT NULL | Nama customer |
 | tracking_token_hash | TEXT | UNIQUE, NOT NULL | Hash token tracking |
+| idempotency_key | VARCHAR | UNIQUE, NULL | Kunci idempotensi checkout (header Idempotency-Key) |
 | status | VARCHAR | NOT NULL | Status order |
 | subtotal | NUMERIC | NOT NULL | Subtotal |
 | discount_amount | NUMERIC | NOT NULL | Nilai diskon |

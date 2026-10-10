@@ -1,5 +1,5 @@
 // Satu-satunya tempat yang tahu base URL & format error API.
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api/v1";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
 
 export class ApiError extends Error {
   constructor(status, code, message, details) {
