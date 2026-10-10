@@ -354,6 +354,10 @@ Menyimpan transaksi pembayaran.
 | status | VARCHAR | NOT NULL | Status pembayaran |
 | paid_at | TIMESTAMP | NULL | Waktu pembayaran |
 | expires_at | TIMESTAMP | NULL | Batas pembayaran |
+| cash_received | NUMERIC | NULL | Uang diterima (khusus CASH) |
+| change_amount | NUMERIC | NULL | Kembalian (khusus CASH) |
+| cash_received | NUMERIC | NULL | Uang diterima (khusus CASH) |
+| change_amount | NUMERIC | NULL | Kembalian (khusus CASH) |
 | created_at | TIMESTAMP | NOT NULL | Waktu dibuat |
 | updated_at | TIMESTAMP | NOT NULL | Waktu diperbarui |
 

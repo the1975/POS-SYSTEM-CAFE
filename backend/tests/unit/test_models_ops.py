@@ -86,3 +86,10 @@ def test_no_cascade_delete_on_transaction_history():
     for t in T.values():
         for fk in t.foreign_keys:
             assert fk.ondelete == "RESTRICT", f"{t.name}.{fk.parent.name}"
+
+
+def test_cash_columns_optional_and_checked():
+    t = T["payments"]
+    assert t.c.cash_received.nullable and t.c.change_amount.nullable
+    names = _names(t)
+    assert "cash_received_covers_amount" in names and "change_non_negative" in names

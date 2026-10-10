@@ -36,6 +36,11 @@ class Payment(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "payments"
     __table_args__ = (
         CheckConstraint("amount > 0", name="amount_positive"),
+        # Cash: uang diterima harus cukup; kembalian tidak negatif.
+        CheckConstraint(
+            "cash_received IS NULL OR cash_received >= amount", name="cash_received_covers_amount"
+        ),
+        CheckConstraint("change_amount IS NULL OR change_amount >= 0", name="change_non_negative"),
         CheckConstraint(enum_check("status", PaymentStatus), name="status_valid"),
         CheckConstraint(enum_check("payment_method", PaymentMethod), name="payment_method_valid"),
     )
@@ -52,6 +57,9 @@ class Payment(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     status: Mapped[str] = mapped_column(
         String(20), server_default=PaymentStatus.PENDING.value, nullable=False, index=True
     )
+    # Hanya terisi untuk pembayaran CASH.
+    cash_received: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
+    change_amount: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
     paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
