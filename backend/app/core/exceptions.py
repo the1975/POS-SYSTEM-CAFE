@@ -1,6 +1,6 @@
 """Format error API yang konsisten: aman, bisa dibaca mesin, dan manusiawi.
 
-    {"error": {"code": "VALIDATION_ERROR", "message": "...", "details": [...]}}
+    {"success": false, "error": {"code": "VALIDATION_ERROR", "message": "...", "details": [...]}}
 """
 import logging
 from typing import Any
@@ -36,10 +36,8 @@ class ConflictError(AppError):
 
 
 def _body(code: str, message: str, details: Any = None) -> dict:
-    err: dict[str, Any] = {"code": code, "message": message}
-    if details is not None:
-        err["details"] = details
-    return {"error": err}
+    # Format resmi api-design.md §8: success=false + error{code,message,details}.
+    return {"success": False, "error": {"code": code, "message": message, "details": details}}
 
 
 def register_exception_handlers(app: FastAPI) -> None:

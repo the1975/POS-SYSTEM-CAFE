@@ -38,7 +38,12 @@ def test_validation_error_shape():
 def test_app_error_shape():
     r = _app().get("/conflict")
     assert r.status_code == 409
-    assert r.json()["error"] == {"code": "CONFLICT", "message": "Stok tidak cukup."}
+    assert r.json()["success"] is False
+    assert r.json()["error"] == {
+        "code": "CONFLICT",
+        "message": "Stok tidak cukup.",
+        "details": None,
+    }
 
 
 def test_unhandled_error_is_safe():

@@ -14,7 +14,7 @@ router = APIRouter(prefix="/health", tags=["health"])
 @router.get("")
 def liveness() -> dict:
     """Proses hidup. Tidak menyentuh database."""
-    return {"status": "ok"}
+    return {"status": "ok", "service": "monster-cafe-api"}
 
 
 @router.get("/ready")

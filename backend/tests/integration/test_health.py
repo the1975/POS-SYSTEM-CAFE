@@ -5,7 +5,7 @@ from app.db.dependencies import get_db
 def test_liveness_ok(client):
     r = client.get("/api/v1/health")
     assert r.status_code == 200
-    assert r.json() == {"status": "ok"}
+    assert r.json() == {"status": "ok", "service": "monster-cafe-api"}
 
 
 def test_readiness_ok_when_db_reachable(client):
