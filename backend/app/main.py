@@ -6,6 +6,7 @@ from app.api.customer.router import router as customer_router
 from app.core.config import get_settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import setup_logging
+from app.db import models  # noqa: F401  (daftarkan SEMUA tabel; FK antar-tabel butuh ini)
 
 API_PREFIX = "/api/v1"
 
