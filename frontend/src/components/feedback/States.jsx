@@ -4,7 +4,7 @@ export function LoadingList({ rows = 6 }) {
   return (
     <div aria-busy="true" aria-live="polite">
       <p className="muted">Memuat menu…</p>
-      <ul className="list">
+      <ul className="list surface">
         {Array.from({ length: rows }, (_, i) => (
           <li key={i} className="item item--skeleton" aria-hidden="true">
             <span className="thumb skeleton" />

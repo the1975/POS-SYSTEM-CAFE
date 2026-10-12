@@ -48,7 +48,7 @@ export default function ProductList({ menu }) {
       {groups.map((group, i) => (
         <section key={`${group.id}-${i}`} className="group">
           {group.title && <h2 className="group__title">{group.title}</h2>}
-          <ul className="list">
+          <ul className="list surface">
             {group.items.map((p) => (
               <ProductItem key={p.id} product={p} />
             ))}
