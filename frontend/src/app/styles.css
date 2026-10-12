@@ -163,7 +163,7 @@ a { color: inherit; }
 .line__name { margin: 0; font-size: 1rem; font-weight: 600; }
 .line__total { margin: 0; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
 .line__actions { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; }
-.summary { margin-top: 24px; padding: 16px; }
+.summary { margin-top: 24px; padding: 0 16px 16px; }
 .summary__row { display: flex; justify-content: space-between; gap: 16px; font-size: 1.0625rem; }
 .summary__note { margin-top: 8px; font-size: 0.9375rem; }
 
@@ -198,3 +198,50 @@ a { color: inherit; }
   .skeleton { animation: pulse 1.4s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: 0.5; } }
 }
+
+/* ---------- Pemesanan & konfirmasi ---------- */
+.field { margin: 0 0 24px; padding: 0; border: 0; min-width: 0; }
+.field__label { display: block; margin-bottom: 8px; padding: 0; font-weight: 600; }
+.field__error { margin: 8px 0 0; color: var(--danger); }
+.field .muted { margin-top: 8px; font-size: 0.9375rem; }
+.input {
+  width: 100%; min-height: 48px; padding: 0 16px; font: inherit; color: var(--text);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-btn);
+}
+.input[aria-invalid="true"] { border-color: var(--danger); }
+
+.option {
+  display: flex; gap: 16px; align-items: flex-start; margin-bottom: 8px; padding: 16px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-btn); cursor: pointer;
+}
+.option input { margin-top: 4px; width: 20px; height: 20px; accent-color: var(--accent); }
+.option span { display: grid; gap: 4px; }
+.option:has(input:checked) { border-color: var(--accent); }
+.option--disabled { opacity: 0.55; cursor: default; }
+
+.summary__row--item { margin-bottom: 8px; font-size: 1rem; }
+.summary__row--total {
+  margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 1.125rem;
+}
+.summary > .summary__row:first-child { margin-top: 16px; }
+
+.alert { margin-bottom: 24px; padding: 16px; border: 1px solid var(--danger); border-radius: var(--r-btn); }
+.alert__title { margin: 0 0 8px; font-weight: 700; color: var(--danger); }
+.alert__list { margin: 8px 0 16px; padding-left: 24px; }
+
+.btn--ghost { color: var(--text); background: transparent; border: 1px solid var(--line); }
+
+/* Tiket pesanan: nomor besar = satu momen yang diingat di halaman ini */
+.ticket { padding: 40px 0 24px; text-align: center; display: grid; gap: 8px; justify-items: center; }
+.ticket__number {
+  margin: 0; font-size: clamp(3.5rem, 18vw, 5rem); font-weight: 800; line-height: 1;
+  letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+}
+.ticket__name { font-size: 0.9375rem; }
+.pill {
+  margin: 0; padding: 4px 16px; font-size: 0.875rem; font-weight: 600; border-radius: 999px;
+  color: var(--accent); border: 1px solid var(--accent);
+}
+.notice { margin-bottom: 24px; padding: 16px; background: var(--surface); border: 1px solid var(--accent); border-radius: var(--r-card); }
+.notice__title { margin: 0 0 8px; font-weight: 700; }
+.line--simple { display: flex; justify-content: space-between; gap: 16px; }
