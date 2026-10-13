@@ -1,4 +1,5 @@
 """Aturan bisnis menu customer. Tidak tahu soal HTTP maupun SQL."""
+
 import uuid
 
 from app.core.responses import Pagination, build_pagination

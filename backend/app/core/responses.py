@@ -1,4 +1,5 @@
 """Envelope response standar (api-design.md §8). Dipakai semua endpoint sukses."""
+
 from typing import Generic, TypeVar
 
 from pydantic import BaseModel

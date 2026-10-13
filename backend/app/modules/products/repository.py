@@ -1,4 +1,5 @@
 """Akses database untuk menu. Hanya query; aturan bisnis ada di service."""
+
 import uuid
 
 from sqlalchemy import Select, func, select

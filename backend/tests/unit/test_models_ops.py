@@ -6,10 +6,24 @@ from app.modules.payments.model import PaymentStatus
 T = Base.metadata.tables
 
 ALL_18 = {
-    "roles", "users", "categories", "products", "inventory", "stock_reservations",
-    "stock_movements", "orders", "order_items", "order_revisions", "order_revision_items",
-    "payments", "payment_events", "order_status_history", "remake_events", "pickups",
-    "notifications", "audit_logs",
+    "roles",
+    "users",
+    "categories",
+    "products",
+    "inventory",
+    "stock_reservations",
+    "stock_movements",
+    "orders",
+    "order_items",
+    "order_revisions",
+    "order_revision_items",
+    "payments",
+    "payment_events",
+    "order_status_history",
+    "remake_events",
+    "pickups",
+    "notifications",
+    "audit_logs",
 }
 
 
@@ -27,8 +41,14 @@ def test_all_18_entities_exist():
 
 def test_payment_status_values_match_spec():
     assert {s.value for s in PaymentStatus} == {
-        "PENDING", "WAITING_CASH", "PAID", "FAILED",
-        "REFUND_REQUESTED", "REFUND_PENDING", "REFUNDED", "REFUND_FAILED",
+        "PENDING",
+        "WAITING_CASH",
+        "PAID",
+        "FAILED",
+        "REFUND_REQUESTED",
+        "REFUND_PENDING",
+        "REFUNDED",
+        "REFUND_FAILED",
     }
 
 
@@ -54,8 +74,13 @@ def test_remake_uses_same_order_item():
     assert _fk(t.c.order_item_id) == {"order_items.id"}
     assert not hasattr(t.c, "order_id")
     assert {r.value for r in RemakeReason} == {
-        "WRONG_MENU", "WRONG_SIZE", "WRONG_TOPPING", "WRONG_QUANTITY",
-        "DAMAGED_OR_SPILLED", "CUSTOMER_REQUEST", "OTHER",
+        "WRONG_MENU",
+        "WRONG_SIZE",
+        "WRONG_TOPPING",
+        "WRONG_QUANTITY",
+        "DAMAGED_OR_SPILLED",
+        "CUSTOMER_REQUEST",
+        "OTHER",
     }
     assert not t.c.created_by.nullable
 

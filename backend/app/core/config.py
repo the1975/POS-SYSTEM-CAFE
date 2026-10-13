@@ -1,5 +1,6 @@
 """Konfigurasi aplikasi. Semua nilai bisnis yang bisa berubah (mis. timeout reservasi)
 dibaca dari environment, bukan di-hardcode di banyak tempat."""
+
 from decimal import Decimal
 from functools import lru_cache
 

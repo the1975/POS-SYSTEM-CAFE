@@ -1,5 +1,6 @@
 """Import semua model di sini supaya terdaftar di Base.metadata (dipakai Alembic).
 Tambahkan modul baru setiap kali ada model baru."""
+
 from app.modules.audit.model import AuditLog  # noqa: F401
 from app.modules.inventory.model import Inventory, StockMovement, StockReservation  # noqa: F401
 from app.modules.kitchen.model import RemakeEvent  # noqa: F401

@@ -10,7 +10,11 @@ from app.modules.orders.pricing import calculate_totals
 
 def test_order_number_format_and_rollover():
     assert [format_order_number(n) for n in (1, 127, 999, 1000, 1999)] == [
-        "A001", "A127", "A999", "B001", "C001",
+        "A001",
+        "A127",
+        "A999",
+        "B001",
+        "C001",
     ]
     assert format_order_number(26 * 999) == "Z999"
     assert format_order_number(26 * 999 + 1) == "AA001"  # setelah Z lanjut ke dua huruf
@@ -29,7 +33,11 @@ def test_order_numbers_are_unique_over_a_long_range():
 def test_totals_match_spec_example():
     # Contoh dari dokumen: subtotal 100.000, diskon 10.000, DPP 90.000, pajak 9.000, total 99.000.
     t = calculate_totals(Decimal(100000), Decimal(10000), Decimal(10))
-    assert (t.taxable_base, t.tax_amount, t.total) == (Decimal(90000), Decimal(9000), Decimal(99000))
+    assert (t.taxable_base, t.tax_amount, t.total) == (
+        Decimal(90000),
+        Decimal(9000),
+        Decimal(99000),
+    )
 
 
 def test_tax_rounds_half_up_to_whole_rupiah():

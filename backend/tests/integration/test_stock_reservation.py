@@ -17,9 +17,7 @@ def _body(menu, items):
 
 
 def _post(client, menu, items, key):
-    return client.post(
-        f"{API}/orders", json=_body(menu, items), headers={"Idempotency-Key": key}
-    )
+    return client.post(f"{API}/orders", json=_body(menu, items), headers={"Idempotency-Key": key})
 
 
 def _stock(db, menu, name):

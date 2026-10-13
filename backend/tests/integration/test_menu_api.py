@@ -36,7 +36,10 @@ def test_products_never_expose_cost_price(client, menu):
 
 def test_default_order_is_category_then_name(client, menu):
     assert _names(client.get(f"{API}/products")) == [
-        "Es Teh", "Kopi Susu", "Jus 100% Jeruk", "Nasi Goreng",
+        "Es Teh",
+        "Kopi Susu",
+        "Jus 100% Jeruk",
+        "Nasi Goreng",
     ]
 
 

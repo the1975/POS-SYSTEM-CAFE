@@ -42,7 +42,10 @@ def test_create_order_calculates_totals_on_the_server(client, menu):
     d = r.json()["data"]
     # 2 x 8.000 + 1 x 25.000 = 41.000; pajak 10% = 4.100; total 45.100
     assert (d["subtotal"], d["discount_amount"], d["tax_amount"], d["total"]) == (
-        41000, 0, 4100, 45100,
+        41000,
+        0,
+        4100,
+        45100,
     )
     assert d["status"] == "PENDING"
     assert d["order_number"] == "A001"
@@ -116,9 +119,7 @@ def test_items_keep_name_and_price_snapshot(client, menu, db):
     product.price = Decimal(9999)  # admin mengubah harga setelah order dibuat
     product.name = "Es Teh Jumbo"
     db.commit()
-    row = db.scalars(
-        select(OrderItem).where(OrderItem.product_id == menu["es_teh"])
-    ).one()
+    row = db.scalars(select(OrderItem).where(OrderItem.product_id == menu["es_teh"])).one()
     assert row.product_name_snapshot == "Es Teh"
     assert row.unit_price == 8000
 
@@ -143,7 +144,9 @@ def test_same_key_returns_same_order_without_duplicating(client, menu, db):
     assert first.status_code == 201 and again.status_code == 200
     a, b = first.json()["data"], again.json()["data"]
     assert (a["order_id"], a["order_number"], a["tracking_token"]) == (
-        b["order_id"], b["order_number"], b["tracking_token"],
+        b["order_id"],
+        b["order_number"],
+        b["tracking_token"],
     )
     assert _count_orders(db) == 1
 

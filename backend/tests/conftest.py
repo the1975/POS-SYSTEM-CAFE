@@ -27,6 +27,7 @@ from app.modules.orders.history_model import OrderStatusHistory
 from app.modules.orders.model import Order, OrderItem
 from app.modules.orders.repository import OrderRepository
 from app.modules.orders.service import OrderService
+from app.modules.payments.model import Payment
 from app.modules.products.model import Category, Product
 from app.modules.users.model import Role, User
 
@@ -45,6 +46,7 @@ TEST_TABLES = [
     OrderStatusHistory.__table__,
     StockReservation.__table__,
     StockMovement.__table__,
+    Payment.__table__,
 ]
 
 

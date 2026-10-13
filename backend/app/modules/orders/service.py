@@ -1,5 +1,7 @@
 """Aturan bisnis pembuatan & pembacaan order (sisi customer guest)."""
+
 import uuid
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 from sqlalchemy.exc import IntegrityError
@@ -12,7 +14,13 @@ from app.modules.orders.exceptions import (
     OrderNotFoundError,
 )
 from app.modules.orders.history_model import OrderStatusHistory
-from app.modules.orders.model import Order, OrderItem, OrderItemStatus, OrderStatus
+from app.modules.orders.model import (
+    Order,
+    OrderItem,
+    OrderItemStatus,
+    OrderStatus,
+    PaymentMethod,
+)
 from app.modules.orders.order_number import format_order_number
 from app.modules.orders.pricing import calculate_totals
 from app.modules.orders.repository import OrderRepository
@@ -22,6 +30,7 @@ from app.modules.orders.schema import (
     OrderDetailOut,
     OrderItemOut,
 )
+from app.modules.payments.model import Payment, PaymentStatus
 from app.modules.products.model import Product
 
 
@@ -56,7 +65,8 @@ class OrderService:
             # order yang terpakai dan tidak ada baris yang tersimpan.
             self.inventory.reserve_stock(lines, {pid: p.name for pid, p in products.items()})
             order, history = self._build_order(data, lines, products, idempotency_key)
-            self.repo.add(order, history)
+            payment = self._build_payment(order, data)
+            self.repo.add(order, history, payment)
             self.inventory.record_reservations(order.id, lines)
             self.repo.commit()  # stok + order + item + riwayat + reservasi: semua atau tidak sama sekali
         except IntegrityError:
@@ -145,6 +155,19 @@ class OrderService:
             reason="Order dibuat",
         )
         return order, history
+
+    def _build_payment(self, order: Order, data: CreateOrderIn) -> Payment:
+        """Tagihan dibuat bersamaan dengan order. CASH menunggu kasir, QRIS menunggu provider."""
+        is_cash = data.payment_method.value == PaymentMethod.CASH.value
+        timeout = timedelta(minutes=self.inventory.reservation_timeout_minutes)
+        return Payment(
+            order_id=order.id,
+            provider="CASH" if is_cash else "MOCK_QRIS",
+            payment_method=data.payment_method.value,
+            amount=order.total,
+            status=(PaymentStatus.WAITING_CASH if is_cash else PaymentStatus.PENDING).value,
+            expires_at=datetime.now(UTC) + timeout,
+        )
 
     def _replay(
         self, existing: Order, data: CreateOrderIn, lines: dict[uuid.UUID, int]

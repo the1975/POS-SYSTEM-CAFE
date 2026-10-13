@@ -11,9 +11,17 @@ def _names(table) -> str:
 
 def test_all_tables_registered():
     expected = {
-        "roles", "users", "categories", "products",
-        "inventory", "stock_movements", "stock_reservations",
-        "orders", "order_items", "order_revisions", "order_revision_items",
+        "roles",
+        "users",
+        "categories",
+        "products",
+        "inventory",
+        "stock_movements",
+        "stock_reservations",
+        "orders",
+        "order_items",
+        "order_revisions",
+        "order_revision_items",
     }
     assert expected <= set(T)
 
@@ -29,7 +37,13 @@ def test_order_identity_and_guest_token():
 
 def test_order_status_values_match_spec():
     assert {s.value for s in OrderStatus} == {
-        "PENDING", "CONFIRMED", "PREPARING", "READY", "COMPLETED", "CANCELLED", "OVERDUE",
+        "PENDING",
+        "CONFIRMED",
+        "PREPARING",
+        "READY",
+        "COMPLETED",
+        "CANCELLED",
+        "OVERDUE",
     }
     assert "DELIVERING" not in {s.value for s in OrderStatus}
     assert {p.value for p in PaymentMethod} == {"QRIS", "CASH"}
@@ -39,8 +53,13 @@ def test_order_status_values_match_spec():
 def test_order_money_checks():
     names = _names(T["orders"])
     for needed in (
-        "subtotal_non_negative", "discount_non_negative", "tax_non_negative",
-        "total_non_negative", "discount_within_subtotal", "status_valid", "payment_method_valid",
+        "subtotal_non_negative",
+        "discount_non_negative",
+        "tax_non_negative",
+        "total_non_negative",
+        "discount_within_subtotal",
+        "status_valid",
+        "payment_method_valid",
     ):
         assert needed in names
 

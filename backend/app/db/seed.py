@@ -4,6 +4,7 @@ tidak menimpa password admin yang sudah ada).
     python -m app.db.seed          # 5 role + akun admin
     python -m app.db.seed --demo   # + kategori/produk/stok contoh (tidak jalan di production)
 """
+
 import argparse
 import sys
 from decimal import Decimal

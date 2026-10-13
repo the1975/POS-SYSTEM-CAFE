@@ -1,7 +1,8 @@
 """Format error API yang konsisten: aman, bisa dibaca mesin, dan manusiawi.
 
-    {"success": false, "error": {"code": "VALIDATION_ERROR", "message": "...", "details": [...]}}
+{"success": false, "error": {"code": "VALIDATION_ERROR", "message": "...", "details": [...]}}
 """
+
 import logging
 from typing import Any
 

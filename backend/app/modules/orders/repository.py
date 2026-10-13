@@ -1,4 +1,5 @@
 """Akses database untuk order. Hanya query/penyimpanan; aturan bisnis ada di service."""
+
 import uuid
 
 from sqlalchemy import Sequence, select

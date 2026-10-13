@@ -1,4 +1,5 @@
 """Akses database stok. Hanya operasi data; aturan bisnis ada di InventoryService."""
+
 import uuid
 
 from sqlalchemy import select, update

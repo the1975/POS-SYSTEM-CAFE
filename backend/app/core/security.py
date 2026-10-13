@@ -1,5 +1,6 @@
 """Keamanan: hashing password staff/admin + token tracking order customer.
 RBAC dan token pickup menyusul di fase berikutnya."""
+
 import base64
 import hashlib
 import hmac
@@ -30,6 +31,7 @@ def verify_password(password: str, password_hash: str) -> bool:
 # Kenapa diturunkan, bukan acak murni? Supaya request ulang dengan Idempotency-Key yang sama
 # (mis. respons pertama hilang karena sinyal HP putus) bisa mengembalikan token yang SAMA,
 # tanpa menyimpan token mentah di database. Yang disimpan tetap HASH-nya saja.
+
 
 def derive_tracking_token(order_id: uuid.UUID) -> str:
     secret = get_settings().tracking_token_secret

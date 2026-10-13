@@ -29,7 +29,13 @@ def test_inventory_defaults_are_zero():
 
 def test_stock_movement_types_match_spec():
     assert {m.value for m in StockMovementType} == {
-        "SALE", "RESERVATION", "RELEASE", "RESTOCK", "ADJUSTMENT", "WASTE", "REMAKE",
+        "SALE",
+        "RESERVATION",
+        "RELEASE",
+        "RESTOCK",
+        "ADJUSTMENT",
+        "WASTE",
+        "REMAKE",
     }
     assert "movement_type_valid" in _constraint_names(T["stock_movements"])
 
