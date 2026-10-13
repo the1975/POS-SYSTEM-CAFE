@@ -19,7 +19,9 @@ from app.db import models  # noqa: F401  (mendaftarkan semua tabel)
 from app.db.base import Base
 from app.db.dependencies import get_db
 from app.main import create_app
-from app.modules.inventory.model import Inventory
+from app.modules.inventory.model import Inventory, StockMovement, StockReservation
+from app.modules.inventory.repository import InventoryRepository
+from app.modules.inventory.service import InventoryService
 from app.modules.orders.dependencies import get_order_service
 from app.modules.orders.history_model import OrderStatusHistory
 from app.modules.orders.model import Order, OrderItem
@@ -33,9 +35,16 @@ from app.modules.users.model import Role, User
 # Role & User ikut dibuat karena tabel lain punya foreign key ke sana (SQLite menolak insert
 # kalau tabel induk FK tidak ada, begitu pemeriksaan foreign key dinyalakan).
 TEST_TABLES = [
-    Role.__table__, User.__table__,
-    Category.__table__, Product.__table__, Inventory.__table__,
-    Order.__table__, OrderItem.__table__, OrderStatusHistory.__table__,
+    Role.__table__,
+    User.__table__,
+    Category.__table__,
+    Product.__table__,
+    Inventory.__table__,
+    Order.__table__,
+    OrderItem.__table__,
+    OrderStatusHistory.__table__,
+    StockReservation.__table__,
+    StockMovement.__table__,
 ]
 
 
@@ -76,6 +85,10 @@ def client(db) -> TestClient:
         s = get_settings()
         return OrderService(
             TestOrderRepository(db),
+            InventoryService(
+                InventoryRepository(db),
+                reservation_timeout_minutes=s.reservation_timeout_minutes,
+            ),
             tax_rate_percent=s.tax_rate_percent,
             max_quantity_per_item=s.max_quantity_per_item,
         )
@@ -115,7 +128,13 @@ def menu(db) -> dict[str, uuid.UUID]:
     rahasia = product(secret, "Menu Rahasia", 99000, stock=5)  # kategori nonaktif
     db.commit()
     return {
-        "drinks": drinks.id, "food": food.id, "secret": secret.id,
-        "es_teh": es_teh.id, "kopi": kopi.id, "nasi": nasi.id,
-        "jus": jus.id, "mie": mie.id, "rahasia": rahasia.id,
+        "drinks": drinks.id,
+        "food": food.id,
+        "secret": secret.id,
+        "es_teh": es_teh.id,
+        "kopi": kopi.id,
+        "nasi": nasi.id,
+        "jus": jus.id,
+        "mie": mie.id,
+        "rahasia": rahasia.id,
     }
