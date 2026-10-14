@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import health
 from app.api.customer.router import router as customer_router
+from app.api.staff.router import router as staff_router
 from app.core.config import get_settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import setup_logging
@@ -31,6 +32,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(app)
     app.include_router(health.router, prefix=API_PREFIX)
     app.include_router(customer_router, prefix=API_PREFIX)
+    app.include_router(staff_router, prefix=API_PREFIX)
     return app
 
 

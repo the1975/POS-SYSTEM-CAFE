@@ -3,6 +3,7 @@ import os
 # Harus di paling atas: diisi SEBELUM app di-import, karena get_settings() membaca env saat pertama dipanggil.
 os.environ.setdefault("TRACKING_TOKEN_SECRET", "rahasia-khusus-test-jangan-dipakai-di-produksi")
 os.environ.setdefault("TAX_RATE_PERCENT", "10")
+os.environ.setdefault("JWT_SECRET", "jwt-rahasia-khusus-test-jangan-dipakai-di-produksi")
 
 import itertools
 import uuid

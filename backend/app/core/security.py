@@ -5,7 +5,9 @@ import base64
 import hashlib
 import hmac
 import uuid
+from datetime import UTC, datetime, timedelta
 
+import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerifyMismatchError
 
@@ -49,3 +51,32 @@ def hash_token(token: str) -> str:
 def verify_token(token: str, token_hash: str) -> bool:
     # compare_digest: waktu perbandingan konstan, tidak membocorkan kecocokan sebagian.
     return hmac.compare_digest(hash_token(token), token_hash)
+
+
+# ---- Token login staff (JWT) --------------------------------------------------------------
+# Stateless: server tidak menyimpan sesi. Masa berlaku pendek (access_token_minutes).
+
+
+def _jwt_secret() -> str:
+    secret = get_settings().jwt_secret
+    if secret is None:
+        raise RuntimeError("JWT_SECRET belum diisi di .env")
+    return secret.get_secret_value()
+
+
+def create_access_token(user_id: uuid.UUID, role: str) -> str:
+    now = datetime.now(UTC)
+    payload = {
+        "sub": str(user_id),
+        "role": role,
+        "iat": now,
+        "exp": now + timedelta(minutes=get_settings().access_token_minutes),
+    }
+    return jwt.encode(payload, _jwt_secret(), algorithm="HS256")
+
+
+def decode_access_token(token: str) -> dict:
+    """Melempar jwt.PyJWTError bila token palsu, rusak, atau kedaluwarsa."""
+    return jwt.decode(
+        token, _jwt_secret(), algorithms=["HS256"], options={"require": ["exp", "sub"]}
+    )

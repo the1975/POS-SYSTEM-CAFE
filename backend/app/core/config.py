@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     max_quantity_per_item: int = Field(default=20, ge=1, le=999)
     # Kunci rahasia untuk token tracking order. WAJIB di production.
     tracking_token_secret: SecretStr | None = None
+    # Rahasia penandatangan token login staff (JWT). WAJIB di production; isi acak panjang.
+    jwt_secret: SecretStr | None = None
+    access_token_minutes: int = Field(default=60, ge=1, le=1440)
     # Hanya dipakai skrip seed untuk membuat admin awal. Isi di .env, jangan di kode.
     seed_admin_email: str | None = None
     seed_admin_password: SecretStr | None = None
