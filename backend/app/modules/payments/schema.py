@@ -3,6 +3,8 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
+from app.modules.orders.schema import Money
+
 
 class CashConfirmIn(BaseModel):
     # Hanya uang yang diterima. Kembalian TIDAK diterima dari client (dihitung backend).
@@ -13,6 +15,6 @@ class CashConfirmOut(BaseModel):
     payment_id: uuid.UUID
     payment_status: str
     order_status: str
-    amount: Decimal
-    cash_received: Decimal
-    change: Decimal
+    amount: Money
+    cash_received: Money
+    change: Money

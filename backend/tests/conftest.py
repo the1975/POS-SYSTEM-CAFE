@@ -141,3 +141,34 @@ def menu(db) -> dict[str, uuid.UUID]:
         "mie": mie.id,
         "rahasia": rahasia.id,
     }
+
+
+@pytest.fixture
+def staff_headers(client, db):
+    """Buat akun staff dengan role tertentu, login, lalu kembalikan header Authorization."""
+    from sqlalchemy import select
+
+    from app.core.security import hash_password
+
+    password = "password-uji-12345"
+
+    def _make(role_name: str = "CASHIER", email: str | None = None) -> dict:
+        email = email or f"{role_name.lower()}@example.com"
+        role = db.scalar(select(Role).where(Role.name == role_name))
+        if role is None:
+            role = Role(name=role_name)
+            db.add(role)
+            db.flush()
+        db.add(
+            User(
+                role_id=role.id,
+                name=f"Staf {role_name}",
+                email=email,
+                password_hash=hash_password(password),
+            )
+        )
+        db.commit()
+        r = client.post("/api/v1/auth/login", json={"email": email, "password": password})
+        return {"Authorization": f"Bearer {r.json()['data']['access_token']}"}
+
+    return _make
