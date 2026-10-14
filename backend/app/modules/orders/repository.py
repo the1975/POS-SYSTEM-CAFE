@@ -1,11 +1,12 @@
 """Akses database untuk order. Hanya query/penyimpanan; aturan bisnis ada di service."""
 
 import uuid
+from datetime import datetime
 
-from sqlalchemy import Sequence, select
+from sqlalchemy import Sequence, select, update
 from sqlalchemy.orm import Session, selectinload
 
-from app.modules.orders.model import Order
+from app.modules.orders.model import Order, OrderStatus
 from app.modules.products.model import Category, Product
 
 # SEQUENCE PostgreSQL (dibuat di migrasi): nextval atomik, aman untuk request paralel.
@@ -54,3 +55,13 @@ class OrderRepository:
 
     def rollback(self) -> None:
         self.db.rollback()
+
+    def mark_confirmed(self, order_id: uuid.UUID, at: datetime) -> bool:
+        """PENDING -> CONFIRMED secara ATOMIK. False bila order sudah tidak PENDING."""
+        stmt = (
+            update(Order)
+            .where(Order.id == order_id, Order.status == OrderStatus.PENDING.value)
+            .values(status=OrderStatus.CONFIRMED.value, confirmed_at=at)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1

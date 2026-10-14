@@ -7,7 +7,7 @@ baris order, reservasi, dan movement sukses atau gagal SEBAGAI SATU KESATUAN."""
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from app.modules.inventory.exceptions import InsufficientStockError
+from app.modules.inventory.exceptions import InsufficientStockError, ReservationNotActiveError
 from app.modules.inventory.model import (
     ReservationStatus,
     StockMovement,
@@ -71,3 +71,30 @@ class InventoryService:
                 )
             )
         self.repo.add(*rows)
+
+    def convert_reservations(self, order_id: uuid.UUID, *, created_by: uuid.UUID | None) -> None:
+        """Order dibayar: stok yang ditahan menjadi terjual (reserved turun + movement SALE).
+        Berjalan di transaksi milik pemanggil."""
+        reservations = self.repo.active_reservations(order_id)
+        if not reservations:
+            raise ReservationNotActiveError
+        # Urutan tetap (by id), sama seperti reserve_stock, supaya tidak deadlock.
+        for r in sorted(reservations, key=lambda r: str(r.product_id)):
+            if not self.repo.consume_reserved(r.product_id, r.quantity):
+                raise RuntimeError(f"Stok ditahan tidak konsisten untuk produk {r.product_id}")
+        if self.repo.mark_reservations_converted(order_id) != len(reservations):
+            raise ReservationNotActiveError  # berubah di tengah jalan (mis. baru kedaluwarsa)
+        self.repo.add(
+            *[
+                StockMovement(
+                    product_id=r.product_id,
+                    movement_type=StockMovementType.SALE.value,
+                    quantity=-r.quantity,
+                    reference_type="order",
+                    reference_id=order_id,
+                    reason="Stok ditahan menjadi penjualan (pembayaran lunas)",
+                    created_by=created_by,
+                )
+                for r in reservations
+            ]
+        )
