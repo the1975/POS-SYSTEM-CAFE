@@ -57,6 +57,7 @@ class OrderDetailOut(BaseModel):
     customer_name: str
     status: str
     payment_method: str
+    payment_status: str | None
     items: list[OrderItemOut]
     subtotal: Money
     discount_amount: Money

@@ -7,6 +7,7 @@ from sqlalchemy import Sequence, select, update
 from sqlalchemy.orm import Session, selectinload
 
 from app.modules.orders.model import Order, OrderStatus
+from app.modules.payments.model import Payment
 from app.modules.products.model import Category, Product
 
 # SEQUENCE PostgreSQL (dibuat di migrasi): nextval atomik, aman untuk request paralel.
@@ -38,7 +39,14 @@ class OrderRepository:
         return self.db.scalar(stmt)
 
     def get_by_id(self, order_id: uuid.UUID) -> Order | None:
-        stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items))
+        stmt = (
+            select(Order)
+            .where(Order.id == order_id)
+            .options(selectinload(Order.items))
+            # Selalu data terbaru dari DB, bukan salinan lama di session (update massal
+            # seperti mark_confirmed tidak memperbarui objek yang sudah ada di session).
+            .execution_options(populate_existing=True)
+        )
         return self.db.scalar(stmt)
 
     def add(self, *objects) -> None:
@@ -65,3 +73,13 @@ class OrderRepository:
             .execution_options(synchronize_session=False)
         )
         return self.db.execute(stmt).rowcount == 1
+
+    def latest_payment_status(self, order_id: uuid.UUID) -> str | None:
+        """Status pembayaran terbaru order ini (None bila belum ada tagihan)."""
+        stmt = (
+            select(Payment.status)
+            .where(Payment.order_id == order_id)
+            .order_by(Payment.created_at.desc(), Payment.id.desc())
+            .limit(1)
+        )
+        return self.db.scalar(stmt)

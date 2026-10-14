@@ -209,6 +209,7 @@ class OrderService:
             customer_name=order.customer_name,
             status=order.status,
             payment_method=order.payment_method,
+            payment_status=self.repo.latest_payment_status(order.id),
             items=[
                 OrderItemOut(name=i.product_name_snapshot, quantity=i.quantity, status=i.status)
                 for i in order.items
