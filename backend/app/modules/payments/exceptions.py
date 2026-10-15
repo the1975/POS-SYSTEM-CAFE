@@ -37,3 +37,17 @@ class InsufficientCashError(AppError):
 
     def __init__(self, details: Any) -> None:
         super().__init__("Jumlah uang tidak mencukupi.", details)
+
+
+class PaymentNotQrisError(ConflictError):
+    code = "PAYMENT_NOT_QRIS"
+
+    def __init__(self) -> None:
+        super().__init__("Pembayaran order ini bukan QRIS.")
+
+
+class PaymentExpiredError(ConflictError):
+    code = "PAYMENT_EXPIRED"
+
+    def __init__(self) -> None:
+        super().__init__("Batas waktu pembayaran sudah lewat.")

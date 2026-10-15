@@ -46,3 +46,28 @@ class PaymentRepository:
 
     def rollback(self) -> None:
         self.db.rollback()
+
+    def get_latest_by_order(self, order_id: uuid.UUID) -> Payment | None:
+        stmt = (
+            select(Payment)
+            .where(Payment.order_id == order_id)
+            .order_by(Payment.created_at.desc(), Payment.id.desc())
+            .limit(1)
+            .execution_options(populate_existing=True)
+        )
+        return self.db.scalar(stmt)
+
+    def set_provider_transaction(self, payment_id: uuid.UUID, transaction_id: str) -> bool:
+        """Simpan ID transaksi provider SEKALI saja (hanya bila masih kosong dan PENDING).
+        False = sudah diisi permintaan lain (kalah balapan)."""
+        stmt = (
+            update(Payment)
+            .where(
+                Payment.id == payment_id,
+                Payment.status == PaymentStatus.PENDING.value,
+                Payment.provider_transaction_id.is_(None),
+            )
+            .values(provider_transaction_id=transaction_id)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1
