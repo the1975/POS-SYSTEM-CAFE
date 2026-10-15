@@ -1,8 +1,9 @@
 """Akses database stok. Hanya operasi data; aturan bisnis ada di InventoryService."""
 
 import uuid
+from datetime import datetime
 
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from app.modules.inventory.model import Inventory, ReservationStatus, StockReservation
@@ -69,6 +70,48 @@ class InventoryRepository:
                 StockReservation.status == ReservationStatus.ACTIVE.value,
             )
             .values(status=ReservationStatus.CONVERTED.value)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount
+
+    def due_reservation_order_ids(self, now: datetime, limit: int) -> list[uuid.UUID]:
+        """Order yang punya reservasi ACTIVE dan batas waktunya sudah lewat (paling lama dulu)."""
+        stmt = (
+            select(StockReservation.order_id)
+            .where(
+                StockReservation.status == ReservationStatus.ACTIVE.value,
+                StockReservation.expires_at <= now,
+            )
+            .group_by(StockReservation.order_id)
+            .order_by(func.min(StockReservation.expires_at))
+            .limit(limit)
+        )
+        return list(self.db.scalars(stmt))
+
+    def release_reserved(self, product_id: uuid.UUID, quantity: int) -> bool:
+        """Kembalikan stok ditahan ke tersedia secara ATOMIK; gagal kalau reserved kurang."""
+        stmt = (
+            update(Inventory)
+            .where(Inventory.product_id == product_id, Inventory.quantity_reserved >= quantity)
+            .values(
+                quantity_reserved=Inventory.quantity_reserved - quantity,
+                quantity_available=Inventory.quantity_available + quantity,
+            )
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1
+
+    def mark_reservations_released(
+        self, order_id: uuid.UUID, status: ReservationStatus, at: datetime
+    ) -> int:
+        """ACTIVE -> EXPIRED/CANCELLED. Hanya yang masih ACTIVE yang berubah; mengembalikan jumlahnya."""
+        stmt = (
+            update(StockReservation)
+            .where(
+                StockReservation.order_id == order_id,
+                StockReservation.status == ReservationStatus.ACTIVE.value,
+            )
+            .values(status=status.value, released_at=at)
             .execution_options(synchronize_session=False)
         )
         return self.db.execute(stmt).rowcount

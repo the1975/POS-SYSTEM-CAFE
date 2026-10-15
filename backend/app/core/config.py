@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     access_token_minutes: int = Field(default=60, ge=1, le=1440)
     # Rahasia bersama untuk memverifikasi tanda tangan webhook payment provider.
     payment_webhook_secret: SecretStr | None = None
+    # Jeda (detik) antar pemeriksaan reservasi kedaluwarsa oleh pekerja.
+    expiration_scan_interval_seconds: int = Field(default=30, ge=1, le=3600)
     # Hanya dipakai skrip seed untuk membuat admin awal. Isi di .env, jangan di kode.
     seed_admin_email: str | None = None
     seed_admin_password: SecretStr | None = None

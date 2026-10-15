@@ -83,3 +83,13 @@ class OrderRepository:
             .limit(1)
         )
         return self.db.scalar(stmt)
+
+    def mark_cancelled(self, order_id: uuid.UUID, at: datetime) -> bool:
+        """PENDING -> CANCELLED secara ATOMIK. False bila order sudah tidak PENDING."""
+        stmt = (
+            update(Order)
+            .where(Order.id == order_id, Order.status == OrderStatus.PENDING.value)
+            .values(status=OrderStatus.CANCELLED.value, cancelled_at=at)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1

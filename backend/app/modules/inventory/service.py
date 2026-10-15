@@ -98,3 +98,41 @@ class InventoryService:
                 for r in reservations
             ]
         )
+
+    def due_order_ids(self, now: datetime, limit: int) -> list[uuid.UUID]:
+        return self.repo.due_reservation_order_ids(now, limit)
+
+    def release_reservations(
+        self,
+        order_id: uuid.UUID,
+        *,
+        status: ReservationStatus,
+        at: datetime,
+        created_by: uuid.UUID | None,
+        reason: str,
+    ) -> None:
+        """Stok yang ditahan dikembalikan jadi tersedia (kedaluwarsa atau order batal).
+        Berjalan di transaksi milik pemanggil."""
+        reservations = self.repo.active_reservations(order_id)
+        if not reservations:
+            raise ReservationNotActiveError
+        # Urutan tetap (by id), sama seperti reserve/convert, supaya tidak deadlock.
+        for r in sorted(reservations, key=lambda r: str(r.product_id)):
+            if not self.repo.release_reserved(r.product_id, r.quantity):
+                raise RuntimeError(f"Stok ditahan tidak konsisten untuk produk {r.product_id}")
+        if self.repo.mark_reservations_released(order_id, status, at) != len(reservations):
+            raise ReservationNotActiveError  # berubah di tengah jalan (mis. baru dibayar)
+        self.repo.add(
+            *[
+                StockMovement(
+                    product_id=r.product_id,
+                    movement_type=StockMovementType.RELEASE.value,
+                    quantity=r.quantity,  # positif: stok tersedia bertambah lagi
+                    reference_type="order",
+                    reference_id=order_id,
+                    reason=reason,
+                    created_by=created_by,
+                )
+                for r in reservations
+            ]
+        )

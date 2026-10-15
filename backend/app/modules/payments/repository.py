@@ -109,3 +109,16 @@ class PaymentRepository:
             .execution_options(synchronize_session=False)
         )
         return self.db.execute(stmt).rowcount == 1
+
+    def fail_unpaid_for_order(self, order_id: uuid.UUID) -> int:
+        """Pembayaran yang belum lunas (PENDING/WAITING_CASH) jadi FAILED. Yang PAID tidak disentuh."""
+        stmt = (
+            update(Payment)
+            .where(
+                Payment.order_id == order_id,
+                Payment.status.in_([PaymentStatus.PENDING.value, PaymentStatus.WAITING_CASH.value]),
+            )
+            .values(status=PaymentStatus.FAILED.value)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount
