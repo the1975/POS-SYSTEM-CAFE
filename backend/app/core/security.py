@@ -80,3 +80,18 @@ def decode_access_token(token: str) -> dict:
     return jwt.decode(
         token, _jwt_secret(), algorithms=["HS256"], options={"require": ["exp", "sub"]}
     )
+
+
+# ---- Token pickup (diambil customer saat order READY) -----------------------------------
+# Pola sama dengan token tracking, tapi "label" HMAC-nya berbeda: token tracking tidak bisa
+# dipakai sebagai token pickup (dan sebaliknya). Yang disimpan di database tetap HASH-nya.
+
+
+def derive_pickup_token(order_id: uuid.UUID) -> str:
+    secret = get_settings().tracking_token_secret
+    if secret is None:
+        raise RuntimeError("TRACKING_TOKEN_SECRET belum diisi di .env")
+    digest = hmac.new(
+        secret.get_secret_value().encode(), b"pickup:" + order_id.bytes, hashlib.sha256
+    ).digest()
+    return base64.urlsafe_b64encode(digest).rstrip(b"=").decode()

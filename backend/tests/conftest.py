@@ -30,6 +30,7 @@ from app.modules.orders.model import Order, OrderItem
 from app.modules.orders.repository import OrderRepository
 from app.modules.orders.service import OrderService
 from app.modules.payments.model import Payment, PaymentEvent
+from app.modules.pickup.model import Pickup
 from app.modules.products.model import Category, Product
 from app.modules.users.model import Role, User
 
@@ -50,6 +51,7 @@ TEST_TABLES = [
     StockMovement.__table__,
     Payment.__table__,
     PaymentEvent.__table__,
+    Pickup.__table__,
 ]
 
 
