@@ -24,3 +24,10 @@ class IdempotencyKeyReusedError(ConflictError):
 
     def __init__(self) -> None:
         super().__init__("Kunci permintaan ini sudah dipakai untuk pesanan yang berbeda.")
+
+
+class OrderNotCancellableError(ConflictError):
+    code = "ORDER_NOT_CANCELLABLE"
+
+    def __init__(self) -> None:
+        super().__init__("Order ini sudah tidak bisa dibatalkan sendiri. Silakan hubungi kasir.")
