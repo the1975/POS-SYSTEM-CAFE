@@ -7,7 +7,7 @@ from decimal import Decimal
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from app.modules.payments.model import Payment, PaymentStatus
+from app.modules.payments.model import Payment, PaymentEvent, PaymentStatus
 
 
 class PaymentRepository:
@@ -68,6 +68,44 @@ class PaymentRepository:
                 Payment.provider_transaction_id.is_(None),
             )
             .values(provider_transaction_id=transaction_id)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1
+
+    def get_by_provider_transaction(self, transaction_id: str) -> Payment | None:
+        stmt = (
+            select(Payment)
+            .where(Payment.provider_transaction_id == transaction_id)
+            .execution_options(populate_existing=True)
+        )
+        return self.db.scalar(stmt)
+
+    def event_exists(self, event_id: str) -> bool:
+        stmt = select(PaymentEvent.id).where(PaymentEvent.event_id == event_id).limit(1)
+        return self.db.scalar(stmt) is not None
+
+    def add(self, *objects) -> None:
+        """Simpan lalu flush: pelanggaran UNIQUE (event_id ganda) langsung terdeteksi."""
+        for obj in objects:
+            self.db.add(obj)
+            self.db.flush()
+
+    def mark_qris_paid(self, payment_id: uuid.UUID, paid_at: datetime) -> bool:
+        """PENDING -> PAID secara ATOMIK. False bila sudah tidak PENDING."""
+        stmt = (
+            update(Payment)
+            .where(Payment.id == payment_id, Payment.status == PaymentStatus.PENDING.value)
+            .values(status=PaymentStatus.PAID.value, paid_at=paid_at)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1
+
+    def mark_failed(self, payment_id: uuid.UUID) -> bool:
+        """PENDING -> FAILED secara ATOMIK. False bila sudah tidak PENDING."""
+        stmt = (
+            update(Payment)
+            .where(Payment.id == payment_id, Payment.status == PaymentStatus.PENDING.value)
+            .values(status=PaymentStatus.FAILED.value)
             .execution_options(synchronize_session=False)
         )
         return self.db.execute(stmt).rowcount == 1

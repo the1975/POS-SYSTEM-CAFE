@@ -13,6 +13,21 @@ class ProviderTransaction:
     payment_url: str
 
 
+@dataclass(frozen=True)
+class ProviderEvent:
+    """Webhook yang sudah diurai ke bentuk netral (apa pun format aslinya)."""
+
+    event_id: str
+    event_type: str  # "payment.paid" | "payment.failed" | lainnya (diabaikan)
+    transaction_id: str
+    amount: Decimal
+    payload: dict
+
+
+EVENT_PAID = "payment.paid"
+EVENT_FAILED = "payment.failed"
+
+
 class PaymentProvider(Protocol):
     name: str
 
@@ -23,3 +38,11 @@ class PaymentProvider(Protocol):
         ...
 
     def payment_url(self, transaction_id: str) -> str: ...
+
+    def verify_webhook(self, *, raw_body: bytes, signature: str | None) -> bool:
+        """Cek tanda tangan pada body MENTAH (sebelum di-parse)."""
+        ...
+
+    def parse_webhook(self, raw_body: bytes) -> ProviderEvent:
+        """Melempar InvalidWebhookPayloadError bila isi tidak sesuai format."""
+        ...

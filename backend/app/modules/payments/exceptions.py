@@ -51,3 +51,26 @@ class PaymentExpiredError(ConflictError):
 
     def __init__(self) -> None:
         super().__init__("Batas waktu pembayaran sudah lewat.")
+
+
+class InvalidWebhookSignatureError(AppError):
+    status_code = 401
+    code = "INVALID_SIGNATURE"
+
+    def __init__(self) -> None:
+        super().__init__("Tanda tangan webhook tidak valid.")
+
+
+class InvalidWebhookPayloadError(AppError):
+    status_code = 400
+    code = "INVALID_WEBHOOK_PAYLOAD"
+
+    def __init__(self) -> None:
+        super().__init__("Isi webhook tidak valid.")
+
+
+class PaymentAmountMismatchError(ConflictError):
+    code = "PAYMENT_AMOUNT_MISMATCH"
+
+    def __init__(self, details: Any) -> None:
+        super().__init__("Jumlah pembayaran tidak sama dengan tagihan.", details)

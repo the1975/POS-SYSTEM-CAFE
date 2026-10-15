@@ -4,6 +4,7 @@ import os
 os.environ.setdefault("TRACKING_TOKEN_SECRET", "rahasia-khusus-test-jangan-dipakai-di-produksi")
 os.environ.setdefault("TAX_RATE_PERCENT", "10")
 os.environ.setdefault("JWT_SECRET", "jwt-rahasia-khusus-test-jangan-dipakai-di-produksi")
+os.environ.setdefault("PAYMENT_WEBHOOK_SECRET", "webhook-rahasia-khusus-test-jangan-dipakai")
 
 import itertools
 import uuid
@@ -28,7 +29,7 @@ from app.modules.orders.history_model import OrderStatusHistory
 from app.modules.orders.model import Order, OrderItem
 from app.modules.orders.repository import OrderRepository
 from app.modules.orders.service import OrderService
-from app.modules.payments.model import Payment
+from app.modules.payments.model import Payment, PaymentEvent
 from app.modules.products.model import Category, Product
 from app.modules.users.model import Role, User
 
@@ -48,6 +49,7 @@ TEST_TABLES = [
     StockReservation.__table__,
     StockMovement.__table__,
     Payment.__table__,
+    PaymentEvent.__table__,
 ]
 
 
@@ -172,3 +174,13 @@ def staff_headers(client, db):
         return {"Authorization": f"Bearer {r.json()['data']['access_token']}"}
 
     return _make
+
+
+# SQLite (dipakai test) tidak punya JSONB: tampilkan sebagai JSON biasa.
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.compiler import compiles
+
+
+@compiles(JSONB, "sqlite")
+def _jsonb_as_json_on_sqlite(type_, compiler, **kw):
+    return "JSON"

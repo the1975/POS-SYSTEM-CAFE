@@ -1,12 +1,11 @@
-"""Aturan bisnis pembayaran. Konfirmasi cash = satu transaksi:
-payment PAID + stok ditahan jadi terjual + order CONFIRMED + riwayat status."""
+"""Aturan bisnis pembayaran cash oleh kasir. Konfirmasi = satu transaksi:
+payment PAID + (lewat OrderSettlement) stok terjual, order CONFIRMED, riwayat status."""
 
 import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
 
 from app.modules.inventory.service import InventoryService
-from app.modules.orders.history_model import OrderStatusHistory
 from app.modules.orders.model import OrderStatus, PaymentMethod
 from app.modules.orders.repository import OrderRepository
 from app.modules.payments.exceptions import (
@@ -19,6 +18,7 @@ from app.modules.payments.exceptions import (
 from app.modules.payments.model import PaymentStatus
 from app.modules.payments.repository import PaymentRepository
 from app.modules.payments.schema import CashConfirmOut
+from app.modules.payments.settlement import OrderSettlement
 
 
 class PaymentService:
@@ -27,7 +27,7 @@ class PaymentService:
     ) -> None:
         self.payments = payments
         self.orders = orders
-        self.inventory = inventory
+        self.settlement = OrderSettlement(orders, inventory)
 
     def confirm_cash(
         self, payment_id: uuid.UUID, cash_received: Decimal, cashier_id: uuid.UUID
@@ -54,17 +54,11 @@ class PaymentService:
         try:
             if not self.payments.mark_cash_paid(payment.id, cash_received, change, now):
                 raise PaymentAlreadyPaidError  # kalah balapan dari konfirmasi lain
-            self.inventory.convert_reservations(order.id, created_by=cashier_id)
-            if not self.orders.mark_confirmed(order.id, now):
-                raise PaymentInvalidStateError
-            self.orders.add(
-                OrderStatusHistory(
-                    order_id=order.id,
-                    from_status=OrderStatus.PENDING.value,
-                    to_status=OrderStatus.CONFIRMED.value,
-                    changed_by=cashier_id,
-                    reason="Pembayaran cash dikonfirmasi kasir",
-                )
+            self.settlement.confirm_paid_order(
+                order.id,
+                at=now,
+                changed_by=cashier_id,
+                reason="Pembayaran cash dikonfirmasi kasir",
             )
             self.payments.commit()  # semua atau tidak sama sekali
         except Exception:
