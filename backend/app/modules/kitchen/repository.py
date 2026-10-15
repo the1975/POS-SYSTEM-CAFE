@@ -9,6 +9,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.engine import Row
 from sqlalchemy.orm import Session
 
+from app.modules.kitchen.model import RemakeEvent
 from app.modules.orders.model import Order, OrderItem, OrderItemStatus, OrderStatus
 
 _ORDER_COLUMNS = (
@@ -145,3 +146,28 @@ class KitchenRepository:
 
     def rollback(self) -> None:
         self.db.rollback()
+
+    def mark_item_remake(self, item_id: uuid.UUID) -> bool:
+        """PREPARING/READY -> REMAKE secara ATOMIK. False bila item tidak bisa di-remake."""
+        stmt = (
+            update(OrderItem)
+            .where(
+                OrderItem.id == item_id,
+                OrderItem.status.in_(
+                    [OrderItemStatus.PREPARING.value, OrderItemStatus.READY.value]
+                ),
+            )
+            .values(status=OrderItemStatus.REMAKE.value)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1
+
+    def resolve_remakes(self, item_id: uuid.UUID, at: datetime) -> int:
+        """Remake yang belum selesai untuk item ini ditandai selesai (item sudah siap lagi)."""
+        stmt = (
+            update(RemakeEvent)
+            .where(RemakeEvent.order_item_id == item_id, RemakeEvent.resolved_at.is_(None))
+            .values(resolved_at=at)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount

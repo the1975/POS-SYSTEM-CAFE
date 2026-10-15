@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.responses import DataResponse, PageResponse
 from app.db.dependencies import get_db
+from app.modules.kitchen.remake_schema import RemakeIn, to_db_reason
 from app.modules.kitchen.repository import KitchenRepository
 from app.modules.kitchen.schema import KitchenOrderOut
 from app.modules.kitchen.service import KitchenService
@@ -51,3 +52,9 @@ def start_order(order_id: uuid.UUID, service: ServiceDep, user: KitchenUser):
 @router.post("/order-items/{order_item_id}/ready", response_model=DataResponse[KitchenOrderOut])
 def mark_item_ready(order_item_id: uuid.UUID, service: ServiceDep, user: KitchenUser):
     return DataResponse(data=service.mark_item_ready(order_item_id, user.id))
+
+
+@router.post("/order-items/{order_item_id}/remake", response_model=DataResponse[KitchenOrderOut])
+def remake_item(order_item_id: uuid.UUID, body: RemakeIn, service: ServiceDep, user: KitchenUser):
+    reason = to_db_reason(body.reason)
+    return DataResponse(data=service.request_remake(order_item_id, reason, body.notes, user.id))

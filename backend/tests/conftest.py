@@ -24,6 +24,7 @@ from app.main import create_app
 from app.modules.inventory.model import Inventory, StockMovement, StockReservation
 from app.modules.inventory.repository import InventoryRepository
 from app.modules.inventory.service import InventoryService
+from app.modules.kitchen.model import RemakeEvent
 from app.modules.orders.dependencies import get_order_service
 from app.modules.orders.history_model import OrderStatusHistory
 from app.modules.orders.model import Order, OrderItem
@@ -52,6 +53,7 @@ TEST_TABLES = [
     Payment.__table__,
     PaymentEvent.__table__,
     Pickup.__table__,
+    RemakeEvent.__table__,
 ]
 
 

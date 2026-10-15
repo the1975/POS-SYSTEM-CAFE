@@ -12,7 +12,9 @@ from app.modules.kitchen.exceptions import (
     KitchenInvalidStateError,
     OrderItemNotFoundError,
     OrderNotPaidError,
+    RemakeAlreadyInProgressError,
 )
+from app.modules.kitchen.model import RemakeEvent, RemakeReason
 from app.modules.kitchen.repository import KitchenRepository
 from app.modules.kitchen.schema import KitchenItemOut, KitchenOrderOut
 from app.modules.orders.exceptions import OrderNotFoundError
@@ -96,8 +98,11 @@ class KitchenService:
                 return self._view(order_id)
             if order.status != OrderStatus.PREPARING.value:
                 raise KitchenInvalidStateError
+            was_remake = item.status == OrderItemStatus.REMAKE.value
             if not self.kitchen.mark_item_ready(item_id):
                 raise KitchenInvalidStateError
+            if was_remake:
+                self.kitchen.resolve_remakes(item_id, now)  # item sudah siap lagi
             if self.kitchen.count_items_not_ready(order_id) == 0:
                 self._finish_order(order_id, user_id, now)
             self.kitchen.commit()
@@ -149,3 +154,35 @@ class KitchenService:
                 for i in items
             ],
         )
+
+    # ---- remake: item dibuat ulang (item yang SAMA, bukan order/item baru) ----
+    def request_remake(
+        self, item_id: uuid.UUID, reason: RemakeReason, notes: str | None, user_id: uuid.UUID
+    ) -> KitchenOrderOut:
+        item = self.kitchen.get_item_row(item_id)
+        if item is None:
+            raise OrderItemNotFoundError
+        order_id = item.order_id
+        try:
+            # Kunci order dulu: bergiliran dengan "tandai siap", supaya order tidak sempat
+            # jadi READY di tengah proses remake.
+            order = self.kitchen.get_order_row(order_id, lock=True)
+            item = self.kitchen.get_item_row(item_id)  # baca ulang: bisa berubah saat menunggu
+            if order is None or item is None:
+                raise OrderItemNotFoundError
+            if order.status != OrderStatus.PREPARING.value:
+                raise KitchenInvalidStateError
+            if item.status == OrderItemStatus.REMAKE.value:
+                raise RemakeAlreadyInProgressError
+            if not self.kitchen.mark_item_remake(item_id):
+                raise KitchenInvalidStateError
+            self.kitchen.add(
+                RemakeEvent(
+                    order_item_id=item_id, reason=reason.value, notes=notes, created_by=user_id
+                )
+            )
+            self.kitchen.commit()
+        except Exception:
+            self.kitchen.rollback()
+            raise
+        return self._view(order_id)

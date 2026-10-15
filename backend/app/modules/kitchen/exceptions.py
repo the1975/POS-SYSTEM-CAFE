@@ -20,3 +20,10 @@ class OrderNotPaidError(ConflictError):
 
     def __init__(self) -> None:
         super().__init__("Order belum dibayar.")
+
+
+class RemakeAlreadyInProgressError(ConflictError):
+    code = "REMAKE_ALREADY_IN_PROGRESS"
+
+    def __init__(self) -> None:
+        super().__init__("Item ini sedang dibuat ulang.")
