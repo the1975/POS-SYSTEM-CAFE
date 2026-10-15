@@ -423,6 +423,8 @@ READY
 COMPLETED
 ```
 
+Catatan remake: order `READY` dapat kembali ke `PREPARING` saat ada remake, lalu `READY` lagi setelah item selesai.
+
 ---
 
 # 8. Remake
