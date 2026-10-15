@@ -6,7 +6,12 @@ from decimal import Decimal
 
 from sqlalchemy.exc import IntegrityError
 
-from app.core.security import derive_tracking_token, hash_token, verify_token
+from app.core.security import (
+    derive_pickup_token,
+    derive_tracking_token,
+    hash_token,
+    verify_token,
+)
 from app.modules.inventory.service import InventoryService
 from app.modules.orders.exceptions import (
     IdempotencyKeyReusedError,
@@ -31,6 +36,7 @@ from app.modules.orders.schema import (
     OrderItemOut,
 )
 from app.modules.payments.model import Payment, PaymentStatus
+from app.modules.pickup.model import PickupStatus
 from app.modules.products.model import Product
 
 
@@ -210,6 +216,7 @@ class OrderService:
             status=order.status,
             payment_method=order.payment_method,
             payment_status=self.repo.latest_payment_status(order.id),
+            pickup_token=self._pickup_token(order),
             items=[
                 OrderItemOut(name=i.product_name_snapshot, quantity=i.quantity, status=i.status)
                 for i in order.items
@@ -219,3 +226,11 @@ class OrderService:
             tax_amount=order.tax_amount,
             total=order.total,
         )
+
+    def _pickup_token(self, order: Order) -> str | None:
+        """Token pickup hanya terlihat customer saat pesanan siap diambil dan belum diambil."""
+        if order.status not in (OrderStatus.READY.value, OrderStatus.OVERDUE.value):
+            return None
+        if self.repo.pickup_status(order.id) != PickupStatus.WAITING_PICKUP.value:
+            return None
+        return derive_pickup_token(order.id)

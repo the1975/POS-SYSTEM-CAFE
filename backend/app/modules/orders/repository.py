@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.modules.orders.model import Order, OrderStatus
 from app.modules.payments.model import Payment
+from app.modules.pickup.model import Pickup
 from app.modules.products.model import Category, Product
 
 # SEQUENCE PostgreSQL (dibuat di migrasi): nextval atomik, aman untuk request paralel.
@@ -93,3 +94,7 @@ class OrderRepository:
             .execution_options(synchronize_session=False)
         )
         return self.db.execute(stmt).rowcount == 1
+
+    def pickup_status(self, order_id: uuid.UUID) -> str | None:
+        """Status pickup order ini (None bila belum ada pickup)."""
+        return self.db.scalar(select(Pickup.status).where(Pickup.order_id == order_id))

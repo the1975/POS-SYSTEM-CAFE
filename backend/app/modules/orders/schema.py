@@ -58,6 +58,7 @@ class OrderDetailOut(BaseModel):
     status: str
     payment_method: str
     payment_status: str | None
+    pickup_token: str | None
     items: list[OrderItemOut]
     subtotal: Money
     discount_amount: Money
