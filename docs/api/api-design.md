@@ -963,6 +963,16 @@ Backend wajib:
 - Communicate with payment provider if applicable.
 - Prevent duplicate refund.
 
+### Implementasi Versi Pertama
+
+- Role: `ADMIN` saja (OWNER = ADMIN di kode).
+- Refund penuh saja: `amount` harus sama dengan total pembayaran, selain itu `REFUND_AMOUNT_INVALID` (422).
+- Hanya pembayaran `CASH` dengan status `PAID`, pada order `CONFIRMED` (belum dimasak).
+- Pembayaran QRIS, order yang sudah diproses dapur, dan refund ganda ditolak dengan `REFUND_NOT_ALLOWED` (409).
+- Pembayaran cash langsung `PAID → REFUNDED` tanpa singgah di `REFUND_REQUESTED` / `REFUND_PENDING`, karena uang dikembalikan kasir secara manual.
+- Satu transaksi: payment `REFUNDED`, stok dikembalikan (movement `RESTOCK`), order `CONFIRMED → CANCELLED` dengan riwayat status, dan audit log `REFUND_PAYMENT`.
+- Belum ada: refund sebagian, refund QRIS lewat provider, refund untuk order yang sudah dimasak (stok `WASTE`).
+
 ---
 
 # 32. Inventory API
