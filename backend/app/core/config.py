@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     payment_webhook_secret: SecretStr | None = None
     # Jeda (detik) antar pemeriksaan reservasi kedaluwarsa oleh pekerja.
     expiration_scan_interval_seconds: int = Field(default=30, ge=1, le=3600)
+    # Order READY yang tidak diambil lebih lama dari ini (menit) menjadi OVERDUE.
+    pickup_overdue_minutes: int = Field(default=30, ge=1, le=1440)
     # Hanya dipakai skrip seed untuk membuat admin awal. Isi di .env, jangan di kode.
     seed_admin_email: str | None = None
     seed_admin_password: SecretStr | None = None

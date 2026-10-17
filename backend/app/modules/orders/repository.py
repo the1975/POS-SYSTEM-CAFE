@@ -108,3 +108,32 @@ class OrderRepository:
             .execution_options(synchronize_session=False)
         )
         return self.db.execute(stmt).rowcount == 1
+
+    def due_overdue_order_ids(self, cutoff: datetime, limit: int) -> list[uuid.UUID]:
+        """Order READY yang siapnya sudah lewat batas (paling lama dulu)."""
+        stmt = (
+            select(Order.id)
+            .where(
+                Order.status == OrderStatus.READY.value,
+                Order.ready_at.is_not(None),
+                Order.ready_at <= cutoff,
+            )
+            .order_by(Order.ready_at)
+            .limit(limit)
+        )
+        return list(self.db.scalars(stmt))
+
+    def mark_overdue(self, order_id: uuid.UUID, cutoff: datetime) -> bool:
+        """READY -> OVERDUE secara ATOMIK. Syarat ready_at ikut dicek ulang: order yang baru
+        dibuat ulang (remake) lalu READY lagi tidak ikut tersapu. False bila tidak memenuhi."""
+        stmt = (
+            update(Order)
+            .where(
+                Order.id == order_id,
+                Order.status == OrderStatus.READY.value,
+                Order.ready_at <= cutoff,
+            )
+            .values(status=OrderStatus.OVERDUE.value)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1
