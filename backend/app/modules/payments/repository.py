@@ -122,3 +122,13 @@ class PaymentRepository:
             .execution_options(synchronize_session=False)
         )
         return self.db.execute(stmt).rowcount
+
+    def mark_refunded(self, payment_id: uuid.UUID) -> bool:
+        """PAID -> REFUNDED secara ATOMIK. Refund ganda: yang kedua mendapat False."""
+        stmt = (
+            update(Payment)
+            .where(Payment.id == payment_id, Payment.status == PaymentStatus.PAID.value)
+            .values(status=PaymentStatus.REFUNDED.value)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1

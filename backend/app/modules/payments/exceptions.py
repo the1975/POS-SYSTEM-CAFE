@@ -74,3 +74,18 @@ class PaymentAmountMismatchError(ConflictError):
 
     def __init__(self, details: Any) -> None:
         super().__init__("Jumlah pembayaran tidak sama dengan tagihan.", details)
+
+
+class RefundNotAllowedError(ConflictError):
+    code = "REFUND_NOT_ALLOWED"
+
+    def __init__(self, message: str = "Refund tidak dapat dilakukan untuk pembayaran ini.") -> None:
+        super().__init__(message)
+
+
+class RefundAmountInvalidError(AppError):
+    status_code = 422
+    code = "REFUND_AMOUNT_INVALID"
+
+    def __init__(self, details: Any) -> None:
+        super().__init__("Jumlah refund harus sama dengan total pembayaran.", details)

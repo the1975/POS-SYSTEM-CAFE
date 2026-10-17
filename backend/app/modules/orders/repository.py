@@ -98,3 +98,13 @@ class OrderRepository:
     def pickup_status(self, order_id: uuid.UUID) -> str | None:
         """Status pickup order ini (None bila belum ada pickup)."""
         return self.db.scalar(select(Pickup.status).where(Pickup.order_id == order_id))
+
+    def mark_cancelled_after_payment(self, order_id: uuid.UUID, at: datetime) -> bool:
+        """CONFIRMED -> CANCELLED secara ATOMIK (refund sebelum dimasak). False bila status berubah."""
+        stmt = (
+            update(Order)
+            .where(Order.id == order_id, Order.status == OrderStatus.CONFIRMED.value)
+            .values(status=OrderStatus.CANCELLED.value, cancelled_at=at)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1

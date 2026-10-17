@@ -115,3 +115,20 @@ class InventoryRepository:
             .execution_options(synchronize_session=False)
         )
         return self.db.execute(stmt).rowcount
+
+    def converted_reservations(self, order_id: uuid.UUID) -> list[StockReservation]:
+        stmt = select(StockReservation).where(
+            StockReservation.order_id == order_id,
+            StockReservation.status == ReservationStatus.CONVERTED.value,
+        )
+        return list(self.db.scalars(stmt))
+
+    def restock_available(self, product_id: uuid.UUID, quantity: int) -> bool:
+        """Tambah stok tersedia secara ATOMIK (barang terjual dikembalikan)."""
+        stmt = (
+            update(Inventory)
+            .where(Inventory.product_id == product_id)
+            .values(quantity_available=Inventory.quantity_available + quantity)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1

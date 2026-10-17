@@ -21,6 +21,7 @@ from app.db import models  # noqa: F401  (mendaftarkan semua tabel)
 from app.db.base import Base
 from app.db.dependencies import get_db
 from app.main import create_app
+from app.modules.audit.model import AuditLog
 from app.modules.inventory.model import Inventory, StockMovement, StockReservation
 from app.modules.inventory.repository import InventoryRepository
 from app.modules.inventory.service import InventoryService
@@ -54,6 +55,7 @@ TEST_TABLES = [
     PaymentEvent.__table__,
     Pickup.__table__,
     RemakeEvent.__table__,
+    AuditLog.__table__,
 ]
 
 

@@ -136,3 +136,30 @@ class InventoryService:
                 for r in reservations
             ]
         )
+
+    def restock_sold(
+        self, order_id: uuid.UUID, *, created_by: uuid.UUID | None, reason: str
+    ) -> None:
+        """Refund order yang belum dimasak: stok yang sudah terjual kembali jadi tersedia
+        (movement RESTOCK). Berjalan di transaksi milik pemanggil."""
+        reservations = self.repo.converted_reservations(order_id)
+        if not reservations:
+            raise ReservationNotActiveError
+        # Urutan tetap (by id), sama seperti reserve/convert/release, supaya tidak deadlock.
+        for r in sorted(reservations, key=lambda r: str(r.product_id)):
+            if not self.repo.restock_available(r.product_id, r.quantity):
+                raise RuntimeError(f"Record inventory tidak ada untuk produk {r.product_id}")
+        self.repo.add(
+            *[
+                StockMovement(
+                    product_id=r.product_id,
+                    movement_type=StockMovementType.RESTOCK.value,
+                    quantity=r.quantity,  # positif: stok tersedia bertambah
+                    reference_type="order",
+                    reference_id=order_id,
+                    reason=reason,
+                    created_by=created_by,
+                )
+                for r in reservations
+            ]
+        )
