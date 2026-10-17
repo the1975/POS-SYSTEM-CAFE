@@ -245,3 +245,10 @@ a { color: inherit; }
 .notice { margin-bottom: 24px; padding: 16px; background: var(--surface); border: 1px solid var(--accent); border-radius: var(--r-card); }
 .notice__title { margin: 0 0 8px; font-weight: 700; }
 .line--simple { display: flex; justify-content: space-between; gap: 16px; }
+
+/* ---------- Staff ---------- */
+.staff-bar { justify-content: space-between; gap: 16px; }
+.staff-bar__user { display: flex; align-items: center; gap: 8px; }
+.staff-bar__who { display: grid; text-align: right; line-height: 1.2; font-size: 0.875rem; }
+.staff-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 24px; }
+a.chip { display: inline-flex; align-items: center; text-decoration: none; }
