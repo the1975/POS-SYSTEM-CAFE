@@ -18,3 +18,28 @@ export function confirmCash(token, paymentId, cashReceived) {
     body: JSON.stringify({ cash_received: String(cashReceived) }),
   });
 }
+
+// ---- Dapur ----
+export function listKitchenOrders(token, { signal } = {}) {
+  return apiFetch("/kitchen/orders?page=1&page_size=100", { headers: authHeader(token), signal });
+}
+
+export function startOrder(token, orderId) {
+  return apiFetch(`/kitchen/orders/${orderId}/start`, { method: "POST", headers: authHeader(token) });
+}
+
+export function markItemReady(token, itemId) {
+  return apiFetch(`/kitchen/order-items/${itemId}/ready`, {
+    method: "POST",
+    headers: authHeader(token),
+  });
+}
+
+// notes opsional: kosong tidak dikirim.
+export function remakeItem(token, itemId, { reason, notes }) {
+  return apiFetch(`/kitchen/order-items/${itemId}/remake`, {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify({ reason, notes: notes?.trim() || undefined }),
+  });
+}
