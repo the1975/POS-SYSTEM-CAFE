@@ -1165,11 +1165,11 @@ Order item tidak dibuat sebagai order baru.
 
 ### Perilaku Remake
 
-- Item pindah ke `REMAKE`, lalu kembali ke proses memasak (`PREPARING`).
-- Jika order sudah `READY`, order kembali `READY → PREPARING`.
-- Selama itu pickup ditahan: token tidak bisa diverifikasi dan pickup tidak bisa diselesaikan.
-- Setelah semua item siap lagi, order otomatis `PREPARING → READY` (token sama).
-- Remake dicatat di `remake_events`, `order_status_history`, dan audit log.
+- Remake hanya bisa dilakukan saat order `PREPARING` (item masih dimasak atau sudah siap, tetapi order belum `READY`).
+- Item pindah ke `REMAKE`; setelah ditandai siap lagi, item kembali `READY`.
+- Order baru menjadi `READY` setelah semua item siap, termasuk item hasil remake. Order tidak pernah kembali dari `READY`.
+- Remake pada order yang belum dimulai atau sudah `READY` ditolak dengan `KITCHEN_INVALID_STATE`. Remake ganda pada item yang sama ditolak dengan `REMAKE_ALREADY_IN_PROGRESS`.
+- Remake dicatat di `remake_events`.
 
 ---
 
@@ -1207,7 +1207,7 @@ Backend:
 1. Hash token.
 2. Search matching pickup.
 3. Validate pickup state.
-4. Validate order state (harus `READY`). Order `PREPARING` karena remake ditolak dengan `ORDER_INVALID_STATE`.
+4. Validate order state.
 5. Return order summary.
 
 Response:
@@ -1702,12 +1702,6 @@ Valid transition:
     READY
        ↓
     COMPLETED
-
-Transisi remake:
-
-    READY → PREPARING
-
-Hanya lewat `POST /kitchen/order-items/{id}/remake`. Setelah semua item siap lagi, order kembali `PREPARING → READY`.
 
 Cancellation:
 

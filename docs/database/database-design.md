@@ -319,12 +319,6 @@ atau:
 
 `CONFIRMED → CANCELLED`
 
-Remake pada order `READY`:
-
-`READY → PREPARING → READY`
-
-Pickup ditahan selama `PREPARING`.
-
 Jika customer tidak mengambil order:
 
 `READY → OVERDUE`
@@ -586,7 +580,7 @@ Remake dicatat pada:
 
 Alasan harus tersedia agar dapat dianalisis.
 
-Jika order sudah `READY`, remake mengembalikan order ke `PREPARING` dan perubahan dicatat di `order_status_history`.
+Remake hanya bisa dilakukan saat order `PREPARING`; order yang sudah `READY` tidak bisa di-remake.
 
 ---
 
