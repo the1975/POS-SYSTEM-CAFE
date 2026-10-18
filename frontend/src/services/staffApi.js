@@ -3,8 +3,12 @@ import { apiFetch } from "./api";
 const authHeader = (token) => ({ Authorization: `Bearer ${token}` });
 
 // Daftar order untuk staff. paymentStatus mis. "WAITING_CASH" = antrean kasir.
-export function listStaffOrders(token, { paymentStatus, search, pageSize = 50, signal } = {}) {
-  const qs = new URLSearchParams({ page: "1", page_size: String(pageSize) });
+export function listStaffOrders(
+  token,
+  { status, paymentStatus, search, page = 1, pageSize = 50, signal } = {}
+) {
+  const qs = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
+  if (status) qs.set("status", status);
   if (paymentStatus) qs.set("payment_status", paymentStatus);
   if (search) qs.set("search", search);
   return apiFetch(`/staff/orders?${qs}`, { headers: authHeader(token), signal });
@@ -60,4 +64,14 @@ export function verifyPickup(token, pickupToken) {
 
 export function completePickup(token, pickupId) {
   return apiFetch(`/pickup/${pickupId}/complete`, { method: "POST", headers: authHeader(token) });
+}
+
+// ---- Admin ----
+// Refund penuh (versi pertama): amount harus sama dengan total pembayaran. Hanya ADMIN.
+export function refundPayment(token, paymentId, { amount, reason }) {
+  return apiFetch(`/payments/${paymentId}/refund`, {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify({ amount: String(amount), reason: reason.trim() }),
+  });
 }

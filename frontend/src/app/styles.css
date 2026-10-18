@@ -303,3 +303,14 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .manual form { display: flex; gap: 8px; margin-top: 8px; }
 .manual .input { flex: 1; min-width: 0; }
 .pickup__meta { margin-top: 16px; text-align: center; }
+
+/* ---------- Admin ---------- */
+.admin__tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
+.chip:disabled { opacity: 0.5; cursor: not-allowed; }
+.admin__filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.admin__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.admin__pager { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 16px; }
+.admin__pager .muted { text-align: center; font-size: 0.875rem; }
+.refund__warning { margin: 24px 0; }
+.refund__confirm { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; cursor: pointer; }
+.refund__confirm input { width: 24px; height: 24px; flex: none; margin: 0; }
