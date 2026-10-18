@@ -283,3 +283,11 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .row-actions { display: flex; gap: 8px; margin-top: 24px; }
 .row-actions .btn { flex: 1; }
 .remake__form { margin-top: 24px; }
+
+/* ---------- QR pengambilan ---------- */
+.pickup { text-align: center; }
+.pickup__qr {
+  display: block; width: min(320px, 100%); aspect-ratio: 1; margin: 16px auto;
+  padding: 8px; background: #ffffff; border-radius: var(--r-btn);
+}
+.pickup__qr.skeleton { background: var(--line); }

@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { EmptyState } from "../components/feedback/States";
 import Header from "../components/layout/Header";
+import PickupQr from "../features/orders/PickupQr";
+import { shouldShowPickupQr } from "../features/orders/pickupQr";
 import { statusLabel } from "../features/orders/statusLabels";
 import { useOrder } from "../features/orders/useOrder";
 import { getOrderAccess } from "../stores/orderAccess";
@@ -44,6 +46,14 @@ export default function OrderPage() {
               <p className="pill">{statusLabel(order.status)}</p>
               <p className="muted ticket__name">Atas nama {order.customer_name}</p>
             </section>
+
+            {shouldShowPickupQr(order) && (
+              <section className="notice pickup" aria-label="QR pengambilan pesanan">
+                <p className="notice__title">Ambil pesananmu</p>
+                <PickupQr token={order.pickup_token} />
+                <p className="muted">Tunjukkan QR ini ke petugas. Jangan dibagikan ke orang lain.</p>
+              </section>
+            )}
 
             {order.status === "PENDING" && order.payment_method === "CASH" && (
               <section className="notice">
