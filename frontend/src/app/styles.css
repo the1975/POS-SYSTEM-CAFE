@@ -252,3 +252,16 @@ a { color: inherit; }
 .staff-bar__who { display: grid; text-align: right; line-height: 1.2; font-size: 0.875rem; }
 .staff-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 24px; }
 a.chip { display: inline-flex; align-items: center; text-decoration: none; }
+
+/* ---------- Kasir ---------- */
+.searchbar { display: flex; gap: 8px; margin-bottom: 16px; }
+.searchbar .input { flex: 1; min-width: 0; }
+.queue__note { margin-bottom: 8px; font-size: 0.9375rem; }
+.queue__row { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.queue__row:last-child { border-bottom: 0; }
+.queue__no { flex: none; min-width: 64px; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.queue__main { flex: 1; min-width: 0; display: grid; }
+.queue__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.cash__field { margin-top: 24px; }
+.cash__alert { margin: 16px 0 0; }
+.change { margin: 0; font-size: clamp(2.25rem, 12vw, 3.5rem); font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }

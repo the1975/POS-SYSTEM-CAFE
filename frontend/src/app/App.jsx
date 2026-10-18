@@ -5,7 +5,7 @@ import MenuPage from "../pages/MenuPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import OrderPage from "../pages/OrderPage";
 import StaffLoginPage from "../pages/StaffLoginPage";
-import StaffScreenPage from "../pages/StaffScreenPage";
+import { renderStaffScreen } from "../pages/staffPages";
 import RequireRole from "../features/staff/RequireRole";
 import { STAFF_SCREENS } from "../features/staff/screens";
 
@@ -24,7 +24,7 @@ export default function App() {
           path={s.path}
           element={
             <RequireRole roles={s.roles}>
-              <StaffScreenPage screen={s} />
+              {renderStaffScreen(s)}
             </RequireRole>
           }
         />
