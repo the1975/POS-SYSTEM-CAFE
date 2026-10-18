@@ -291,3 +291,15 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
   padding: 8px; background: #ffffff; border-radius: var(--r-btn);
 }
 .pickup__qr.skeleton { background: var(--line); }
+
+/* ---------- Pickup (staff) ---------- */
+.scanner { display: grid; gap: 16px; }
+.scanner__video {
+  width: 100%; aspect-ratio: 1; object-fit: cover;
+  background: #000000; border-radius: var(--r-card);
+}
+.manual { margin-top: 16px; }
+.manual summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--muted); }
+.manual form { display: flex; gap: 8px; margin-top: 8px; }
+.manual .input { flex: 1; min-width: 0; }
+.pickup__meta { margin-top: 16px; text-align: center; }

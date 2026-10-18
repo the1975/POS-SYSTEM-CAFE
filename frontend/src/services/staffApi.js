@@ -43,3 +43,21 @@ export function remakeItem(token, itemId, { reason, notes }) {
     body: JSON.stringify({ reason, notes: notes?.trim() || undefined }),
   });
 }
+
+// ---- Pickup ----
+export function listPickupOrders(token, status, { signal } = {}) {
+  const qs = new URLSearchParams({ status, page: "1", page_size: "100" });
+  return apiFetch(`/pickup/orders?${qs}`, { headers: authHeader(token), signal });
+}
+
+export function verifyPickup(token, pickupToken) {
+  return apiFetch("/pickup/verify", {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify({ pickup_token: pickupToken }),
+  });
+}
+
+export function completePickup(token, pickupId) {
+  return apiFetch(`/pickup/${pickupId}/complete`, { method: "POST", headers: authHeader(token) });
+}
