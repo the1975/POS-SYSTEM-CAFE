@@ -1593,6 +1593,16 @@ Dapat digunakan untuk:
 
 Password update sebaiknya menggunakan endpoint khusus.
 
+### Implementasi Versi Pertama (User API)
+
+- Semua endpoint `/users` hanya untuk `ADMIN` (OWNER = ADMIN di kode). Response tidak pernah memuat password atau hash.
+- `GET /users`: filter `role_id`, `is_active`, `search` (nama atau email), `page`, `page_size`.
+- `GET /users/roles`: daftar role (`id`, `name`) untuk mengisi `role_id`. Tambahan di luar spec awal.
+- `POST /users`: password minimal 12 karakter. Email unik tanpa membedakan huruf besar/kecil (`EMAIL_ALREADY_USED`, 409). Role tidak dikenal `ROLE_NOT_FOUND` (422). Tercatat di audit log `CREATE_USER` (tanpa password).
+- `PATCH /users/{id}`: ubah `name`, `role_id`, `is_active` (minimal satu). Admin tidak boleh menonaktifkan atau mengganti role akunnya sendiri (`CANNOT_MODIFY_SELF`, 409), dan admin aktif terakhir tidak boleh hilang (`LAST_ADMIN`, 409). Tercatat di audit log `UPDATE_USER`.
+- Akun nonaktif langsung ditolak, baik login maupun token lama, karena role dan status dibaca dari database.
+- Belum ada: ganti password (endpoint khusus).
+
 ---
 
 # 58. API Validation

@@ -1,4 +1,4 @@
-from app.core.exceptions import AppError
+from app.core.exceptions import AppError, ConflictError, NotFoundError
 
 
 class InvalidCredentialsError(AppError):
@@ -25,3 +25,39 @@ class ForbiddenError(AppError):
 
     def __init__(self) -> None:
         super().__init__("Anda tidak punya akses ke fitur ini.")
+
+
+class UserNotFoundError(NotFoundError):
+    code = "USER_NOT_FOUND"
+
+    def __init__(self) -> None:
+        super().__init__("Pengguna tidak ditemukan.")
+
+
+class EmailAlreadyUsedError(ConflictError):
+    code = "EMAIL_ALREADY_USED"
+
+    def __init__(self) -> None:
+        super().__init__("Email sudah dipakai akun lain.")
+
+
+class RoleNotFoundError(AppError):
+    status_code = 422
+    code = "ROLE_NOT_FOUND"
+
+    def __init__(self) -> None:
+        super().__init__("Role tidak dikenal.")
+
+
+class CannotModifySelfError(ConflictError):
+    code = "CANNOT_MODIFY_SELF"
+
+    def __init__(self) -> None:
+        super().__init__("Kamu tidak bisa menonaktifkan atau mengganti role akunmu sendiri.")
+
+
+class LastAdminError(ConflictError):
+    code = "LAST_ADMIN"
+
+    def __init__(self) -> None:
+        super().__init__("Harus tersisa minimal satu admin aktif.")
