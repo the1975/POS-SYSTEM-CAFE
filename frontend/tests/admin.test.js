@@ -95,7 +95,7 @@ describe("label dan filter", () => {
   });
 
   it("hanya tab Order yang siap", () => {
-    expect(ADMIN_TABS.filter((t) => t.ready).map((t) => t.id)).toEqual(["orders"]);
+    expect(ADMIN_TABS.filter((t) => t.ready).map((t) => t.id)).toEqual(["orders", "users"]);
   });
 });
 

@@ -36,7 +36,7 @@ export const ADMIN_TABS = [
   { id: "dashboard", label: "Dashboard", ready: false },
   { id: "products", label: "Produk", ready: false },
   { id: "inventory", label: "Stok", ready: false },
-  { id: "users", label: "Pengguna", ready: false },
+  { id: "users", label: "Pengguna", ready: true },
 ];
 
 // Sama dengan aturan backend (payments/refund.py): tunai, sudah lunas, order belum dimasak.
@@ -47,12 +47,12 @@ export const canRefund = (o) =>
   o.payment_status === "PAID" &&
   o.status === "CONFIRMED";
 
-export function pageInfo(p) {
+export function pageInfo(p, noun = "order") {
   if (!p || p.total === 0) return { hasPrev: false, hasNext: false, label: "" };
   return {
     hasPrev: p.page > 1,
     hasNext: p.page < p.total_pages,
-    label: `Halaman ${p.page} dari ${p.total_pages} · ${p.total} order`,
+    label: `Halaman ${p.page} dari ${p.total_pages} · ${p.total} ${noun}`,
   };
 }
 

@@ -3,55 +3,121 @@ import StaffHeader from "../components/layout/StaffHeader";
 import StaffNav from "../components/layout/StaffNav";
 import { ADMIN_TABS } from "../features/admin/admin";
 import AdminOrders from "../features/admin/AdminOrders";
+import AdminUsers from "../features/admin/AdminUsers";
+import CreateUserPanel from "../features/admin/CreateUserPanel";
+import EditUserPanel from "../features/admin/EditUserPanel";
 import RefundPanel from "../features/admin/RefundPanel";
+import { useRoles } from "../features/admin/useUsers";
 import { useAuth } from "../stores/AuthContext";
 
-// Layar Admin. Baru tab Order (+ refund) yang punya backend; tab lain "segera".
+// Layar Admin. Tab Order (+ refund) dan Pengguna sudah punya backend; tab lain "segera".
 export default function AdminPage({ screen }) {
   const { user, token, logout } = useAuth();
-  const [filters, setFilters] = useState({ status: "", paymentStatus: "", search: "", page: 1 });
+  const { roles } = useRoles(token, logout);
+  const [tab, setTab] = useState("orders");
+  const [orderFilters, setOrderFilters] = useState({ status: "", paymentStatus: "", search: "", page: 1 });
+  const [userFilters, setUserFilters] = useState({ roleId: "", isActive: "", search: "", page: 1 });
   const [refunding, setRefunding] = useState(null);
+  const [userPanel, setUserPanel] = useState(null); // { mode: "create" } | { mode: "edit", user }
 
-  return (
-    <>
-      <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container">
-        {refunding ? (
-          <RefundPanel
-            key={refunding.order_id}
-            order={refunding}
-            token={token}
-            onBack={() => setRefunding(null)}
-            onDone={() => setRefunding(null)}
-            onUnauthorized={logout}
-          />
-        ) : (
+  function renderBody() {
+    if (refunding) {
+      return (
+        <RefundPanel
+          key={refunding.order_id}
+          order={refunding}
+          token={token}
+          onBack={() => setRefunding(null)}
+          onDone={() => setRefunding(null)}
+          onUnauthorized={logout}
+        />
+      );
+    }
+    if (userPanel?.mode === "create") {
+      return (
+        <CreateUserPanel
+          token={token}
+          roles={roles}
+          onBack={() => setUserPanel(null)}
+          onDone={() => setUserPanel(null)}
+          onUnauthorized={logout}
+        />
+      );
+    }
+    if (userPanel?.mode === "edit") {
+      return (
+        <EditUserPanel
+          key={userPanel.user.id}
+          token={token}
+          user={userPanel.user}
+          roles={roles}
+          isSelf={userPanel.user.id === user.id}
+          onBack={() => setUserPanel(null)}
+          onDone={() => setUserPanel(null)}
+          onUnauthorized={logout}
+        />
+      );
+    }
+    return (
+      <>
+        <StaffNav role={user.role} current={screen.path} />
+        <nav className="admin__tabs" aria-label="Menu admin">
+          {ADMIN_TABS.map((t) =>
+            t.ready ? (
+              <button
+                key={t.id}
+                type="button"
+                className="chip"
+                aria-pressed={tab === t.id}
+                onClick={() => setTab(t.id)}
+              >
+                {t.label}
+              </button>
+            ) : (
+              <button key={t.id} type="button" className="chip" disabled>
+                {t.label} · segera
+              </button>
+            )
+          )}
+        </nav>
+        {tab === "orders" ? (
           <>
-            <StaffNav role={user.role} current={screen.path} />
-            <nav className="admin__tabs" aria-label="Menu admin">
-              {ADMIN_TABS.map((t) =>
-                t.ready ? (
-                  <button key={t.id} type="button" className="chip" aria-pressed="true">
-                    {t.label}
-                  </button>
-                ) : (
-                  <button key={t.id} type="button" className="chip" disabled>
-                    {t.label} · segera
-                  </button>
-                )
-              )}
-            </nav>
             <h1 className="page-title">Order</h1>
             <AdminOrders
               token={token}
-              filters={filters}
-              onFilters={setFilters}
+              filters={orderFilters}
+              onFilters={setOrderFilters}
               onRefund={setRefunding}
               onUnauthorized={logout}
             />
           </>
+        ) : (
+          <>
+            <div className="admin__top">
+              <h1 className="page-title">Pengguna</h1>
+              <button type="button" className="btn btn--sm" onClick={() => setUserPanel({ mode: "create" })}>
+                + Tambah
+              </button>
+            </div>
+            <AdminUsers
+              token={token}
+              me={user.id}
+              roles={roles}
+              filters={userFilters}
+              onFilters={setUserFilters}
+              onEdit={(u) => setUserPanel({ mode: "edit", user: u })}
+              onUnauthorized={logout}
+            />
+          </>
         )}
-      </main>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <StaffHeader title={screen.title} user={user} onLogout={logout} />
+      <main className="container">{renderBody()}</main>
     </>
   );
 }

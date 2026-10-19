@@ -75,3 +75,33 @@ export function refundPayment(token, paymentId, { amount, reason }) {
     body: JSON.stringify({ amount: String(amount), reason: reason.trim() }),
   });
 }
+
+// ---- Pengguna (admin) ----
+export function listUsers(token, { roleId, isActive, search, page = 1, pageSize = 20, signal } = {}) {
+  const qs = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
+  if (roleId) qs.set("role_id", roleId);
+  if (isActive === "true" || isActive === "false") qs.set("is_active", isActive);
+  if (search) qs.set("search", search);
+  return apiFetch(`/users?${qs}`, { headers: authHeader(token), signal });
+}
+
+export function listRoles(token, { signal } = {}) {
+  return apiFetch("/users/roles", { headers: authHeader(token), signal });
+}
+
+export function createUser(token, { name, email, password, roleId }) {
+  return apiFetch("/users", {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify({ name: name.trim(), email: email.trim(), password, role_id: roleId }),
+  });
+}
+
+// patch hanya berisi field yang berubah: name, role_id, is_active.
+export function updateUser(token, userId, patch) {
+  return apiFetch(`/users/${userId}`, {
+    method: "PATCH",
+    headers: authHeader(token),
+    body: JSON.stringify(patch),
+  });
+}
