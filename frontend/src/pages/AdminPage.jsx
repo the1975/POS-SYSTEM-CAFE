@@ -3,22 +3,28 @@ import StaffHeader from "../components/layout/StaffHeader";
 import StaffNav from "../components/layout/StaffNav";
 import { ADMIN_TABS } from "../features/admin/admin";
 import AdminOrders from "../features/admin/AdminOrders";
+import AdminProducts from "../features/admin/AdminProducts";
 import AdminUsers from "../features/admin/AdminUsers";
 import CreateUserPanel from "../features/admin/CreateUserPanel";
 import EditUserPanel from "../features/admin/EditUserPanel";
+import ProductFormPanel from "../features/admin/ProductFormPanel";
 import RefundPanel from "../features/admin/RefundPanel";
+import { useCategories } from "../features/admin/useAdminProducts";
 import { useRoles } from "../features/admin/useUsers";
 import { useAuth } from "../stores/AuthContext";
 
-// Layar Admin. Tab Order (+ refund) dan Pengguna sudah punya backend; tab lain "segera".
+// Layar Admin. Tab Order (+ refund), Produk, dan Pengguna sudah punya backend; tab lain "segera".
 export default function AdminPage({ screen }) {
   const { user, token, logout } = useAuth();
   const { roles } = useRoles(token, logout);
+  const { categories } = useCategories();
   const [tab, setTab] = useState("orders");
   const [orderFilters, setOrderFilters] = useState({ status: "", paymentStatus: "", search: "", page: 1 });
   const [userFilters, setUserFilters] = useState({ roleId: "", isActive: "", search: "", page: 1 });
   const [refunding, setRefunding] = useState(null);
   const [userPanel, setUserPanel] = useState(null); // { mode: "create" } | { mode: "edit", user }
+  const [productFilters, setProductFilters] = useState({ categoryId: "", isAvailable: "", search: "", page: 1 });
+  const [productPanel, setProductPanel] = useState(null); // { product: null } = tambah | { product } = ubah
 
   function renderBody() {
     if (refunding) {
@@ -58,6 +64,19 @@ export default function AdminPage({ screen }) {
         />
       );
     }
+    if (productPanel) {
+      return (
+        <ProductFormPanel
+          key={productPanel.product?.id ?? "new"}
+          token={token}
+          product={productPanel.product}
+          categories={categories}
+          onBack={() => setProductPanel(null)}
+          onDone={() => setProductPanel(null)}
+          onUnauthorized={logout}
+        />
+      );
+    }
     return (
       <>
         <StaffNav role={user.role} current={screen.path} />
@@ -88,6 +107,23 @@ export default function AdminPage({ screen }) {
               filters={orderFilters}
               onFilters={setOrderFilters}
               onRefund={setRefunding}
+              onUnauthorized={logout}
+            />
+          </>
+        ) : tab === "products" ? (
+          <>
+            <div className="admin__top">
+              <h1 className="page-title">Produk</h1>
+              <button type="button" className="btn btn--sm" onClick={() => setProductPanel({ product: null })}>
+                + Tambah
+              </button>
+            </div>
+            <AdminProducts
+              token={token}
+              categories={categories}
+              filters={productFilters}
+              onFilters={setProductFilters}
+              onEdit={(p) => setProductPanel({ product: p })}
               onUnauthorized={logout}
             />
           </>

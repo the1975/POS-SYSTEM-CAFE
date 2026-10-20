@@ -105,3 +105,33 @@ export function updateUser(token, userId, patch) {
     body: JSON.stringify(patch),
   });
 }
+
+// ---- Produk (admin) ----
+// Daftar SEMUA produk (termasuk yang disembunyikan) lengkap dengan HPP.
+export function listAdminProducts(
+  token,
+  { categoryId, isAvailable, search, page = 1, pageSize = 20, signal } = {}
+) {
+  const qs = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
+  if (categoryId) qs.set("category_id", categoryId);
+  if (isAvailable === "true" || isAvailable === "false") qs.set("is_available", isAvailable);
+  if (search) qs.set("search", search);
+  return apiFetch(`/admin/products?${qs}`, { headers: authHeader(token), signal });
+}
+
+export function createProduct(token, body) {
+  return apiFetch("/products", {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify(body),
+  });
+}
+
+// patch hanya berisi field yang berubah.
+export function updateProduct(token, productId, patch) {
+  return apiFetch(`/products/${productId}`, {
+    method: "PATCH",
+    headers: authHeader(token),
+    body: JSON.stringify(patch),
+  });
+}

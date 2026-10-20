@@ -34,7 +34,7 @@ export const PAYMENT_FILTERS = toOptions(PAYMENT_STATUS_LABELS, "Semua status ba
 export const ADMIN_TABS = [
   { id: "orders", label: "Order", ready: true },
   { id: "dashboard", label: "Dashboard", ready: false },
-  { id: "products", label: "Produk", ready: false },
+  { id: "products", label: "Produk", ready: true },
   { id: "inventory", label: "Stok", ready: false },
   { id: "users", label: "Pengguna", ready: true },
 ];
