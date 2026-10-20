@@ -115,3 +115,36 @@ def test_patch_edge_cases(client, db, menu, staff_headers):
     client.patch(f"{API}/products/{pid}", json={"description": "Segar"}, headers=admin)
     r = client.patch(f"{API}/products/{pid}", json={"description": None}, headers=admin)
     assert r.json()["data"]["description"] is None
+
+
+def test_admin_list_requires_admin(client, staff_headers):
+    cashier = staff_headers("CASHIER")
+    assert client.get(f"{API}/admin/products", headers=cashier).status_code == 403
+    assert client.get(f"{API}/admin/products").status_code == 401
+
+
+def test_admin_list_shows_all_products_with_cost_and_category(client, menu, staff_headers):
+    admin = staff_headers("ADMIN")
+    r = client.get(f"{API}/admin/products", headers=admin)
+    assert r.status_code == 200
+    body = r.json()
+    assert body["pagination"]["total"] == 6  # termasuk yang disembunyikan & kategori nonaktif
+    by_name = {p["name"]: p for p in body["data"]}
+    assert by_name["Mie Goreng"]["is_available"] is False
+    assert by_name["Es Teh"]["cost_price"] == 1000
+    assert by_name["Es Teh"]["category_name"] == "Minuman"
+    assert by_name["Menu Rahasia"]["category_name"] == "Rahasia"
+
+
+def test_admin_list_filters(client, menu, staff_headers):
+    admin = staff_headers("ADMIN")
+
+    def names(query):
+        r = client.get(f"{API}/admin/products?{query}", headers=admin)
+        assert r.status_code == 200
+        return {p["name"] for p in r.json()["data"]}
+
+    assert names("is_available=false") == {"Mie Goreng"}
+    assert names("search=nasi") == {"Nasi Goreng"}
+    assert names("search=100%25") == {"Jus 100% Jeruk"}  # % dianggap teks biasa
+    assert names(f"category_id={menu['drinks']}") == {"Es Teh", "Kopi Susu"}

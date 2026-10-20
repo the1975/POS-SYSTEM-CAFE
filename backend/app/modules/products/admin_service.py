@@ -9,9 +9,16 @@ Aturan penting:
 import uuid
 from decimal import Decimal
 
+from app.core.responses import Pagination, build_pagination
+
 from app.modules.audit.model import AuditLog
 from app.modules.products.admin_repository import ProductAdminRepository
-from app.modules.products.admin_schema import ProductAdminOut, ProductCreateIn, ProductUpdateIn
+from app.modules.products.admin_schema import (
+    ProductAdminListItem,
+    ProductAdminOut,
+    ProductCreateIn,
+    ProductUpdateIn,
+)
 from app.modules.products.exceptions import InvalidCategoryError, ProductNotFoundError
 from app.modules.products.model import Product
 from app.modules.users.model import User
@@ -42,6 +49,28 @@ def _audit_value(value):
 class ProductAdminService:
     def __init__(self, repo: ProductAdminRepository) -> None:
         self.repo = repo
+
+    def list_products(
+        self,
+        *,
+        category_id: uuid.UUID | None,
+        is_available: bool | None,
+        search: str | None,
+        page: int,
+        page_size: int,
+    ) -> tuple[list[ProductAdminListItem], Pagination]:
+        rows, total = self.repo.list_for_admin(
+            category_id=category_id,
+            is_available=is_available,
+            search=(search or "").strip() or None,
+            page=page,
+            page_size=page_size,
+        )
+        items = [
+            ProductAdminListItem(**to_admin_out(p).model_dump(), category_name=cat_name)
+            for p, cat_name in rows
+        ]
+        return items, build_pagination(page, page_size, total)
 
     def create(self, data: ProductCreateIn, admin: User) -> ProductAdminOut:
         if self.repo.get_category(data.category_id) is None:

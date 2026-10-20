@@ -97,3 +97,9 @@ class ProductAdminOut(BaseModel):
     def _money_as_number(self, value: Decimal) -> int | float:
         # Rupiah biasanya bulat; JSON-nya angka (sama seperti ProductOut).
         return int(value) if value == value.to_integral_value() else float(value)
+
+
+class ProductAdminListItem(ProductAdminOut):
+    """Item daftar untuk tabel admin: sama seperti ProductAdminOut + nama kategori."""
+
+    category_name: str
