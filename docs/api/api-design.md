@@ -474,6 +474,16 @@ Order lama menggunakan:
 - product_name_snapshot
 - unit_price
 
+### Implementasi Versi Pertama (Product API Admin)
+
+- `POST /products` dan `PATCH /products/{id}` hanya untuk `ADMIN` (OWNER = ADMIN di kode). Response memuat `cost_price` (HPP) karena hanya admin yang melihatnya; menu customer tidak pernah memuatnya.
+- `POST /products`: `name` wajib (spasi pinggir dibuang), `price` dan `cost_price` tidak boleh negatif (maksimal 12 digit, 2 desimal), `is_available` default `true`. Kategori tidak dikenal `INVALID_CATEGORY` (422). Tercatat di audit log `CREATE_PRODUCT`.
+- `PATCH /products/{id}`: hanya field yang dikirim yang berubah (minimal satu). `description` dan `image_url` boleh dikirim `null` untuk dikosongkan; field lain tidak boleh `null`. Produk tidak ada `PRODUCT_NOT_FOUND` (404).
+- Tidak ada `DELETE`. Produk tidak dihapus fisik: sembunyikan dengan `is_available=false` (hilang dari menu customer), tampilkan lagi dengan `true`.
+- Audit log hanya mencatat field yang benar-benar berubah (nilai lama dan baru). Ubah harga tercatat sebagai `UPDATE_PRODUCT_PRICE`, perubahan lain `UPDATE_PRODUCT`. Kalau tidak ada yang berubah, tidak ada audit.
+- `GET /admin/products` (tambahan di luar spec awal, hanya `ADMIN`): daftar SEMUA produk termasuk yang disembunyikan dan yang kategorinya nonaktif, dengan `cost_price` dan `category_name`. Filter `category_id`, `is_available`, `search` (nama), `page`, `page_size`. Memakai prefix `/admin` karena `GET /products/{apa-saja}` sudah dipakai menu customer.
+- Produk baru belum punya record stok, jadi di menu tampil `in_stock=false` sampai stok diisi (API Stok menyusul).
+
 ---
 
 # 14. Customer Order API
@@ -2184,6 +2194,7 @@ API dianggap siap jika:
     GET    /products/{id}
     POST   /products
     PATCH  /products/{id}
+    GET    /admin/products
 
 ## Categories
 
