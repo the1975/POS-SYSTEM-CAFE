@@ -4,10 +4,12 @@ import StaffNav from "../components/layout/StaffNav";
 import { ADMIN_TABS } from "../features/admin/admin";
 import AdminOrders from "../features/admin/AdminOrders";
 import AdminProducts from "../features/admin/AdminProducts";
+import AdminStock from "../features/admin/AdminStock";
 import AdminUsers from "../features/admin/AdminUsers";
 import CreateUserPanel from "../features/admin/CreateUserPanel";
 import EditUserPanel from "../features/admin/EditUserPanel";
 import ProductFormPanel from "../features/admin/ProductFormPanel";
+import StockAdjustPanel from "../features/admin/StockAdjustPanel";
 import RefundPanel from "../features/admin/RefundPanel";
 import { useCategories } from "../features/admin/useAdminProducts";
 import { useRoles } from "../features/admin/useUsers";
@@ -25,6 +27,8 @@ export default function AdminPage({ screen }) {
   const [userPanel, setUserPanel] = useState(null); // { mode: "create" } | { mode: "edit", user }
   const [productFilters, setProductFilters] = useState({ categoryId: "", isAvailable: "", search: "", page: 1 });
   const [productPanel, setProductPanel] = useState(null); // { product: null } = tambah | { product } = ubah
+  const [stockFilters, setStockFilters] = useState({ categoryId: "", search: "", page: 1 });
+  const [stockItem, setStockItem] = useState(null); // item stok yang sedang diatur
 
   function renderBody() {
     if (refunding) {
@@ -60,6 +64,18 @@ export default function AdminPage({ screen }) {
           isSelf={userPanel.user.id === user.id}
           onBack={() => setUserPanel(null)}
           onDone={() => setUserPanel(null)}
+          onUnauthorized={logout}
+        />
+      );
+    }
+    if (stockItem) {
+      return (
+        <StockAdjustPanel
+          key={stockItem.product_id}
+          token={token}
+          item={stockItem}
+          onBack={() => setStockItem(null)}
+          onDone={() => setStockItem(null)}
           onUnauthorized={logout}
         />
       );
@@ -107,6 +123,20 @@ export default function AdminPage({ screen }) {
               filters={orderFilters}
               onFilters={setOrderFilters}
               onRefund={setRefunding}
+              onUnauthorized={logout}
+            />
+          </>
+        ) : tab === "inventory" ? (
+          <>
+            <div className="admin__top">
+              <h1 className="page-title">Stok</h1>
+            </div>
+            <AdminStock
+              token={token}
+              categories={categories}
+              filters={stockFilters}
+              onFilters={setStockFilters}
+              onAdjust={setStockItem}
               onUnauthorized={logout}
             />
           </>

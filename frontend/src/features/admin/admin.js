@@ -35,7 +35,7 @@ export const ADMIN_TABS = [
   { id: "orders", label: "Order", ready: true },
   { id: "dashboard", label: "Dashboard", ready: false },
   { id: "products", label: "Produk", ready: true },
-  { id: "inventory", label: "Stok", ready: false },
+  { id: "inventory", label: "Stok", ready: true },
   { id: "users", label: "Pengguna", ready: true },
 ];
 

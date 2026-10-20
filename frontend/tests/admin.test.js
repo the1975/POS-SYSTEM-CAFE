@@ -94,8 +94,8 @@ describe("label dan filter", () => {
     expect(PAYMENT_FILTERS).toHaveLength(9);
   });
 
-  it("tab yang siap: Order, Produk, Pengguna", () => {
-    expect(ADMIN_TABS.filter((t) => t.ready).map((t) => t.id)).toEqual(["orders", "products", "users"]);
+  it("tab yang siap: Order, Produk, Stok, Pengguna", () => {
+    expect(ADMIN_TABS.filter((t) => t.ready).map((t) => t.id)).toEqual(["orders", "products", "inventory", "users"]);
   });
 });
 

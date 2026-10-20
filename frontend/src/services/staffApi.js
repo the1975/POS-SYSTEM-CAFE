@@ -135,3 +135,20 @@ export function updateProduct(token, productId, patch) {
     body: JSON.stringify(patch),
   });
 }
+
+// ---- Stok (admin) ----
+export function listStock(token, { categoryId, search, page = 1, pageSize = 20, signal } = {}) {
+  const qs = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
+  if (categoryId) qs.set("category_id", categoryId);
+  if (search) qs.set("search", search);
+  return apiFetch(`/inventory?${qs}`, { headers: authHeader(token), signal });
+}
+
+// body: { quantity (bertanda), reason, movement_type }
+export function adjustStock(token, productId, body) {
+  return apiFetch(`/inventory/${productId}/adjust`, {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify(body),
+  });
+}
