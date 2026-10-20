@@ -1,4 +1,4 @@
-from app.core.exceptions import NotFoundError
+from app.core.exceptions import AppError, NotFoundError
 
 
 class ProductNotFoundError(NotFoundError):
@@ -13,3 +13,13 @@ class CategoryNotFoundError(NotFoundError):
 
     def __init__(self) -> None:
         super().__init__("Kategori tidak ditemukan.")
+
+
+class InvalidCategoryError(AppError):
+    """Kategori yang dipilih pada body request tidak ada (beda dengan 404 URL tidak ada)."""
+
+    status_code = 422
+    code = "INVALID_CATEGORY"
+
+    def __init__(self) -> None:
+        super().__init__("Kategori tidak dikenal.")
