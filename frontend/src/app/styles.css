@@ -329,3 +329,14 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1.125rem;
   word-break: break-all; user-select: all;
 }
+
+/* ---------- Admin: Dashboard ---------- */
+.dash__cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0; }
+.dash__card { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+.dash__value { font-size: 1.25rem; line-height: 1.3; }
+.dash__title { font-size: 1.125rem; margin: 24px 0 8px; }
+.dash__rank { width: 24px; flex: none; color: var(--muted); }
+.dash__bars { display: flex; align-items: flex-end; gap: 3px; height: 120px; padding: 12px 12px 0; }
+.dash__bar { flex: 1; min-width: 0; background: var(--accent); border-radius: 4px 4px 0 0; }
+.dash__bar--zero { background: var(--line); height: 2px; }
+.dash__axis { display: flex; justify-content: space-between; padding: 4px 12px 12px; font-size: 0.75rem; color: var(--muted); }

@@ -152,3 +152,31 @@ export function adjustStock(token, productId, body) {
     body: JSON.stringify(body),
   });
 }
+
+// ---- Laporan penjualan (admin) ----
+function rangeQuery(startDate, endDate, extra = {}) {
+  const qs = new URLSearchParams({ start_date: startDate, end_date: endDate });
+  for (const [key, value] of Object.entries(extra)) qs.set(key, String(value));
+  return qs;
+}
+
+export function getSalesSummary(token, { startDate, endDate, signal }) {
+  return apiFetch(`/analytics/summary?${rangeQuery(startDate, endDate)}`, {
+    headers: authHeader(token),
+    signal,
+  });
+}
+
+export function getTopProducts(token, { startDate, endDate, limit = 5, signal }) {
+  return apiFetch(`/analytics/products/top?${rangeQuery(startDate, endDate, { limit })}`, {
+    headers: authHeader(token),
+    signal,
+  });
+}
+
+export function getPeakHours(token, { startDate, endDate, signal }) {
+  return apiFetch(`/analytics/peak-hours?${rangeQuery(startDate, endDate)}`, {
+    headers: authHeader(token),
+    signal,
+  });
+}

@@ -3,6 +3,7 @@ import StaffHeader from "../components/layout/StaffHeader";
 import StaffNav from "../components/layout/StaffNav";
 import { ADMIN_TABS } from "../features/admin/admin";
 import AdminOrders from "../features/admin/AdminOrders";
+import AdminDashboard from "../features/admin/AdminDashboard";
 import AdminProducts from "../features/admin/AdminProducts";
 import AdminStock from "../features/admin/AdminStock";
 import AdminUsers from "../features/admin/AdminUsers";
@@ -125,6 +126,11 @@ export default function AdminPage({ screen }) {
               onRefund={setRefunding}
               onUnauthorized={logout}
             />
+          </>
+        ) : tab === "dashboard" ? (
+          <>
+            <h1 className="page-title">Dashboard</h1>
+            <AdminDashboard token={token} onUnauthorized={logout} />
           </>
         ) : tab === "inventory" ? (
           <>

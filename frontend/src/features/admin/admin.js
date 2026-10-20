@@ -33,7 +33,7 @@ export const PAYMENT_FILTERS = toOptions(PAYMENT_STATUS_LABELS, "Semua status ba
 // Menu admin. Yang belum punya backend tampil sebagai "segera".
 export const ADMIN_TABS = [
   { id: "orders", label: "Order", ready: true },
-  { id: "dashboard", label: "Dashboard", ready: false },
+  { id: "dashboard", label: "Dashboard", ready: true },
   { id: "products", label: "Produk", ready: true },
   { id: "inventory", label: "Stok", ready: true },
   { id: "users", label: "Pengguna", ready: true },
