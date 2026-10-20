@@ -1528,6 +1528,17 @@ Contoh:
       "overdue_orders": 2
     }
 
+### Implementasi Versi Pertama (Analytics)
+
+- Hanya `ADMIN` (OWNER = ADMIN di kode). Sudah ada: `GET /analytics/summary`, `GET /analytics/products/top`, `GET /analytics/peak-hours`. Belum ada: `/analytics/operations` dan export CSV.
+- Query `start_date` dan `end_date` (format `YYYY-MM-DD`, inklusif, dibaca zona **WIB/UTC+7**). Kosong = hari ini. Hanya `end_date` = satu hari itu. Maksimal 366 hari. Tidak valid `INVALID_DATE_RANGE` (422).
+- Definisi "terjual": order yang pembayarannya `PAID` dengan `paid_at` di dalam rentang dan order-nya bukan `CANCELLED`. Order yang di-refund atau belum lunas tidak dihitung.
+- `summary`: `revenue` (jumlah `total` order, setelah diskon dan pajak), `orders`, `units_sold`, `average_order_value` (dibulatkan Rupiah), serta `start_date`/`end_date` yang dipakai.
+- `products/top`: urut unit terjual, lalu omzet item (harga x jumlah, sebelum diskon order), lalu nama. `limit` 1-20, default 5.
+- `peak-hours`: selalu 24 entri (jam 0-23 WIB), jam sepi bernilai 0, supaya grafik tidak bolong.
+- **Laba kotor (`gross_profit`) belum ada** karena `order_items` belum menyimpan HPP saat order terjadi; memakai HPP produk saat ini akan membuat laporan lama berubah tiap HPP diubah.
+- Response memakai envelope `{success, data}` seperti endpoint lain, bukan JSON polos seperti contoh di atas.
+
 ---
 
 # 54. CSV Export
