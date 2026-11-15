@@ -471,3 +471,15 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .dash__bar--zero { background: var(--line); }
 .dash__bar--peak { background: var(--accent-grad); }
 .dash__axis { padding: 6px 0 0; }
+
+/* ---------- Pindah layar staff: satu baris ringkas ---------- */
+.staff-nav {
+  flex-wrap: nowrap; justify-content: flex-start; gap: 6px; margin: 12px 0 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.staff-nav::-webkit-scrollbar { display: none; }
+a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
+
+/* ---------- Pager: teks di atas, dua tombol sama lebar ---------- */
+.admin__pager { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.admin__pager .muted { grid-column: 1 / -1; grid-row: 1; margin: 0; text-align: center; }
