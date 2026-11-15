@@ -331,3 +331,28 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .dash__bar { flex: 1; min-width: 0; background: var(--accent); border-radius: 4px 4px 0 0; }
 .dash__bar--zero { background: var(--line); height: 2px; }
 .dash__axis { display: flex; justify-content: space-between; padding: 4px 12px 12px; font-size: 0.75rem; color: var(--muted); }
+
+/* ---------- Navbar kategori (bawah) ---------- */
+.catnav {
+  position: fixed; left: 0; right: 0; z-index: 11; margin: 0 auto;
+  width: min(688px, calc(100% - 32px)); height: 68px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(72px, 1fr);
+  gap: 4px; padding: 6px; overflow-x: auto;
+  background: var(--glass); border: 1px solid var(--line); border-radius: 24px;
+  -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .catnav { background: var(--surface); }
+}
+.catnav__item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: 44px; font: inherit; font-size: 0.6875rem; font-weight: 600; cursor: pointer;
+  color: var(--muted); background: transparent; border: 0; border-radius: 18px;
+}
+.catnav__item svg { width: 22px; height: 22px; }
+.catnav__item[aria-pressed="true"] { color: var(--accent-text); background: var(--accent-grad); font-weight: 700; }
+.container.has-nav { padding-bottom: 112px; }
+.container.has-nav.has-bar { padding-bottom: 192px; }
+.bar--raised { padding-bottom: calc(16px + 68px + 12px + env(safe-area-inset-bottom)); }

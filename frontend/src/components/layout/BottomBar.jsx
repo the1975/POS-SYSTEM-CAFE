@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 
 // Bar aksi melayang di bawah layar. Kaca (glass) dipakai HANYA di sini sebagai aksen.
 // Dengan `to` = tautan; dengan `onAction` = tombol (mis. kirim pesanan).
-export default function BottomBar({ label, value, actionLabel, to, onAction, loading, disabled }) {
+export default function BottomBar({ label, value, actionLabel, to, onAction, loading, disabled, raised }) {
   return (
-    <div className="bar">
+    <div className={`bar${raised ? " bar--raised" : ""}`}>
       <div className="bar__inner">
         <div>
           <p className="bar__label">{label}</p>
