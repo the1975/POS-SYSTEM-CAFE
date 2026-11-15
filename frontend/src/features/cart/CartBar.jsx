@@ -9,7 +9,7 @@ export default function CartBar({ raised }) {
   return (
     <BottomBar
       raised={raised}
-      label={`${count} item di keranjang`}
+      label={`${count} item`}
       value={formatRupiah(subtotal)}
       actionLabel="Lihat keranjang"
       to="/keranjang"

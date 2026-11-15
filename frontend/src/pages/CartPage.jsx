@@ -6,7 +6,7 @@ import { useCart } from "../stores/CartContext";
 import { formatRupiah } from "../utils/format";
 
 export default function CartPage() {
-  const { items, count, subtotal, setQuantity, remove } = useCart();
+  const { items, count, subtotal, setQuantity } = useCart();
 
   if (items.length === 0) {
     return (
@@ -15,7 +15,6 @@ export default function CartPage() {
         <main className="container">
           <div className="state">
             <h1 className="state__title">Keranjangmu masih kosong.</h1>
-            <p className="muted">Pilih menu yang kamu suka, nanti muncul di sini.</p>
             <Link to="/" className="btn">
               Lihat menu
             </Link>
@@ -27,46 +26,42 @@ export default function CartPage() {
 
   return (
     <>
-      <Header title="Keranjang" backTo="/" />
+      <Header backTo="/" />
       <main className="container has-bar">
-        <h1 className="page-title">Pesananmu</h1>
+        <h1 className="page-title">Keranjang</h1>
+        {/* Kurangi sampai 0 = item terhapus, jadi tidak perlu tombol hapus terpisah. */}
         <ul className="list surface">
           {items.map((item) => (
-            <li key={item.productId} className="line">
-              <div>
+            <li key={item.productId} className="cline">
+              <span className="cline__tile" aria-hidden="true">
+                {item.name.charAt(0).toUpperCase()}
+              </span>
+              <div className="cline__body">
                 <h2 className="line__name">{item.name}</h2>
                 <p className="muted">{formatRupiah(item.price)}</p>
               </div>
-              <p className="line__total">{formatRupiah(item.price * item.quantity)}</p>
-              <div className="line__actions">
-                <QuantityStepper
-                  value={item.quantity}
-                  label={item.name}
-                  onChange={(q) => setQuantity(item.productId, q)}
-                />
-                <button type="button" className="link-btn" onClick={() => remove(item.productId)}>
-                  Hapus
-                </button>
-              </div>
+              <QuantityStepper
+                value={item.quantity}
+                label={item.name}
+                onChange={(q) => setQuantity(item.productId, q)}
+              />
             </li>
           ))}
         </ul>
 
         <section className="summary surface" aria-label="Ringkasan">
           <div className="summary__row">
-            <span>Subtotal ({count} item)</span>
+            <span>Subtotal</span>
             <strong>{formatRupiah(subtotal)}</strong>
           </div>
           {/* Jujur soal angka: total akhir dihitung server dari harga terbaru di database. */}
-          <p className="muted summary__note">
-            Pajak dan total akhir dihitung otomatis saat pesanan dibuat.
-          </p>
+          <p className="muted summary__note">Pajak dihitung saat pesanan dibuat.</p>
         </section>
       </main>
       <BottomBar
-        label="Subtotal"
+        label={`${count} item`}
         value={formatRupiah(subtotal)}
-        actionLabel="Lanjut ke pemesanan"
+        actionLabel="Checkout"
         to="/pemesanan"
       />
     </>
