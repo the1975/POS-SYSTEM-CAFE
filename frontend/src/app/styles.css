@@ -439,3 +439,35 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 }
 .seg__item[aria-pressed="true"] { color: var(--accent-text); background: var(--accent-grad); font-weight: 700; }
 @media (min-width: 640px) { .seg { max-width: 320px; } }
+
+/* ---------- Dashboard admin ---------- */
+.dash__cards { gap: 12px; }
+@media (min-width: 640px) { .dash__cards { grid-template-columns: repeat(4, 1fr); } }
+.dash__card { padding: 14px; gap: 6px; border-radius: 20px; }
+.dash__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.dash__head .muted { font-size: 0.8125rem; font-weight: 600; }
+.dash__icon {
+  display: grid; place-items: center; flex: none; width: 32px; height: 32px;
+  border-radius: 12px; color: var(--accent); background: var(--tint);
+}
+.dash__icon svg { width: 18px; height: 18px; }
+.dash__value { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; }
+.dash__panel { margin-top: 12px; padding: 16px; border-radius: 20px; }
+.dash__panel .dash__title { margin: 0 0 14px; font-size: 1.0625rem; }
+.dash__panel .muted { margin: -8px 0 12px; font-size: 0.875rem; }
+.dash__top { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.dash__top li { display: flex; align-items: center; gap: 12px; }
+.dash__top .dash__rank {
+  display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px;
+  color: var(--accent); background: var(--tint); font-size: 0.75rem; font-weight: 800;
+}
+.dash__topbody { flex: 1; min-width: 0; }
+.dash__toprow { display: flex; justify-content: space-between; gap: 8px; font-size: 0.875rem; }
+.dash__toprow .muted { margin: 0; font-size: 0.875rem; }
+.dash__meter { height: 6px; margin-top: 6px; border-radius: 3px; background: #eef2f0; }
+.dash__meter span { display: block; height: 100%; border-radius: 3px; background: var(--accent-grad); }
+.dash__bars { height: 140px; padding: 8px 0 0; gap: 3px; }
+.dash__bar { background: #cdebdd; border-radius: 6px 6px 0 0; }
+.dash__bar--zero { background: var(--line); }
+.dash__bar--peak { background: var(--accent-grad); }
+.dash__axis { padding: 6px 0 0; }
