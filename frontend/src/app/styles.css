@@ -511,3 +511,12 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 }
 .acct__item:hover { background: var(--bg); }
 .acct__item--out { margin-top: 6px; color: #9b2c45; }
+
+/* ---------- Tombol tambah melayang (kanan bawah) ---------- */
+.fab {
+  position: fixed; z-index: 11; right: 16px; bottom: calc(16px + 68px + 16px + env(safe-area-inset-bottom));
+  display: grid; place-items: center; width: 56px; height: 56px; padding: 0; cursor: pointer;
+  color: var(--accent-text); background: var(--accent-grad); border: 0; border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(19, 121, 91, 0.28);
+}
+.fab svg { width: 26px; height: 26px; }

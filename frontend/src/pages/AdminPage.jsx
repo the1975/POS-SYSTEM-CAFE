@@ -1,5 +1,6 @@
 import { useState } from "react";
 import StaffHeader from "../components/layout/StaffHeader";
+import Fab from "../components/ui/Fab";
 import { ADMIN_TABS } from "../features/admin/admin";
 import AdminNav from "../features/admin/AdminNav";
 import AdminOrders from "../features/admin/AdminOrders";
@@ -129,12 +130,8 @@ export default function AdminPage({ screen }) {
           </>
         ) : tab === "products" ? (
           <>
-            <div className="admin__top">
-              <h1 className="page-title">Produk</h1>
-              <button type="button" className="btn btn--sm" onClick={() => setProductPanel({ product: null })}>
-                + Tambah
-              </button>
-            </div>
+            <h1 className="page-title">Produk</h1>
+            <Fab label="Tambah produk" onClick={() => setProductPanel({ product: null })} />
             <AdminProducts
               token={token}
               categories={categories}
@@ -146,12 +143,8 @@ export default function AdminPage({ screen }) {
           </>
         ) : (
           <>
-            <div className="admin__top">
-              <h1 className="page-title">Pengguna</h1>
-              <button type="button" className="btn btn--sm" onClick={() => setUserPanel({ mode: "create" })}>
-                + Tambah
-              </button>
-            </div>
+            <h1 className="page-title">Pengguna</h1>
+            <Fab label="Tambah pengguna" onClick={() => setUserPanel({ mode: "create" })} />
             <AdminUsers
               token={token}
               me={user.id}
