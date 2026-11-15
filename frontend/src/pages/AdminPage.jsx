@@ -1,6 +1,5 @@
 import { useState } from "react";
 import StaffHeader from "../components/layout/StaffHeader";
-import StaffNav from "../components/layout/StaffNav";
 import { ADMIN_TABS } from "../features/admin/admin";
 import AdminNav from "../features/admin/AdminNav";
 import AdminOrders from "../features/admin/AdminOrders";
@@ -97,7 +96,6 @@ export default function AdminPage({ screen }) {
     }
     return (
       <>
-        <StaffNav role={user.role} current={screen.path} />
         <AdminNav tabs={ADMIN_TABS} current={tab} onSelect={setTab} />
         {tab === "orders" ? (
           <>

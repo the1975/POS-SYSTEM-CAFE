@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { EmptyState } from "../components/feedback/States";
 import StaffHeader from "../components/layout/StaffHeader";
-import StaffNav from "../components/layout/StaffNav";
 import { describePickupError } from "../features/pickup/errors";
 import { cleanToken, isPlausibleToken, itemCount, orderFromRow } from "../features/pickup/pickup";
 import QrScanner from "../features/pickup/QrScanner";
@@ -81,7 +80,6 @@ export default function PickupPage({ screen }) {
 
     return (
       <>
-        <StaffNav role={user.role} current={screen.path} />
         <h1 className="page-title">Pickup</h1>
 
         {busy && (

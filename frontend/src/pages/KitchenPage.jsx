@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { EmptyState } from "../components/feedback/States";
 import StaffHeader from "../components/layout/StaffHeader";
-import StaffNav from "../components/layout/StaffNav";
 import { describeKitchenError } from "../features/kitchen/errors";
 import KitchenOrderCard from "../features/kitchen/KitchenOrderCard";
 import { splitQueue } from "../features/kitchen/kitchen";
@@ -60,7 +59,6 @@ export default function KitchenPage({ screen }) {
           />
         ) : (
           <>
-            <StaffNav role={user.role} current={screen.path} />
 
             {notice && (
               <div className="alert kitchen__alert" role="alert">

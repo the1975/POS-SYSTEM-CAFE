@@ -483,3 +483,31 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 /* ---------- Pager: teks di atas, dua tombol sama lebar ---------- */
 .admin__pager { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .admin__pager .muted { grid-column: 1 / -1; grid-row: 1; margin: 0; text-align: center; }
+
+/* ---------- Menu akun staf (avatar) ---------- */
+.acct { position: relative; }
+.acct__btn {
+  width: 44px; height: 44px; font: inherit; font-size: 1rem; font-weight: 800; cursor: pointer;
+  color: var(--accent); background: var(--tint); border: 1px solid var(--line); border-radius: 50%;
+}
+.acct__menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: min(280px, 80vw); padding: 8px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(17, 24, 39, 0.14);
+}
+.acct__who { display: grid; gap: 6px; padding: 10px 12px 12px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
+.acct__role {
+  justify-self: start; padding: 2px 10px; font-size: 0.75rem; font-weight: 700;
+  color: var(--accent); background: var(--tint); border-radius: 999px;
+}
+.acct__label {
+  margin: 10px 12px 4px; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+}
+.acct__item {
+  display: flex; align-items: center; width: 100%; min-height: 44px; padding: 0 12px;
+  font: inherit; font-size: 0.9375rem; font-weight: 600; text-align: left; text-decoration: none; cursor: pointer;
+  color: var(--text); background: transparent; border: 0; border-radius: 12px;
+}
+.acct__item:hover { background: var(--bg); }
+.acct__item--out { margin-top: 6px; color: #9b2c45; }

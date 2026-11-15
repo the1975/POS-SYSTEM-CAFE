@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { EmptyState } from "../components/feedback/States";
 import StaffHeader from "../components/layout/StaffHeader";
-import StaffNav from "../components/layout/StaffNav";
 import CashPaymentPanel from "../features/cashier/CashPaymentPanel";
 import { useWaitingCash } from "../features/cashier/useWaitingCash";
 import { useAuth } from "../stores/AuthContext";
@@ -40,7 +39,6 @@ export default function CashierPage({ screen }) {
           />
         ) : (
           <>
-            <StaffNav role={user.role} current={screen.path} />
             <h1 className="page-title">Menunggu bayar tunai</h1>
 
             <form className="searchbar" onSubmit={onSearch} role="search">
