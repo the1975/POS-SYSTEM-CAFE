@@ -11,12 +11,12 @@ export default function AdminDashboard({ token, onUnauthorized }) {
 
   return (
     <>
-      <nav className="chips" aria-label="Rentang waktu">
+      <nav className="seg" aria-label="Rentang waktu">
         {DASHBOARD_RANGES.map((r) => (
           <button
             key={r.id}
             type="button"
-            className="chip"
+            className="seg__item"
             aria-pressed={rangeId === r.id}
             onClick={() => setRangeId(r.id)}
           >

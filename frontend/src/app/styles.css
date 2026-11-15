@@ -424,3 +424,18 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 }
 .ticket .muted { color: rgba(255, 255, 255, 0.85); }
 .ticket .pill { color: var(--accent-text); background: rgba(0, 0, 0, 0.2); border: 0; }
+
+/* ---------- Navbar admin + filter rentang waktu ---------- */
+.catnav--fit { grid-auto-columns: minmax(0, 1fr); }
+.catnav--fit .catnav__item { font-size: 0.625rem; }
+.catnav__item:disabled { opacity: 0.5; cursor: not-allowed; }
+.seg {
+  display: flex; gap: 4px; padding: 4px; margin: 16px 0 8px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+}
+.seg__item {
+  flex: 1; min-height: 40px; font: inherit; font-size: 0.875rem; font-weight: 600; cursor: pointer;
+  color: var(--muted); background: transparent; border: 0; border-radius: 10px;
+}
+.seg__item[aria-pressed="true"] { color: var(--accent-text); background: var(--accent-grad); font-weight: 700; }
+@media (min-width: 640px) { .seg { max-width: 320px; } }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import StaffHeader from "../components/layout/StaffHeader";
 import StaffNav from "../components/layout/StaffNav";
 import { ADMIN_TABS } from "../features/admin/admin";
+import AdminNav from "../features/admin/AdminNav";
 import AdminOrders from "../features/admin/AdminOrders";
 import AdminDashboard from "../features/admin/AdminDashboard";
 import AdminProducts from "../features/admin/AdminProducts";
@@ -21,7 +22,7 @@ export default function AdminPage({ screen }) {
   const { user, token, logout } = useAuth();
   const { roles } = useRoles(token, logout);
   const { categories } = useCategories();
-  const [tab, setTab] = useState("orders");
+  const [tab, setTab] = useState("dashboard");
   const [orderFilters, setOrderFilters] = useState({ status: "", paymentStatus: "", search: "", page: 1 });
   const [userFilters, setUserFilters] = useState({ roleId: "", isActive: "", search: "", page: 1 });
   const [refunding, setRefunding] = useState(null);
@@ -97,25 +98,7 @@ export default function AdminPage({ screen }) {
     return (
       <>
         <StaffNav role={user.role} current={screen.path} />
-        <nav className="admin__tabs" aria-label="Menu admin">
-          {ADMIN_TABS.map((t) =>
-            t.ready ? (
-              <button
-                key={t.id}
-                type="button"
-                className="chip"
-                aria-pressed={tab === t.id}
-                onClick={() => setTab(t.id)}
-              >
-                {t.label}
-              </button>
-            ) : (
-              <button key={t.id} type="button" className="chip" disabled>
-                {t.label} · segera
-              </button>
-            )
-          )}
-        </nav>
+        <AdminNav tabs={ADMIN_TABS} current={tab} onSelect={setTab} />
         {tab === "orders" ? (
           <>
             <h1 className="page-title">Order</h1>
@@ -189,7 +172,7 @@ export default function AdminPage({ screen }) {
   return (
     <>
       <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container">{renderBody()}</main>
+      <main className="container has-nav">{renderBody()}</main>
     </>
   );
 }
