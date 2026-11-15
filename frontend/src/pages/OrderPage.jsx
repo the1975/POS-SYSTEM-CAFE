@@ -41,7 +41,7 @@ export default function OrderPage() {
         {status === "ready" && (
           <>
             <section className="ticket" aria-label="Nomor pesanan">
-              <p className="muted">Nomor pesananmu</p>
+              <p className="muted">Nomor pesanan</p>
               <p className="ticket__number">{order.order_number}</p>
               <p className="pill">{statusLabel(order.status)}</p>
               <p className="muted ticket__name">Atas nama {order.customer_name}</p>
@@ -59,8 +59,7 @@ export default function OrderPage() {
               <section className="notice">
                 <p className="notice__title">Bayar di kasir</p>
                 <p className="muted">
-                  Sebutkan nomor {order.order_number} dan bayar {formatRupiah(order.total)}. Pesananmu
-                  mulai diproses setelah pembayaran diterima.
+                  Sebutkan nomor {order.order_number} ke kasir dan bayar {formatRupiah(order.total)}.
                 </p>
               </section>
             )}
