@@ -1,13 +1,18 @@
 /* Token desain (skill desain-sandor): kanvas terang lembut, permukaan putih, grid 8pt.
-   Mode gelap dirancang terpisah (charcoal kebiruan), bukan hasil membalik warna.
+   Hanya mode terang, supaya tampilannya konsisten di semua perangkat.
    Font: Inter bila terpasang, lalu font sistem (tanpa unduhan font = cepat di data seluler). */
 :root {
+  color-scheme: light;
   --bg: #f8f9fa;
   --surface: #ffffff;
   --text: #111827;
   --muted: #6b7280;
   --line: #e5e7eb;
-  --accent: #13795b; /* hijau segar: cocok untuk F&B; kontras teks putih 5.6:1 */
+  --accent: #158565; /* hijau F&B; kontras teks putih 4.6:1 */
+  --accent-grad: linear-gradient(135deg, #158565, #0a5a43);
+  --danger-grad: linear-gradient(135deg, #9b2c45, #641a2d);
+  --tint: linear-gradient(145deg, #e7f5ef, #cdebdd);
+  --shadow-accent: 0 8px 20px rgba(19, 121, 91, 0.28);
   --accent-text: #ffffff;
   --danger: #b42318;
   --glass: rgba(255, 255, 255, 0.78);
@@ -16,20 +21,6 @@
   --r-btn: 14px;
   --font: "Inter", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1419;
-    --surface: #171d24;
-    --text: #e8edf2;
-    --muted: #8a96a3;
-    --line: #252e38;
-    --accent: #3cb48f;
-    --accent-text: #06231a;
-    --danger: #f08a80;
-    --glass: rgba(23, 29, 36, 0.78);
-    --lift: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 2px rgba(0, 0, 0, 0.5);
-  }
 }
 
 * { box-sizing: border-box; }
@@ -90,7 +81,7 @@ a { color: inherit; }
   border: 1px solid var(--line); border-radius: 999px;
 }
 .chip[aria-pressed="true"] {
-  background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600;
+  background: var(--accent-grad); color: var(--accent-text); border-color: transparent; font-weight: 600;
 }
 
 /* Daftar menu */
@@ -104,11 +95,11 @@ a { color: inherit; }
 .item:last-child, .line:last-child { border-bottom: 0; }
 .thumb {
   flex: none; width: 80px; height: 80px; border-radius: 16px;
-  object-fit: cover; background: var(--line);
+  object-fit: cover; background: var(--tint);
 }
 .thumb--empty {
   display: grid; place-items: center;
-  font-size: 1.75rem; font-weight: 700; color: var(--muted);
+  font-size: 1.75rem; font-weight: 700; color: var(--accent);
 }
 .item__body { flex: 1; min-width: 0; }
 .item__name { margin: 0; font-size: 1rem; font-weight: 600; }
@@ -133,7 +124,7 @@ a { color: inherit; }
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 48px; padding: 0 24px; font: inherit; font-weight: 600;
   text-decoration: none; cursor: pointer; white-space: nowrap;
-  color: var(--accent-text); background: var(--accent);
+  color: var(--accent-text); background: var(--accent-grad);
   border: 0; border-radius: var(--r-btn);
 }
 .btn--sm { min-height: 44px; padding: 0 16px; }
