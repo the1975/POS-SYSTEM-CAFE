@@ -18,8 +18,11 @@ export default function KitchenPage({ screen }) {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(null);
   const [remake, setRemake] = useState(null); // { order, item }
+  const [tab, setTab] = useState(null); // null = otomatis: Dimasak kalau ada, kalau tidak Antre
 
   const { cooking, waiting } = splitQueue(orders);
+  const active = tab ?? (cooking.length > 0 ? "cooking" : "waiting");
+  const list = active === "cooking" ? cooking : waiting;
 
   // Satu aksi pada satu waktu: mencegah dobel tap saat jaringan lambat.
   async function run(action) {
@@ -59,6 +62,15 @@ export default function KitchenPage({ screen }) {
           />
         ) : (
           <>
+            <h1 className="page-title">Antrean dapur</h1>
+            <div className="seg" role="group" aria-label="Tampilan antrean">
+              <button type="button" className="seg__item" aria-pressed={active === "waiting"} onClick={() => setTab("waiting")}>
+                Antre · {waiting.length}
+              </button>
+              <button type="button" className="seg__item" aria-pressed={active === "cooking"} onClick={() => setTab("cooking")}>
+                Dimasak · {cooking.length}
+              </button>
+            </div>
 
             {notice && (
               <div className="alert kitchen__alert" role="alert">
@@ -82,18 +94,17 @@ export default function KitchenPage({ screen }) {
                 </button>
               </div>
             )}
-            {status === "ready" && orders.length === 0 && (
+            {status === "ready" && list.length === 0 && (
               <EmptyState
-                title="Belum ada order untuk dimasak."
-                hint="Order yang sudah dibayar akan muncul di sini otomatis."
+                title={active === "cooking" ? "Belum ada yang dimasak." : "Antrean kosong."}
+                hint="Order yang sudah dibayar muncul di sini otomatis."
               />
             )}
 
-            {cooking.length > 0 && (
-              <section className="kitchen__group" aria-label="Sedang dimasak">
-                <h1 className="page-title">Sedang dimasak</h1>
-                <ul className="kitchen__list">
-                  {cooking.map((o) => (
+            {list.length > 0 && (
+              <ul className="kitchen__list kitchen__list--top">
+                {list.map((o) =>
+                  active === "cooking" ? (
                     <KitchenOrderCard
                       key={o.order_id}
                       order={o}
@@ -102,16 +113,7 @@ export default function KitchenPage({ screen }) {
                       onReady={(item) => run(() => markItemReady(token, item.order_item_id))}
                       onRemake={(order, item) => setRemake({ order, item })}
                     />
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {waiting.length > 0 && (
-              <section className="kitchen__group" aria-label="Antrean">
-                <h2 className="page-title">Antrean</h2>
-                <ul className="kitchen__list">
-                  {waiting.map((o) => (
+                  ) : (
                     <KitchenOrderCard
                       key={o.order_id}
                       order={o}
@@ -119,9 +121,9 @@ export default function KitchenPage({ screen }) {
                       busy={busy}
                       onStart={(order) => run(() => startOrder(token, order.order_id))}
                     />
-                  ))}
-                </ul>
-              </section>
+                  ),
+                )}
+              </ul>
             )}
           </>
         )}

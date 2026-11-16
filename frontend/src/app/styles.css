@@ -606,3 +606,14 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 8px; margin-top: 8px; border-radius: 13px;
   color: var(--accent); background: var(--tint); font-size: 0.8125rem; font-weight: 800;
 }
+
+/* ---------- Kartu dapur (pewaktu berupa pil) ---------- */
+.kitchen__list--top { margin-top: 12px; }
+.kcard { padding: 18px; border-radius: 20px; }
+.kcard__head { align-items: center; }
+.kcard__no { font-size: 1.375rem; }
+.kcard__time {
+  padding: 4px 12px; font-size: 0.8125rem; font-weight: 800; border-radius: 999px;
+  color: var(--accent); background: var(--tint); font-variant-numeric: tabular-nums;
+}
+.kcard__time--late { color: var(--danger); background: #fef3f2; }

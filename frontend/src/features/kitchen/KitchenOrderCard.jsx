@@ -12,7 +12,7 @@ export default function KitchenOrderCard({ order, now, busy, onStart, onReady, o
       <div className="kcard__head">
         <span className="kcard__no">{order.order_number}</span>
         <span className={`kcard__time${late ? " kcard__time--late" : ""}`}>
-          {cooking ? "Dimasak" : "Menunggu"} {formatElapsed(minutes)}
+          {formatElapsed(minutes)}
         </span>
       </div>
       <p className="muted">{order.customer_name}</p>
@@ -53,7 +53,7 @@ export default function KitchenOrderCard({ order, now, busy, onStart, onReady, o
 
       {!cooking && (
         <button type="button" className="btn btn--block" disabled={busy} onClick={() => onStart(order)}>
-          Mulai
+          Mulai masak
         </button>
       )}
     </li>
