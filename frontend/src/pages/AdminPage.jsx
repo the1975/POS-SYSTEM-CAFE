@@ -148,7 +148,6 @@ export default function AdminPage({ screen }) {
             <AdminUsers
               token={token}
               me={user.id}
-              roles={roles}
               filters={userFilters}
               onFilters={setUserFilters}
               onEdit={(u) => setUserPanel({ mode: "edit", user: u })}

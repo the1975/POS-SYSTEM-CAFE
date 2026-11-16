@@ -7,6 +7,7 @@ import {
   buildUserPatch,
   describeUserError,
   generatePassword,
+  groupUsersByRole,
   isCreateFormValid,
   isEmailPlausible,
   isPasswordValid,
@@ -150,5 +151,23 @@ describe("pesan dan label", () => {
     expect(pageInfo({ page: 1, page_size: 20, total: 7, total_pages: 1 }, "akun").label).toBe(
       "Halaman 1 dari 1 · 7 akun"
     );
+  });
+});
+
+describe("groupUsersByRole", () => {
+  const u = (id, role) => ({ id, role });
+
+  it("mengelompokkan per role dengan urutan Admin, Kasir, Dapur, Pickup, Controller", () => {
+    const groups = groupUsersByRole([u(1, "PICKUP"), u(2, "ADMIN"), u(3, "CASHIER"), u(4, "CASHIER")]);
+    expect(groups.map((g) => [g.role, g.items.length])).toEqual([
+      ["ADMIN", 1],
+      ["CASHIER", 2],
+      ["PICKUP", 1],
+    ]);
+  });
+
+  it("daftar kosong menghasilkan array kosong dan role tak dikenal ditaruh di akhir", () => {
+    expect(groupUsersByRole([])).toEqual([]);
+    expect(groupUsersByRole([u(1, "ZZZ"), u(2, "ADMIN")]).map((g) => g.role)).toEqual(["ADMIN", "ZZZ"]);
   });
 });

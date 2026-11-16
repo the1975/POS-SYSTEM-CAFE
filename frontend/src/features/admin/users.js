@@ -67,3 +67,22 @@ export function describeUserError(err) {
   if (err?.status === 422) return "Periksa isian: nama wajib, email valid, sandi minimal 12 karakter.";
   return "Koneksi atau server bermasalah. Periksa daftar akun dulu sebelum mencoba lagi.";
 }
+
+// Urutan bagian di daftar pengguna.
+const ROLE_ORDER = ["ADMIN", "CASHIER", "KITCHEN", "PICKUP", "CONTROLLER"];
+
+// Kelompokkan akun per role mengikuti ROLE_ORDER; role yang tidak dikenal ditaruh di akhir.
+export function groupUsersByRole(users) {
+  const byRole = new Map();
+  for (const u of users) {
+    if (!byRole.has(u.role)) byRole.set(u.role, []);
+    byRole.get(u.role).push(u);
+  }
+  const rank = (r) => {
+    const i = ROLE_ORDER.indexOf(r);
+    return i === -1 ? ROLE_ORDER.length : i;
+  };
+  return [...byRole.entries()]
+    .sort((a, b) => rank(a[0]) - rank(b[0]))
+    .map(([role, items]) => ({ role, label: roleLabel(role), items }));
+}

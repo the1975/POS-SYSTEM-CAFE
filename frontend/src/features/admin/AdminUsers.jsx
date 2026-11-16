@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { EmptyState } from "../../components/feedback/States";
 import { pageInfo } from "./admin";
-import { USER_STATUS_FILTERS, roleLabel } from "./users";
+import { groupUsersByRole } from "./users";
 import { useUsers } from "./useUsers";
 
-export default function AdminUsers({ token, me, roles, filters, onFilters, onEdit, onUnauthorized }) {
+// Daftar pengguna: dikelompokkan per role (tanpa filter), cukup cari nama atau email.
+export default function AdminUsers({ token, me, filters, onFilters, onEdit, onUnauthorized }) {
   const { status, users, pagination, reload } = useUsers(token, filters, { onUnauthorized });
   const [draft, setDraft] = useState(filters.search);
   const info = pageInfo(pagination, "akun");
   const change = (patch) => onFilters({ ...filters, ...patch, page: 1 });
+  const groups = groupUsersByRole(users);
 
   useEffect(() => {
     if (pagination && pagination.total_pages > 0 && filters.page > pagination.total_pages) {
@@ -20,54 +22,30 @@ export default function AdminUsers({ token, me, roles, filters, onFilters, onEdi
   return (
     <>
       <form
-        className="searchbar"
+        className="usearch"
         role="search"
         onSubmit={(e) => {
           e.preventDefault();
           change({ search: draft.trim() });
         }}
       >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" />
+        </svg>
         <input
-          className="input"
+          className="usearch__input"
           type="search"
           aria-label="Cari nama atau email"
           placeholder="Nama atau email"
           maxLength={100}
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            if (e.target.value === "" && filters.search !== "") change({ search: "" });
+          }}
         />
-        <button type="submit" className="btn btn--sm">
-          Cari
-        </button>
       </form>
-
-      <div className="admin__filters">
-        <select
-          className="input"
-          aria-label="Filter role"
-          value={filters.roleId}
-          onChange={(e) => change({ roleId: e.target.value })}
-        >
-          <option value="">Semua role</option>
-          {roles.map((r) => (
-            <option key={r.id} value={r.id}>
-              {roleLabel(r.name)}
-            </option>
-          ))}
-        </select>
-        <select
-          className="input"
-          aria-label="Filter status akun"
-          value={filters.isActive}
-          onChange={(e) => change({ isActive: e.target.value })}
-        >
-          {USER_STATUS_FILTERS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-      </div>
 
       {status === "loading" && <p className="muted state">Memuat akun…</p>}
       {status === "error" && (
@@ -80,31 +58,43 @@ export default function AdminUsers({ token, me, roles, filters, onFilters, onEdi
         </div>
       )}
       {status === "ready" && users.length === 0 && (
-        <EmptyState title="Tidak ada akun." hint="Coba ubah filter atau kata pencarian." />
+        <EmptyState title="Tidak ada akun." hint="Coba kata pencarian lain." />
       )}
 
-      {users.length > 0 && (
-        <ul className="list surface">
-          {users.map((u) => (
-            <li key={u.id} className="queue__row">
-              <span className="queue__main">
-                <span className="queue__name">
-                  {u.name}
-                  {u.id === me ? " (kamu)" : ""}
-                </span>
-                <span className="muted users__email">{u.email}</span>
-                <span className="admin__chips">
-                  <span className="pill">{roleLabel(u.role)}</span>
+      {groups.map((g) => (
+        <section key={g.role} className="ugroup" aria-label={g.label}>
+          <h2 className="ugroup__title">
+            {g.label} · {g.items.length}
+          </h2>
+          <ul className="list surface ugroup__list">
+            {g.items.map((u) => (
+              <li key={u.id}>
+                <button
+                  type="button"
+                  className={`urow${u.is_active ? "" : " urow--off"}`}
+                  aria-label={`Ubah ${u.name}`}
+                  onClick={() => onEdit(u)}
+                >
+                  <span className="urow__avatar" aria-hidden="true">
+                    {u.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="queue__main">
+                    <span className="queue__name">
+                      {u.name}
+                      {u.id === me ? " (kamu)" : ""}
+                    </span>
+                    <span className="muted users__email">{u.email}</span>
+                  </span>
                   {!u.is_active && <span className="pill pill--warn">Nonaktif</span>}
-                </span>
-              </span>
-              <button type="button" className="btn btn--sm btn--ghost" onClick={() => onEdit(u)}>
-                Ubah
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                  <svg className="urow__go" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       {info.label && (
         <div className="admin__pager">
