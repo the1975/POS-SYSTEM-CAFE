@@ -10,12 +10,23 @@ import {
   pageInfo,
   paymentStatusLabel,
 } from "./admin";
+import AdminSearch from "./AdminSearch";
+import FilterSheet from "./FilterSheet";
 import { useAdminOrders } from "./useAdminOrders";
+
+// Status yang perlu perhatian ditandai merah.
+const WARN = new Set(["CANCELLED", "OVERDUE", "FAILED", "REFUND_FAILED"]);
+const short = (options) => options.map((o) => (o.value === "" ? { ...o, label: "Semua" } : o));
+const FILTER_GROUPS = [
+  { key: "status", label: "Status order", options: short(STATUS_FILTERS) },
+  { key: "paymentStatus", label: "Status bayar", options: short(PAYMENT_FILTERS) },
+];
 
 export default function AdminOrders({ token, filters, onFilters, onRefund, onUnauthorized }) {
   const { status, orders, pagination, reload } = useAdminOrders(token, filters, { onUnauthorized });
-  const [draft, setDraft] = useState(filters.search);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const info = pageInfo(pagination);
+  const filterActive = Boolean(filters.status || filters.paymentStatus);
 
   // Setelah refund, halaman terakhir bisa kosong: mundur ke halaman terakhir yang ada.
   useEffect(() => {
@@ -25,58 +36,28 @@ export default function AdminOrders({ token, filters, onFilters, onRefund, onUna
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
 
-  const change = (patch) => onFilters({ ...filters, ...patch, page: 1 });
-
   return (
     <>
-      <form
-        className="searchbar"
-        role="search"
-        onSubmit={(e) => {
-          e.preventDefault();
-          change({ search: draft.trim() });
-        }}
-      >
-        <input
-          className="input"
-          type="search"
-          aria-label="Cari nomor order atau nama"
-          placeholder="Nomor order atau nama"
-          maxLength={100}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-        />
-        <button type="submit" className="btn btn--sm">
-          Cari
+      <div className="usearchrow">
+        <AdminSearch label="Cari nomor order atau nama" placeholder="Nomor order atau nama" filters={filters} onFilters={onFilters} />
+        <button type="button" className="ufilter" aria-label="Filter order" aria-haspopup="dialog" onClick={() => setSheetOpen(true)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+            <path d="M4 6h16M7 12h10M10 18h4" />
+          </svg>
+          {filterActive && <span className="ufilter__dot" aria-hidden="true" />}
         </button>
-      </form>
-
-      <div className="admin__filters">
-        <select
-          className="input"
-          aria-label="Filter status order"
-          value={filters.status}
-          onChange={(e) => change({ status: e.target.value })}
-        >
-          {STATUS_FILTERS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-        <select
-          className="input"
-          aria-label="Filter status pembayaran"
-          value={filters.paymentStatus}
-          onChange={(e) => change({ paymentStatus: e.target.value })}
-        >
-          {PAYMENT_FILTERS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
       </div>
+      <FilterSheet
+        open={sheetOpen}
+        title="Filter order"
+        groups={FILTER_GROUPS}
+        values={{ status: filters.status, paymentStatus: filters.paymentStatus }}
+        onClose={() => setSheetOpen(false)}
+        onApply={(d) => {
+          onFilters({ ...filters, status: d.status, paymentStatus: d.paymentStatus, page: 1 });
+          setSheetOpen(false);
+        }}
+      />
 
       {status === "stale" && (
         <p className="muted queue__note" role="status">
@@ -94,32 +75,32 @@ export default function AdminOrders({ token, filters, onFilters, onRefund, onUna
         </div>
       )}
       {status === "ready" && orders.length === 0 && (
-        <EmptyState
-          title="Tidak ada order."
-          hint="Coba ubah filter atau kata pencarian."
-        />
+        <EmptyState title="Tidak ada order." hint="Coba filter atau kata pencarian lain." />
       )}
 
       {orders.length > 0 && (
-        <ul className="list surface">
+        <ul className="list surface ugroup__list">
           {orders.map((o) => (
-            <li key={o.order_id} className="queue__row">
-              <span className="queue__no">{o.order_number}</span>
-              <span className="queue__main">
-                <span className="queue__name">{o.customer_name}</span>
-                <span className="muted">
-                  {formatRupiah(o.total)} · {formatShortDateTime(o.created_at)}
+            <li key={o.order_id} className="orow">
+              <div className="orow__top">
+                <span className="orow__no">{o.order_number}</span>
+                <span className="queue__main">
+                  <span className="queue__name">{o.customer_name}</span>
+                  <span className="muted">{formatShortDateTime(o.created_at)}</span>
                 </span>
-                <span className="admin__chips">
-                  <span className="pill">{orderStatusLabel(o.status)}</span>
-                  <span className="pill">{paymentStatusLabel(o.payment_status)}</span>
+                <strong className="orow__total">{formatRupiah(o.total)}</strong>
+              </div>
+              <div className="orow__meta">
+                <span className={`pill${WARN.has(o.status) ? " pill--warn" : ""}`}>{orderStatusLabel(o.status)}</span>
+                <span className={`pill${WARN.has(o.payment_status) ? " pill--warn" : ""}`}>
+                  {paymentStatusLabel(o.payment_status)}
                 </span>
-              </span>
-              {canRefund(o) && (
-                <button type="button" className="btn btn--sm btn--ghost" onClick={() => onRefund(o)}>
-                  Refund
-                </button>
-              )}
+                {canRefund(o) && (
+                  <button type="button" className="btn btn--sm btn--ghost orow__refund" onClick={() => onRefund(o)}>
+                    Refund
+                  </button>
+                )}
+              </div>
             </li>
           ))}
         </ul>
