@@ -17,6 +17,10 @@ export default function AdminNav({ tabs, current, onSelect }) {
   const sorted = ORDER.map((id) => tabs.find((t) => t.id === id)).filter(Boolean);
   return (
     <nav className="catnav catnav--fit" aria-label="Menu admin">
+      <div className="catnav__brand" aria-hidden="true">
+        <span className="catnav__logo">M</span>
+        <b>Monster Café</b>
+      </div>
       {sorted.map((t) => (
         <button
           key={t.id}

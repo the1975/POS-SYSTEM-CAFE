@@ -627,3 +627,38 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 .scancard__row { display: flex; gap: 8px; }
 .scancard__row .input { flex: 1; min-width: 0; }
 .urow--static { cursor: default; }
+
+/* ---------- Layar lebar: rail (tablet) dan sidebar (laptop) ---------- */
+.catnav__brand { display: none; }
+@media (min-width: 768px) {
+  .container { max-width: 880px; padding-left: 32px; padding-right: 32px; }
+  .bar__inner { max-width: 880px; }
+  body:has(.catnav) { padding-left: 88px; }
+  .catnav {
+    top: 0; bottom: 0; left: 0; right: auto; width: 88px; height: auto; margin: 0; padding: 20px 8px;
+    grid-auto-flow: row; grid-auto-columns: auto; grid-auto-rows: auto; align-content: start; gap: 8px;
+    overflow-x: visible; overflow-y: auto; border-width: 0 1px 0 0; border-radius: 0; box-shadow: none;
+  }
+  .catnav--fit { grid-auto-columns: auto; }
+  .catnav__item { min-height: 68px; }
+  .catnav--fit .catnav__item { font-size: 0.6875rem; }
+  .bar { left: 88px; }
+  .container.has-nav { padding-bottom: 32px; }
+  .container.has-nav.has-bar { padding-bottom: 112px; }
+  .bar--raised { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+  .fab { bottom: calc(24px + env(safe-area-inset-bottom)); }
+}
+@media (min-width: 1100px) {
+  body:has(.catnav) { padding-left: 232px; }
+  .catnav { width: 232px; padding: 24px 16px; }
+  .catnav__brand { display: flex; align-items: center; gap: 10px; margin: 0 6px 24px; }
+  .catnav__logo {
+    display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px;
+    color: var(--accent-text); background: var(--accent-grad); font-weight: 800;
+  }
+  .catnav__item, .catnav--fit .catnav__item {
+    min-height: 48px; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 0 14px;
+    border-radius: 14px; font-size: 0.9375rem;
+  }
+  .bar { left: 232px; }
+}

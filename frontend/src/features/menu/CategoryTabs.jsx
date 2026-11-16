@@ -48,6 +48,10 @@ export default function CategoryTabs({ categories, activeId, onSelect }) {
   const options = [{ id: null, name: "Semua" }, ...categories];
   return (
     <nav className="catnav" aria-label="Kategori menu">
+      <div className="catnav__brand" aria-hidden="true">
+        <span className="catnav__logo">M</span>
+        <b>Monster Café</b>
+      </div>
       {options.map((c) => (
         <button
           key={c.id ?? "all"}
