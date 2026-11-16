@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EmptyState } from "../components/feedback/States";
 import StaffHeader from "../components/layout/StaffHeader";
+import AdminSearch from "../features/admin/AdminSearch";
 import CashPaymentPanel from "../features/cashier/CashPaymentPanel";
 import { useWaitingCash } from "../features/cashier/useWaitingCash";
 import { useAuth } from "../stores/AuthContext";
@@ -9,15 +10,9 @@ import { formatRupiah } from "../utils/format";
 // Layar Kasir (wireframes.md #17-#18): antrean order tunai -> buka -> terima uang -> konfirmasi.
 export default function CashierPage({ screen }) {
   const { user, token, logout } = useAuth();
-  const [draft, setDraft] = useState("");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
   const { status, orders, reload } = useWaitingCash(token, search, { onUnauthorized: logout });
-
-  function onSearch(e) {
-    e.preventDefault();
-    setSearch(draft.trim());
-  }
 
   function finish() {
     setSelected(null);
@@ -39,22 +34,17 @@ export default function CashierPage({ screen }) {
           />
         ) : (
           <>
-            <h1 className="page-title">Menunggu bayar tunai</h1>
+            <div className="titlebar">
+              <h1 className="page-title">Menunggu bayar tunai</h1>
+              {orders.length > 0 && <span className="count">{orders.length}</span>}
+            </div>
 
-            <form className="searchbar" onSubmit={onSearch} role="search">
-              <input
-                className="input"
-                type="search"
-                aria-label="Cari nomor order atau nama"
-                placeholder="Nomor order atau nama"
-                maxLength={100}
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-              />
-              <button type="submit" className="btn btn--sm">
-                Cari
-              </button>
-            </form>
+            <AdminSearch
+              label="Cari nomor order atau nama"
+              placeholder="Nomor order atau nama"
+              filters={{ search }}
+              onFilters={(f) => setSearch(f.search)}
+            />
 
             {status === "stale" && (
               <p className="muted queue__note" role="status">
@@ -79,25 +69,28 @@ export default function CashierPage({ screen }) {
             {status === "ready" && orders.length === 0 && (
               <EmptyState
                 title="Tidak ada yang menunggu bayar."
-                hint={
-                  search
-                    ? "Tidak ada order tunai yang cocok dengan pencarianmu."
-                    : "Order tunai baru akan muncul di sini otomatis."
-                }
+                hint={search ? "Tidak ada order yang cocok." : "Order tunai baru muncul di sini otomatis."}
               />
             )}
 
             {orders.length > 0 && (
-              <ul className="list surface">
+              <ul className="list surface ugroup__list">
                 {orders.map((o) => (
-                  <li key={o.order_id} className="queue__row">
-                    <span className="queue__no">{o.order_number}</span>
-                    <span className="queue__main">
-                      <span className="queue__name">{o.customer_name}</span>
-                      <span className="muted">{formatRupiah(o.total)}</span>
-                    </span>
-                    <button type="button" className="btn btn--sm" onClick={() => setSelected(o)}>
-                      Buka
+                  <li key={o.order_id}>
+                    <button
+                      type="button"
+                      className="urow"
+                      aria-label={`Buka order ${o.order_number} atas nama ${o.customer_name}`}
+                      onClick={() => setSelected(o)}
+                    >
+                      <span className="orow__no">{o.order_number}</span>
+                      <span className="queue__main">
+                        <span className="queue__name">{o.customer_name}</span>
+                      </span>
+                      <strong>{formatRupiah(o.total)}</strong>
+                      <svg className="urow__go" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M9 6l6 6-6 6" />
+                      </svg>
                     </button>
                   </li>
                 ))}
