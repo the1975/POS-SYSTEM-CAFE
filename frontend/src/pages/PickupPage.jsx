@@ -80,37 +80,47 @@ export default function PickupPage({ screen }) {
 
     return (
       <>
-        <h1 className="page-title">Pickup</h1>
-
-        {busy && (
-          <p className="muted" role="status">
-            Memeriksa token…
-          </p>
-        )}
-        <button type="button" className="btn btn--block" disabled={busy} onClick={() => setScanning(true)}>
-          Scan QR pickup
-        </button>
-
-        <details className="manual">
-          <summary>Tempel token manual</summary>
-          <form onSubmit={onManualSubmit}>
-            <input
-              className="input"
-              aria-label="Token pickup dari customer"
-              placeholder="Token dari customer"
-              autoComplete="off"
-              autoCapitalize="none"
-              spellCheck={false}
-              value={manual}
-              onChange={(e) => setManual(e.target.value)}
-            />
-            <button type="submit" className="btn btn--sm" disabled={busy || !manual.trim()}>
-              Verifikasi
-            </button>
+        <section className="surface scancard">
+          <span className="scancard__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M4 12h16" />
+            </svg>
+          </span>
+          <h1 className="scancard__title">Scan QR pickup</h1>
+          {busy && (
+            <p className="muted" role="status">
+              Memeriksa token…
+            </p>
+          )}
+          <button type="button" className="btn btn--block" disabled={busy} onClick={() => setScanning(true)}>
+            Mulai scan
+          </button>
+          <form className="scancard__manual" onSubmit={onManualSubmit}>
+            <label className="field__label" htmlFor="pickup-token">
+              Token manual
+            </label>
+            <div className="scancard__row">
+              <input
+                id="pickup-token"
+                className="input"
+                placeholder="Token dari customer"
+                autoComplete="off"
+                autoCapitalize="none"
+                spellCheck={false}
+                value={manual}
+                onChange={(e) => setManual(e.target.value)}
+              />
+              <button type="submit" className="btn btn--sm btn--ghost" disabled={busy || !manual.trim()}>
+                Verifikasi
+              </button>
+            </div>
           </form>
-        </details>
+        </section>
 
-        <h2 className="page-title">Siap diambil</h2>
+        <div className="titlebar">
+          <h2 className="page-title">Siap diambil</h2>
+          {orders.length > 0 && <span className="count">{orders.length}</span>}
+        </div>
         {status === "stale" && (
           <p className="muted queue__note" role="status">
             Gagal memperbarui daftar. Mencoba lagi otomatis…
@@ -129,14 +139,14 @@ export default function PickupPage({ screen }) {
         {status === "ready" && orders.length === 0 && (
           <EmptyState
             title="Belum ada pesanan siap diambil."
-            hint="Pesanan yang selesai dimasak dapur akan muncul di sini otomatis."
+            hint="Pesanan yang selesai dimasak muncul di sini otomatis."
           />
         )}
         {orders.length > 0 && (
-          <ul className="list surface">
+          <ul className="list surface ugroup__list">
             {orders.map((o) => (
-              <li key={o.pickup_id} className="queue__row">
-                <span className="queue__no">{o.order_number}</span>
+              <li key={o.pickup_id} className="urow urow--static">
+                <span className="orow__no">{o.order_number}</span>
                 <span className="queue__main">
                   <span className="queue__name">{o.customer_name}</span>
                   <span className="muted">

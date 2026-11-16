@@ -617,3 +617,13 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   color: var(--accent); background: var(--tint); font-variant-numeric: tabular-nums;
 }
 .kcard__time--late { color: var(--danger); background: #fef3f2; }
+
+/* ---------- Pickup: kartu scan ---------- */
+.scancard { display: grid; justify-items: center; gap: 16px; margin-top: 12px; padding: 28px 20px; text-align: center; border-radius: 24px; }
+.scancard__icon { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 22px; color: var(--accent); background: var(--tint); }
+.scancard__icon svg { width: 36px; height: 36px; }
+.scancard__title { margin: 0; font-size: 1.375rem; font-weight: 800; }
+.scancard__manual { width: 100%; margin-top: 8px; padding-top: 20px; text-align: left; border-top: 1px solid var(--line); }
+.scancard__row { display: flex; gap: 8px; }
+.scancard__row .input { flex: 1; min-width: 0; }
+.urow--static { cursor: default; }
