@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { EmptyState } from "../../components/feedback/States";
 import { formatRupiah } from "../../utils/format";
 import { pageInfo } from "./admin";
-import { PRODUCT_STATUS_FILTERS } from "./products";
+import AdminSearch from "./AdminSearch";
+import { groupBy } from "./group";
 import { useAdminProducts } from "./useAdminProducts";
 
-export default function AdminProducts({ token, categories, filters, onFilters, onEdit, onUnauthorized }) {
+// Daftar produk: dikelompokkan per kategori, cukup cari nama produk.
+export default function AdminProducts({ token, filters, onFilters, onEdit, onUnauthorized }) {
   const { status, products, pagination, reload } = useAdminProducts(token, filters, { onUnauthorized });
-  const [draft, setDraft] = useState(filters.search);
   const info = pageInfo(pagination, "produk");
-  const change = (patch) => onFilters({ ...filters, ...patch, page: 1 });
+  const groups = groupBy(products, (p) => p.category_name);
 
   // Kalau halaman yang dibuka melewati batas (mis. data berkurang), mundur ke halaman terakhir.
   useEffect(() => {
@@ -21,55 +22,7 @@ export default function AdminProducts({ token, categories, filters, onFilters, o
 
   return (
     <>
-      <form
-        className="searchbar"
-        role="search"
-        onSubmit={(e) => {
-          e.preventDefault();
-          change({ search: draft.trim() });
-        }}
-      >
-        <input
-          className="input"
-          type="search"
-          aria-label="Cari nama produk"
-          placeholder="Nama produk"
-          maxLength={100}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-        />
-        <button type="submit" className="btn btn--sm">
-          Cari
-        </button>
-      </form>
-
-      <div className="admin__filters">
-        <select
-          className="input"
-          aria-label="Filter kategori"
-          value={filters.categoryId}
-          onChange={(e) => change({ categoryId: e.target.value })}
-        >
-          <option value="">Semua kategori</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <select
-          className="input"
-          aria-label="Filter status produk"
-          value={filters.isAvailable}
-          onChange={(e) => change({ isAvailable: e.target.value })}
-        >
-          {PRODUCT_STATUS_FILTERS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <AdminSearch label="Cari nama produk" placeholder="Nama produk" filters={filters} onFilters={onFilters} />
 
       {status === "loading" && <p className="muted state">Memuat produk…</p>}
       {status === "error" && (
@@ -82,30 +35,42 @@ export default function AdminProducts({ token, categories, filters, onFilters, o
         </div>
       )}
       {status === "ready" && products.length === 0 && (
-        <EmptyState title="Tidak ada produk." hint="Coba ubah filter atau kata pencarian." />
+        <EmptyState title="Tidak ada produk." hint="Coba kata pencarian lain." />
       )}
 
-      {products.length > 0 && (
-        <ul className="list surface">
-          {products.map((p) => (
-            <li key={p.id} className="queue__row">
-              <span className="queue__main">
-                <span className="queue__name">{p.name}</span>
-                <span className="muted">
-                  {formatRupiah(p.price)} · HPP {formatRupiah(p.cost_price)}
-                </span>
-                <span className="admin__chips">
-                  <span className="pill">{p.category_name}</span>
+      {groups.map((g) => (
+        <section key={g.label} className="ugroup" aria-label={g.label}>
+          <h2 className="ugroup__title">
+            {g.label} · {g.items.length}
+          </h2>
+          <ul className="list surface ugroup__list">
+            {g.items.map((p) => (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  className={`urow${p.is_available ? "" : " urow--off"}`}
+                  aria-label={`Ubah ${p.name}`}
+                  onClick={() => onEdit(p)}
+                >
+                  <span className="urow__avatar urow__avatar--sq" aria-hidden="true">
+                    {p.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="queue__main">
+                    <span className="queue__name">{p.name}</span>
+                    <span className="muted">
+                      {formatRupiah(p.price)} · HPP {formatRupiah(p.cost_price)}
+                    </span>
+                  </span>
                   {!p.is_available && <span className="pill pill--warn">Disembunyikan</span>}
-                </span>
-              </span>
-              <button type="button" className="btn btn--sm btn--ghost" onClick={() => onEdit(p)}>
-                Ubah
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                  <svg className="urow__go" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       {info.label && (
         <div className="admin__pager">

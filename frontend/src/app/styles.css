@@ -549,3 +549,10 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   color: var(--accent); background: var(--tint); font-size: 1.125rem; font-weight: 800;
 }
 .urow__go { flex: none; width: 18px; height: 18px; color: var(--muted); }
+
+/* ---------- Baris produk dan stok ---------- */
+.urow__avatar--sq { border-radius: 14px; }
+.urow .pill { padding: 2px 10px; font-size: 0.75rem; }
+.urow__qty { display: grid; justify-items: end; flex: none; line-height: 1.2; }
+.urow__qty strong { font-size: 1.125rem; font-weight: 800; }
+.urow__qty .muted { font-size: 0.75rem; }

@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { EmptyState } from "../../components/feedback/States";
 import { pageInfo } from "./admin";
+import AdminSearch from "./AdminSearch";
 import { groupUsersByRole } from "./users";
 import { useUsers } from "./useUsers";
 
 // Daftar pengguna: dikelompokkan per role (tanpa filter), cukup cari nama atau email.
 export default function AdminUsers({ token, me, filters, onFilters, onEdit, onUnauthorized }) {
   const { status, users, pagination, reload } = useUsers(token, filters, { onUnauthorized });
-  const [draft, setDraft] = useState(filters.search);
   const info = pageInfo(pagination, "akun");
-  const change = (patch) => onFilters({ ...filters, ...patch, page: 1 });
   const groups = groupUsersByRole(users);
 
   useEffect(() => {
@@ -21,31 +20,7 @@ export default function AdminUsers({ token, me, filters, onFilters, onEdit, onUn
 
   return (
     <>
-      <form
-        className="usearch"
-        role="search"
-        onSubmit={(e) => {
-          e.preventDefault();
-          change({ search: draft.trim() });
-        }}
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-          <circle cx="11" cy="11" r="7" />
-          <path d="M20 20l-4-4" />
-        </svg>
-        <input
-          className="usearch__input"
-          type="search"
-          aria-label="Cari nama atau email"
-          placeholder="Nama atau email"
-          maxLength={100}
-          value={draft}
-          onChange={(e) => {
-            setDraft(e.target.value);
-            if (e.target.value === "" && filters.search !== "") change({ search: "" });
-          }}
-        />
-      </form>
+      <AdminSearch label="Cari nama atau email" placeholder="Nama atau email" filters={filters} onFilters={onFilters} />
 
       {status === "loading" && <p className="muted state">Memuat akun…</p>}
       {status === "error" && (

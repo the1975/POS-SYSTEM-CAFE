@@ -121,7 +121,6 @@ export default function AdminPage({ screen }) {
             </div>
             <AdminStock
               token={token}
-              categories={categories}
               filters={stockFilters}
               onFilters={setStockFilters}
               onAdjust={setStockItem}
@@ -134,7 +133,6 @@ export default function AdminPage({ screen }) {
             <Fab label="Tambah produk" onClick={() => setProductPanel({ product: null })} />
             <AdminProducts
               token={token}
-              categories={categories}
               filters={productFilters}
               onFilters={setProductFilters}
               onEdit={(p) => setProductPanel({ product: p })}

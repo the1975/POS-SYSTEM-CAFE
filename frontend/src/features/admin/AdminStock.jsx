@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { EmptyState } from "../../components/feedback/States";
 import { pageInfo } from "./admin";
+import AdminSearch from "./AdminSearch";
+import { groupBy } from "./group";
 import { stockLabel } from "./stock";
 import { useStock } from "./useStock";
 
-export default function AdminStock({ token, categories, filters, onFilters, onAdjust, onUnauthorized }) {
+// Daftar stok: dikelompokkan per kategori; stok menipis/habis diberi label mencolok.
+export default function AdminStock({ token, filters, onFilters, onAdjust, onUnauthorized }) {
   const { status, items, pagination, reload } = useStock(token, filters, { onUnauthorized });
-  const [draft, setDraft] = useState(filters.search);
   const info = pageInfo(pagination, "produk");
-  const change = (patch) => onFilters({ ...filters, ...patch, page: 1 });
+  const groups = groupBy(items, (it) => it.category_name);
 
   // Kalau halaman yang dibuka melewati batas, mundur ke halaman terakhir.
   useEffect(() => {
@@ -20,43 +22,7 @@ export default function AdminStock({ token, categories, filters, onFilters, onAd
 
   return (
     <>
-      <form
-        className="searchbar"
-        role="search"
-        onSubmit={(e) => {
-          e.preventDefault();
-          change({ search: draft.trim() });
-        }}
-      >
-        <input
-          className="input"
-          type="search"
-          aria-label="Cari nama produk"
-          placeholder="Nama produk"
-          maxLength={100}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-        />
-        <button type="submit" className="btn btn--sm">
-          Cari
-        </button>
-      </form>
-
-      <div className="admin__filters">
-        <select
-          className="input"
-          aria-label="Filter kategori"
-          value={filters.categoryId}
-          onChange={(e) => change({ categoryId: e.target.value })}
-        >
-          <option value="">Semua kategori</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <AdminSearch label="Cari nama produk" placeholder="Nama produk" filters={filters} onFilters={onFilters} />
 
       {status === "loading" && <p className="muted state">Memuat stok…</p>}
       {status === "error" && (
@@ -69,32 +35,48 @@ export default function AdminStock({ token, categories, filters, onFilters, onAd
         </div>
       )}
       {status === "ready" && items.length === 0 && (
-        <EmptyState title="Tidak ada produk." hint="Coba ubah filter atau kata pencarian." />
+        <EmptyState title="Tidak ada produk." hint="Coba kata pencarian lain." />
       )}
 
-      {items.length > 0 && (
-        <ul className="list surface">
-          {items.map((it) => (
-            <li key={it.product_id} className="queue__row">
-              <span className="queue__main">
-                <span className="queue__name">{it.product_name}</span>
-                <span className="muted">
-                  Tersedia {it.quantity_available}
-                  {it.quantity_reserved > 0 ? ` · Ditahan pesanan ${it.quantity_reserved}` : ""}
-                </span>
-                <span className="admin__chips">
-                  <span className="pill">{it.category_name}</span>
+      {groups.map((g) => (
+        <section key={g.label} className="ugroup" aria-label={g.label}>
+          <h2 className="ugroup__title">
+            {g.label} · {g.items.length}
+          </h2>
+          <ul className="list surface ugroup__list">
+            {g.items.map((it) => (
+              <li key={it.product_id}>
+                <button
+                  type="button"
+                  className={`urow${it.is_available ? "" : " urow--off"}`}
+                  aria-label={`Atur stok ${it.product_name}`}
+                  onClick={() => onAdjust(it)}
+                >
+                  <span className="urow__avatar urow__avatar--sq" aria-hidden="true">
+                    {it.product_name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="queue__main">
+                    <span className="queue__name">{it.product_name}</span>
+                    {(it.quantity_reserved > 0 || !it.is_available) && (
+                      <span className="muted">
+                        {it.quantity_reserved > 0 ? `Ditahan pesanan ${it.quantity_reserved}` : "Disembunyikan"}
+                      </span>
+                    )}
+                  </span>
                   {stockLabel(it) && <span className="pill pill--warn">{stockLabel(it)}</span>}
-                  {!it.is_available && <span className="pill">Disembunyikan</span>}
-                </span>
-              </span>
-              <button type="button" className="btn btn--sm btn--ghost" onClick={() => onAdjust(it)}>
-                Atur stok
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                  <span className="urow__qty">
+                    <strong>{it.quantity_available}</strong>
+                    <span className="muted">tersedia</span>
+                  </span>
+                  <svg className="urow__go" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       {info.label && (
         <div className="admin__pager">
