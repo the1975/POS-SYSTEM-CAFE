@@ -1,5 +1,6 @@
 import Header from "../components/layout/Header";
 import CartBar from "../features/cart/CartBar";
+import CartPanel from "../features/cart/CartPanel";
 import CategoryTabs from "../features/menu/CategoryTabs";
 import ProductList from "../features/menu/ProductList";
 import SearchBox from "../features/menu/SearchBox";
@@ -28,6 +29,7 @@ export default function MenuPage() {
         onSelect={menu.setCategoryId}
       />
       <CartBar raised={hasNav} />
+      <CartPanel />
     </>
   );
 }

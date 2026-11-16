@@ -642,7 +642,7 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   .catnav--fit { grid-auto-columns: auto; }
   .catnav__item { min-height: 68px; }
   .catnav--fit .catnav__item { font-size: 0.6875rem; }
-  .bar { left: 88px; }
+  body:has(.catnav) .bar { left: 88px; }
   .container.has-nav { padding-bottom: 32px; }
   .container.has-nav.has-bar { padding-bottom: 112px; }
   .bar--raised { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
@@ -660,5 +660,21 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
     min-height: 48px; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 0 14px;
     border-radius: 14px; font-size: 0.9375rem;
   }
-  .bar { left: 232px; }
+  body:has(.catnav) .bar { left: 232px; }
+}
+
+/* ---------- Panel keranjang (laptop) ---------- */
+.cartpanel { display: none; }
+@media (min-width: 1100px) {
+  body:has(.cartpanel) { padding-right: 340px; }
+  body:has(.cartpanel) .bar { display: none; }
+  .container.has-nav.has-bar { padding-bottom: 32px; }
+  .cartpanel {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 11; display: flex; flex-direction: column;
+    width: 340px; padding: 28px 24px; background: var(--surface); border-left: 1px solid var(--line);
+  }
+  .cartpanel__title { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; }
+  .cartpanel__list { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
+  .cartpanel__row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .cartpanel__foot { display: grid; gap: 8px; margin-top: auto; padding-top: 16px; }
 }
