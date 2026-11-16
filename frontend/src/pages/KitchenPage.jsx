@@ -22,7 +22,6 @@ export default function KitchenPage({ screen }) {
 
   const { cooking, waiting } = splitQueue(orders);
   const active = tab ?? (cooking.length > 0 ? "cooking" : "waiting");
-  const list = active === "cooking" ? cooking : waiting;
 
   // Satu aksi pada satu waktu: mencegah dobel tap saat jaringan lambat.
   async function run(action) {
@@ -47,7 +46,7 @@ export default function KitchenPage({ screen }) {
   return (
     <>
       <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container">
+      <main className="container container--wide">
         {remake ? (
           <RemakePanel
             order={remake.order}
@@ -63,7 +62,7 @@ export default function KitchenPage({ screen }) {
         ) : (
           <>
             <h1 className="page-title">Antrean dapur</h1>
-            <div className="seg" role="group" aria-label="Tampilan antrean">
+            <div className="seg seg--narrow" role="group" aria-label="Tampilan antrean">
               <button type="button" className="seg__item" aria-pressed={active === "waiting"} onClick={() => setTab("waiting")}>
                 Antre · {waiting.length}
               </button>
@@ -94,37 +93,48 @@ export default function KitchenPage({ screen }) {
                 </button>
               </div>
             )}
-            {status === "ready" && list.length === 0 && (
-              <EmptyState
-                title={active === "cooking" ? "Belum ada yang dimasak." : "Antrean kosong."}
-                hint="Order yang sudah dibayar muncul di sini otomatis."
-              />
-            )}
-
-            {list.length > 0 && (
-              <ul className="kitchen__list kitchen__list--top">
-                {list.map((o) =>
-                  active === "cooking" ? (
-                    <KitchenOrderCard
-                      key={o.order_id}
-                      order={o}
-                      now={now}
-                      busy={busy}
-                      onReady={(item) => run(() => markItemReady(token, item.order_item_id))}
-                      onRemake={(order, item) => setRemake({ order, item })}
+            <div className="kcols">
+              {[
+                { key: "waiting", title: "Antre", list: waiting },
+                { key: "cooking", title: "Dimasak", list: cooking },
+              ].map((col) => (
+                <section key={col.key} className={`kcol${active === col.key ? " is-active" : ""}`} aria-label={col.title}>
+                  <h2 className="kcol__title">
+                    {col.title} <span className="count">{col.list.length}</span>
+                  </h2>
+                  {status === "ready" && col.list.length === 0 && (
+                    <EmptyState
+                      title={col.key === "cooking" ? "Belum ada yang dimasak." : "Antrean kosong."}
+                      hint="Order yang sudah dibayar muncul di sini otomatis."
                     />
-                  ) : (
-                    <KitchenOrderCard
-                      key={o.order_id}
-                      order={o}
-                      now={now}
-                      busy={busy}
-                      onStart={(order) => run(() => startOrder(token, order.order_id))}
-                    />
-                  ),
-                )}
-              </ul>
-            )}
+                  )}
+                  {col.list.length > 0 && (
+                    <ul className="kitchen__list kitchen__list--top">
+                      {col.list.map((o) =>
+                        col.key === "cooking" ? (
+                          <KitchenOrderCard
+                            key={o.order_id}
+                            order={o}
+                            now={now}
+                            busy={busy}
+                            onReady={(item) => run(() => markItemReady(token, item.order_item_id))}
+                            onRemake={(order, item) => setRemake({ order, item })}
+                          />
+                        ) : (
+                          <KitchenOrderCard
+                            key={o.order_id}
+                            order={o}
+                            now={now}
+                            busy={busy}
+                            onStart={(order) => run(() => startOrder(token, order.order_id))}
+                          />
+                        ),
+                      )}
+                    </ul>
+                  )}
+                </section>
+              ))}
+            </div>
           </>
         )}
       </main>

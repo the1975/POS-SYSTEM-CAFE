@@ -22,18 +22,9 @@ export default function CashierPage({ screen }) {
   return (
     <>
       <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container">
-        {selected ? (
-          <CashPaymentPanel
-            key={selected.order_id}
-            order={selected}
-            token={token}
-            onBack={() => setSelected(null)}
-            onDone={finish}
-            onUnauthorized={logout}
-          />
-        ) : (
-          <>
+      <main className="container container--wide">
+        <div className="split">
+          <section className={`split__list${selected ? " is-away" : ""}`}>
             <div className="titlebar">
               <h1 className="page-title">Menunggu bayar tunai</h1>
               {orders.length > 0 && <span className="count">{orders.length}</span>}
@@ -96,8 +87,24 @@ export default function CashierPage({ screen }) {
                 ))}
               </ul>
             )}
-          </>
-        )}
+          </section>
+          {selected ? (
+            <section className="split__panel">
+              <CashPaymentPanel
+                key={selected.order_id}
+                order={selected}
+                token={token}
+                onBack={() => setSelected(null)}
+                onDone={finish}
+                onUnauthorized={logout}
+              />
+            </section>
+          ) : (
+            <section className="surface split__empty">
+              <p className="muted">Pilih order di sebelah kiri untuk menerima pembayaran.</p>
+            </section>
+          )}
+        </div>
       </main>
     </>
   );

@@ -678,3 +678,22 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   .cartpanel__row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
   .cartpanel__foot { display: grid; gap: 8px; margin-top: auto; padding-top: 16px; }
 }
+
+/* ---------- Layar staf: dua panel di layar lebar ---------- */
+.split__empty, .kcol__title { display: none; }
+.kcol { display: none; }
+.kcol.is-active { display: block; }
+@media (min-width: 1024px) {
+  .container--wide { max-width: 1200px; }
+  .split { display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: start; }
+  .split__list.is-away { display: block; }
+  .split__empty { display: grid; place-items: center; min-height: 240px; margin-top: 24px; text-align: center; border-radius: 20px; }
+  .seg--narrow { display: none; }
+  .kcols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .kcol { display: block; }
+  .kcol__title { display: flex; align-items: center; gap: 10px; margin: 16px 0 0; font-size: 1.125rem; font-weight: 800; }
+  .kcols .kitchen__list--top { margin-top: 12px; }
+}
+@media (max-width: 1023px) {
+  .split__list.is-away { display: none; }
+}

@@ -79,7 +79,7 @@ export default function PickupPage({ screen }) {
     if (scanning) return <QrScanner onDetected={verify} onCancel={() => setScanning(false)} />;
 
     return (
-      <>
+      <div className="split split--pickup">
         <section className="surface scancard">
           <span className="scancard__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -117,6 +117,7 @@ export default function PickupPage({ screen }) {
           </form>
         </section>
 
+        <div className="split__panel">
         <div className="titlebar">
           <h2 className="page-title">Siap diambil</h2>
           {orders.length > 0 && <span className="count">{orders.length}</span>}
@@ -164,14 +165,15 @@ export default function PickupPage({ screen }) {
             ))}
           </ul>
         )}
-      </>
+        </div>
+      </div>
     );
   }
 
   return (
     <>
       <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container">{renderBody()}</main>
+      <main className="container container--wide">{renderBody()}</main>
     </>
   );
 }
