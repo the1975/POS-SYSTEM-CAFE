@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BottomBar from "../../components/layout/BottomBar";
 import { confirmCash } from "../../services/staffApi";
 import { formatRupiah } from "../../utils/format";
 import { changeFor, parseRupiahInput, quickAmounts } from "./cash";
@@ -11,6 +12,7 @@ export default function CashPaymentPanel({ order, token, onBack, onDone, onUnaut
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
   const enough = cash >= total;
+  const short = cash > 0 && !enough;
 
   async function onConfirm() {
     if (busy || !enough) return;
@@ -48,60 +50,48 @@ export default function CashPaymentPanel({ order, token, onBack, onDone, onUnaut
   }
 
   return (
-    <>
-      <button type="button" className="link-btn" onClick={onBack}>
-        ← Kembali
-      </button>
-      <h1 className="page-title">Bayar tunai · {order.order_number}</h1>
+    <div className="cashpanel">
+      <div className="cashhead">
+        <button type="button" className="header__back" aria-label="Kembali" onClick={onBack}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+        </button>
+        <span className="orow__no">{order.order_number}</span>
+        <span className="queue__name">{order.customer_name}</span>
+      </div>
 
-      <section className="surface summary" aria-label="Rincian pembayaran">
-        <div className="summary__row">
-          <span>Atas nama</span>
-          <span>{order.customer_name}</span>
-        </div>
-        <div className="summary__row summary__row--total">
-          <span>Total</span>
-          <strong>{formatRupiah(total)}</strong>
-        </div>
+      <section className="surface cashtotal" aria-label="Rincian pembayaran">
+        <span className="cashtotal__label">Total</span>
+        <strong className="cashtotal__value">{formatRupiah(total)}</strong>
       </section>
 
-      <div className="field cash__field">
+      <div className="field">
         <label className="field__label" htmlFor="cash-received">
           Uang diterima
         </label>
         <input
           id="cash-received"
-          className="input"
+          className="input cashinput"
           inputMode="numeric"
           autoComplete="off"
           placeholder="Rp0"
           value={cash ? formatRupiah(cash) : ""}
           onChange={(e) => setCash(parseRupiahInput(e.target.value))}
-          aria-invalid={cash > 0 && !enough}
+          aria-invalid={short}
         />
-        <div className="chips">
+        <div className="qa">
           {quickAmounts(total).map((v) => (
-            <button
-              key={v}
-              type="button"
-              className="chip"
-              aria-pressed={cash === v}
-              onClick={() => setCash(v)}
-            >
+            <button key={v} type="button" className="qa__btn" aria-pressed={cash === v} onClick={() => setCash(v)}>
               {v === Math.ceil(total) ? "Uang pas" : formatRupiah(v)}
             </button>
           ))}
         </div>
-        {cash > 0 && !enough && (
-          <p className="field__error" role="alert">
-            Uang belum mencukupi.
-          </p>
-        )}
       </div>
 
-      <div className="summary__row summary__row--total">
-        <span>Kembalian</span>
-        <strong>{enough ? formatRupiah(changeFor(total, cash)) : "—"}</strong>
+      <div className={`cashchange${enough ? " cashchange--ok" : short ? " cashchange--short" : ""}`} role={short ? "alert" : undefined}>
+        <span>{short ? "Kurang" : "Kembalian"}</span>
+        <strong>{enough ? formatRupiah(changeFor(total, cash)) : short ? formatRupiah(total - cash) : "—"}</strong>
       </div>
 
       {error && (
@@ -110,14 +100,7 @@ export default function CashPaymentPanel({ order, token, onBack, onDone, onUnaut
         </div>
       )}
 
-      <button
-        type="button"
-        className="btn btn--block"
-        disabled={!enough || busy}
-        onClick={onConfirm}
-      >
-        {busy ? "Memproses…" : "Konfirmasi pembayaran"}
-      </button>
-    </>
+      <BottomBar actionLabel="Konfirmasi pembayaran" onAction={onConfirm} loading={busy} disabled={!enough} />
+    </div>
   );
 }
