@@ -691,3 +691,7 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   color: inherit; text-decoration: none; background: #eef8f3; border: 2px solid var(--accent); border-radius: 20px;
 }
 .activeorder .urow__go { flex: none; width: 18px; height: 18px; color: var(--accent); }
+
+/* Bar tanpa ringkasan: satu tombol selebar bar */
+.bar__inner--solo { justify-content: center; }
+.bar__inner--solo .btn { width: 100%; justify-content: center; }

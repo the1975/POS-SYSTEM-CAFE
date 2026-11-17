@@ -99,12 +99,7 @@ export default function OrderPage() {
         )}
       </main>
       {status === "ready" && (
-        <BottomBar
-          label={`Pesanan ${order.order_number}`}
-          value={statusLabel(order.status)}
-          actionLabel="Pesan lagi"
-          to="/"
-        />
+        <BottomBar actionLabel="Pesan lagi" to="/" />
       )}
     </>
   );

@@ -10,13 +10,16 @@ const chevron = (
 // Bar aksi melayang di bawah layar (hijau gradasi).
 // Dengan `to` = tautan; dengan `onAction` = tombol (mis. kirim pesanan).
 export default function BottomBar({ label, value, actionLabel, to, onAction, loading, disabled, raised }) {
+  const solo = !label && !value; // tanpa teks ringkasan: hanya satu tombol selebar bar
   return (
     <div className={`bar${raised ? " bar--raised" : ""}`}>
-      <div className="bar__inner">
-        <div>
-          <p className="bar__label">{label}</p>
-          <p className="bar__value">{value}</p>
-        </div>
+      <div className={`bar__inner${solo ? " bar__inner--solo" : ""}`}>
+        {!solo && (
+          <div>
+            <p className="bar__label">{label}</p>
+            <p className="bar__value">{value}</p>
+          </div>
+        )}
         {to ? (
           <Link to={to} className="btn">
             {actionLabel}
