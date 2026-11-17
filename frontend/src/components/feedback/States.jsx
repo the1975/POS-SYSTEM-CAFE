@@ -4,14 +4,12 @@ export function LoadingList({ rows = 6 }) {
   return (
     <div aria-busy="true" aria-live="polite">
       <p className="muted">Memuat menu…</p>
-      <ul className="list surface">
+      <ul className="pgrid">
         {Array.from({ length: rows }, (_, i) => (
-          <li key={i} className="item item--skeleton" aria-hidden="true">
-            <span className="thumb skeleton" />
-            <span className="item__body">
-              <span className="skeleton skeleton--line" />
-              <span className="skeleton skeleton--line skeleton--short" />
-            </span>
+          <li key={i} className="pcard" aria-hidden="true">
+            <span className="pcard__thumb skeleton" />
+            <span className="skeleton skeleton--line" />
+            <span className="skeleton skeleton--line skeleton--short" />
           </li>
         ))}
       </ul>
