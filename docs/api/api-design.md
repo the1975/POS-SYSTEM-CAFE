@@ -1190,6 +1190,7 @@ Order item tidak dibuat sebagai order baru.
 Role:
 
 - PICKUP
+- CASHIER
 - ORDER_CONTROLLER
 - ADMIN
 - OWNER
@@ -1247,6 +1248,7 @@ Response:
 Role:
 
 - PICKUP
+- CASHIER
 - ORDER_CONTROLLER
 - ADMIN
 - OWNER

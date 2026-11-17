@@ -100,7 +100,7 @@ export default function CashPaymentPanel({ order, token, onBack, onDone, onUnaut
         </div>
       )}
 
-      <BottomBar actionLabel="Konfirmasi pembayaran" onAction={onConfirm} loading={busy} disabled={!enough} />
+      <BottomBar actionLabel="Konfirmasi pembayaran" onAction={onConfirm} loading={busy} disabled={!enough} raised />
     </div>
   );
 }

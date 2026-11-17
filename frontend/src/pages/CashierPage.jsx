@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EmptyState } from "../components/feedback/States";
 import StaffHeader from "../components/layout/StaffHeader";
+import StaffNav from "../components/layout/StaffNav";
 import AdminSearch from "../features/admin/AdminSearch";
 import CashPaymentPanel from "../features/cashier/CashPaymentPanel";
 import { useWaitingCash } from "../features/cashier/useWaitingCash";
@@ -22,7 +23,7 @@ export default function CashierPage({ screen }) {
   return (
     <>
       <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container container--wide">
+      <main className="container container--wide has-nav">
         <div className="split">
           <section className={`split__list${selected ? " is-away" : ""}`}>
             <div className="titlebar">
@@ -106,6 +107,7 @@ export default function CashierPage({ screen }) {
           )}
         </div>
       </main>
+      <StaffNav role={user.role} />
     </>
   );
 }

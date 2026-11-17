@@ -24,7 +24,7 @@ from app.modules.users.model import RoleName, User
 router = APIRouter(prefix="/pickup", tags=["pickup"])
 
 PickupUser = Annotated[
-    User, Depends(require_roles(RoleName.PICKUP, RoleName.CONTROLLER, RoleName.ADMIN))
+    User, Depends(require_roles(RoleName.PICKUP, RoleName.CASHIER, RoleName.CONTROLLER, RoleName.ADMIN))
 ]
 
 

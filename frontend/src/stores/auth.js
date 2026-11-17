@@ -4,7 +4,7 @@ export const SESSION_KEY = "monster-cafe:staff:v1";
 // Halaman awal tiap role (sesuai user-flow.md). Role tak dikenal = tidak punya halaman.
 export const ROLE_HOME = {
   ADMIN: "/admin",
-  CONTROLLER: "/controller",
+  CONTROLLER: "/dapur",
   KITCHEN: "/dapur",
   CASHIER: "/kasir",
   PICKUP: "/pickup",

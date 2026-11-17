@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EmptyState } from "../components/feedback/States";
 import StaffHeader from "../components/layout/StaffHeader";
+import StaffNav from "../components/layout/StaffNav";
 import { describePickupError } from "../features/pickup/errors";
 import { cleanToken, isPlausibleToken, itemCount, orderFromRow } from "../features/pickup/pickup";
 import QrScanner from "../features/pickup/QrScanner";
@@ -173,7 +174,8 @@ export default function PickupPage({ screen }) {
   return (
     <>
       <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container container--wide">{renderBody()}</main>
+      <main className="container container--wide has-nav">{renderBody()}</main>
+      <StaffNav role={user.role} />
     </>
   );
 }

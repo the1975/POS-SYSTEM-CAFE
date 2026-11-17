@@ -61,16 +61,16 @@ describe("role dan layar", () => {
     expect(homeForRole("CASHIER")).toBe("/kasir");
     expect(homeForRole("KITCHEN")).toBe("/dapur");
     expect(homeForRole("PICKUP")).toBe("/pickup");
-    expect(homeForRole("CONTROLLER")).toBe("/controller");
+    expect(homeForRole("CONTROLLER")).toBe("/dapur");
     expect(homeForRole("ADMIN")).toBe("/admin");
     expect(homeForRole("TUKANG_SULAP")).toBeNull();
   });
 
   it("layar yang boleh dibuka mengikuti aturan backend", () => {
-    expect(screensForRole("CASHIER").map((s) => s.path)).toEqual(["/kasir"]);
+    expect(screensForRole("CASHIER").map((s) => s.path)).toEqual(["/kasir", "/pickup"]);
     expect(screensForRole("KITCHEN").map((s) => s.path)).toEqual(["/dapur"]);
     expect(screensForRole("PICKUP").map((s) => s.path)).toEqual(["/pickup"]);
-    expect(screensForRole("ADMIN")).toHaveLength(5);
+    expect(screensForRole("ADMIN")).toHaveLength(4);
   });
 });
 

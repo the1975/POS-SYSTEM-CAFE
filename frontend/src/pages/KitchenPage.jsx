@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EmptyState } from "../components/feedback/States";
 import StaffHeader from "../components/layout/StaffHeader";
+import StaffNav from "../components/layout/StaffNav";
 import { describeKitchenError } from "../features/kitchen/errors";
 import KitchenOrderCard from "../features/kitchen/KitchenOrderCard";
 import { splitQueue } from "../features/kitchen/kitchen";
@@ -46,7 +47,7 @@ export default function KitchenPage({ screen }) {
   return (
     <>
       <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container container--wide">
+      <main className="container container--wide has-nav">
         {remake ? (
           <RemakePanel
             order={remake.order}
@@ -138,6 +139,7 @@ export default function KitchenPage({ screen }) {
           </>
         )}
       </main>
+      <StaffNav role={user.role} />
     </>
   );
 }

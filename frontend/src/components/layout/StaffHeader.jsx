@@ -27,7 +27,8 @@ export default function StaffHeader({ title, user, onLogout }) {
     };
   }, [open]);
 
-  const others = user ? screensForRole(user.role).filter((s) => s.path !== pathname) : [];
+  // Navbar bawah menangani pindah layar untuk staf; menu avatar hanya dipakai di layar Admin.
+  const others = user && pathname.startsWith("/admin") ? screensForRole(user.role).filter((s) => s.path !== pathname) : [];
 
   return (
     <header className="header">

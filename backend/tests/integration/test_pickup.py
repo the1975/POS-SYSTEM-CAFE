@@ -245,11 +245,11 @@ def test_verify_input_is_validated(client, staff):
         assert r.json()["error"]["code"] == "VALIDATION_ERROR"
 
 
-@pytest.mark.parametrize("role", ["CASHIER", "KITCHEN"])
+@pytest.mark.parametrize("role", ["KITCHEN"])
 def test_other_roles_cannot_use_pickup(client, staff_headers, role):
     assert client.get(f"{API}/pickup/orders", headers=staff_headers(role)).status_code == 403
 
 
-@pytest.mark.parametrize("role", ["PICKUP", "CONTROLLER", "ADMIN"])
+@pytest.mark.parametrize("role", ["PICKUP", "CASHIER", "CONTROLLER", "ADMIN"])
 def test_pickup_roles_can_list(client, staff_headers, role):
     assert client.get(f"{API}/pickup/orders", headers=staff_headers(role)).status_code == 200
