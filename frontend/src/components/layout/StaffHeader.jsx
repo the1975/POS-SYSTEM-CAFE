@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { screensForRole } from "../../features/staff/screens";
 import { ROLE_LABEL } from "../../stores/auth";
+import Logo from "../ui/Logo";
 
 // Header staf: judul layar + avatar. Avatar membuka menu akun (nama, role, pindah layar, keluar).
 export default function StaffHeader({ title, user, onLogout }) {
@@ -31,7 +32,10 @@ export default function StaffHeader({ title, user, onLogout }) {
   return (
     <header className="header">
       <div className="container header__inner staff-bar">
-        <span className="brand">{title}</span>
+        <span className="brand">
+          <Logo />
+          {title}
+        </span>
         {user && (
           <div className="acct" ref={box}>
             <button

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { EmptyState } from "../components/feedback/States";
+import BottomBar from "../components/layout/BottomBar";
 import Header from "../components/layout/Header";
 import PickupQr from "../features/orders/PickupQr";
 import { shouldShowPickupQr } from "../features/orders/pickupQr";
@@ -18,7 +19,7 @@ export default function OrderPage() {
   return (
     <>
       <Header title="Pesanan" />
-      <main className="container">
+      <main className={`container${status === "ready" ? " has-bar" : ""}`}>
         {status === "loading" && <p className="muted state">Memuat pesananmu…</p>}
 
         {status === "notfound" && (
@@ -94,12 +95,17 @@ export default function OrderPage() {
               </div>
             </section>
 
-            <Link to="/" className="btn btn--ghost btn--block">
-              Pesan lagi
-            </Link>
           </>
         )}
       </main>
+      {status === "ready" && (
+        <BottomBar
+          label={`Pesanan ${order.order_number}`}
+          value={statusLabel(order.status)}
+          actionLabel="Pesan lagi"
+          to="/"
+        />
+      )}
     </>
   );
 }

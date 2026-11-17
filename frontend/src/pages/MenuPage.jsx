@@ -1,6 +1,7 @@
 import Header from "../components/layout/Header";
 import CartBar from "../features/cart/CartBar";
 import CartPanel from "../features/cart/CartPanel";
+import ActiveOrderCard from "../features/orders/ActiveOrderCard";
 import CategoryTabs from "../features/menu/CategoryTabs";
 import ProductList from "../features/menu/ProductList";
 import SearchBox from "../features/menu/SearchBox";
@@ -17,6 +18,7 @@ export default function MenuPage() {
       <Header />
       {/* has-nav / has-bar: ruang di bawah agar konten terakhir tidak tertutup navbar dan bar keranjang */}
       <main className={`container${hasNav ? " has-nav" : ""}${count > 0 ? " has-bar" : ""}`}>
+        <ActiveOrderCard />
         <section className="intro">
           <h1 className="intro__title">Mau makan apa hari ini?</h1>
         </section>

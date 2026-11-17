@@ -41,3 +41,4 @@ export function saveOrderAccess(entry) {
 }
 
 export const getOrderAccess = (orderId) => read().find((o) => o.orderId === orderId) ?? null;
+export const getLatestOrderAccess = () => read()[0] ?? null;
