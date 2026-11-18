@@ -45,3 +45,16 @@ def test_qris_order_detail_shows_pending_payment(client, menu):
     order = _place(client, menu, "kunci-detail-002", method="QRIS")
     data = _detail(client, order).json()["data"]
     assert data["payment_status"] == "PENDING"
+
+
+def test_pending_order_detail_has_expires_at_then_none_after_paid(client, menu, db, staff_headers):
+    order = _place(client, menu, "kunci-detail-003")
+    assert _detail(client, order).json()["data"]["expires_at"] is not None
+
+    headers = staff_headers("CASHIER", "kasir@example.com")
+    client.post(
+        f"{API}/payments/{db.scalar(select(Payment.id))}/cash-confirm",
+        json={"cash_received": order["total"]},
+        headers=headers,
+    )
+    assert _detail(client, order).json()["data"]["expires_at"] is None

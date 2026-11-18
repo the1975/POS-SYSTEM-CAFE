@@ -85,6 +85,16 @@ class OrderRepository:
         )
         return self.db.scalar(stmt)
 
+    def latest_payment_expiry(self, order_id: uuid.UUID) -> datetime | None:
+        """Batas waktu bayar dari tagihan terbaru (None bila tidak ada)."""
+        stmt = (
+            select(Payment.expires_at)
+            .where(Payment.order_id == order_id)
+            .order_by(Payment.created_at.desc(), Payment.id.desc())
+            .limit(1)
+        )
+        return self.db.scalar(stmt)
+
     def mark_cancelled(self, order_id: uuid.UUID, at: datetime) -> bool:
         """PENDING -> CANCELLED secara ATOMIK. False bila order sudah tidak PENDING."""
         stmt = (

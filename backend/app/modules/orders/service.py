@@ -217,6 +217,7 @@ class OrderService:
             payment_method=order.payment_method,
             payment_status=self.repo.latest_payment_status(order.id),
             pickup_token=self._pickup_token(order),
+            expires_at=self._pending_expiry(order),
             items=[
                 OrderItemOut(name=i.product_name_snapshot, quantity=i.quantity, status=i.status)
                 for i in order.items
@@ -226,6 +227,14 @@ class OrderService:
             tax_amount=order.tax_amount,
             total=order.total,
         )
+
+    def _pending_expiry(self, order: Order) -> datetime | None:
+        if order.status != OrderStatus.PENDING.value:
+            return None
+        expiry = self.repo.latest_payment_expiry(order.id)
+        if expiry is not None and expiry.tzinfo is None:
+            expiry = expiry.replace(tzinfo=UTC)
+        return expiry
 
     def _pickup_token(self, order: Order) -> str | None:
         """Token pickup hanya terlihat customer saat pesanan siap diambil dan belum diambil."""

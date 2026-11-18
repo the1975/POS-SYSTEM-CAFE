@@ -17,3 +17,11 @@ export function createOrder({ customerName, paymentMethod, items }, idempotencyK
 export function getOrder(orderId, token, { signal } = {}) {
   return apiFetch(`/orders/${orderId}`, { headers: { "X-Tracking-Token": token }, signal });
 }
+
+// Batalkan pesanan yang belum dibayar. Token lewat header, sama seperti getOrder.
+export function cancelOrder(orderId, token) {
+  return apiFetch(`/orders/${orderId}/cancel`, {
+    method: "POST",
+    headers: { "X-Tracking-Token": token },
+  });
+}

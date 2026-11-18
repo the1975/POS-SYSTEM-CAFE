@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
 
@@ -59,6 +60,8 @@ class OrderDetailOut(BaseModel):
     payment_method: str
     payment_status: str | None
     pickup_token: str | None
+    # Batas bayar; hanya terisi selama order PENDING (untuk hitung mundur di customer).
+    expires_at: datetime | None = None
     items: list[OrderItemOut]
     subtotal: Money
     discount_amount: Money
