@@ -723,3 +723,9 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 /* ---------- Navbar layar staf (Link) ---------- */
 a.catnav__item { text-decoration: none; }
 .catnav__item[aria-current="page"] { color: var(--accent-text); background: var(--accent-grad); font-weight: 700; }
+
+/* Batalkan pesanan (customer) */
+.cancel { margin-bottom: 24px; }
+.cancel .btn--block { margin-top: 12px; }
+.btn--danger { color: var(--danger); border-color: var(--danger); }
+.btn--solid-danger { color: #fff; background: var(--danger-grad); }
