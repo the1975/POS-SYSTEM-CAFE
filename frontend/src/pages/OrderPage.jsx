@@ -5,6 +5,7 @@ import BottomBar from "../components/layout/BottomBar";
 import Header from "../components/layout/Header";
 import CancelOrder from "../features/orders/CancelOrder";
 import PickupQr from "../features/orders/PickupQr";
+import QrisPay from "../features/orders/QrisPay";
 import { shouldShowPickupQr } from "../features/orders/pickupQr";
 import { statusLabel } from "../features/orders/statusLabels";
 import { useOrder } from "../features/orders/useOrder";
@@ -55,6 +56,10 @@ export default function OrderPage() {
                 <PickupQr token={order.pickup_token} />
                 <p className="muted">Tunjukkan QR ini ke petugas. Jangan dibagikan ke orang lain.</p>
               </section>
+            )}
+
+            {order.status === "PENDING" && order.payment_method === "QRIS" && (
+              <QrisPay orderId={orderId} token={access.token} total={order.total} />
             )}
 
             {order.status === "PENDING" && order.payment_method === "CASH" && (
