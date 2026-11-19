@@ -19,4 +19,4 @@ def login(body: LoginIn, service: Annotated[AuthService, Depends(get_auth_servic
 
 @router.get("/me", response_model=DataResponse[UserOut])
 def me(user: CurrentUser):
-    return DataResponse(data=UserOut(id=user.id, name=user.name, role=user.role.name))
+    return DataResponse(data=UserOut(id=user.id, name=user.name, email=user.email, role=user.role.name))

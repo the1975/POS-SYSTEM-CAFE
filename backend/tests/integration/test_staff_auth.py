@@ -48,6 +48,7 @@ def test_login_returns_token_and_user_without_password(client, db):
     data = r.json()["data"]
     assert data["token_type"] == "bearer" and data["access_token"]
     assert data["user"]["role"] == "CASHIER"
+    assert data["user"]["email"] == "kasir@example.com"
     assert "password" not in r.text and "hash" not in r.text
 
 
@@ -73,6 +74,7 @@ def test_me_returns_current_user(client, db):
     r = client.get(f"{API}/auth/me", headers=_auth(token))
     assert r.status_code == 200
     assert r.json()["data"]["role"] == "CASHIER"
+    assert r.json()["data"]["email"] == "kasir@example.com"
 
 
 def test_me_requires_token(client):

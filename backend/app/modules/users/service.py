@@ -21,5 +21,5 @@ class AuthService:
             raise InvalidCredentialsError
         return LoginOut(
             access_token=create_access_token(user.id, user.role.name),
-            user=UserOut(id=user.id, name=user.name, role=user.role.name),
+            user=UserOut(id=user.id, name=user.name, email=user.email, role=user.role.name),
         )
