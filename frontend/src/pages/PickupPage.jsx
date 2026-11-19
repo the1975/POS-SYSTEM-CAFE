@@ -3,11 +3,18 @@ import { EmptyState } from "../components/feedback/States";
 import StaffHeader from "../components/layout/StaffHeader";
 import StaffNav from "../components/layout/StaffNav";
 import { describePickupError } from "../features/pickup/errors";
-import { cleanToken, isPlausibleToken, itemCount, orderFromRow } from "../features/pickup/pickup";
+import {
+  canManualPickup,
+  cleanToken,
+  filterPickupOrders,
+  isPlausibleToken,
+  itemCount,
+  orderFromRow,
+} from "../features/pickup/pickup";
 import QrScanner from "../features/pickup/QrScanner";
 import { usePickupQueue } from "../features/pickup/usePickupQueue";
 import VerifiedPanel from "../features/pickup/VerifiedPanel";
-import { verifyPickup } from "../services/staffApi";
+import { verifyPickup, verifyPickupManual } from "../services/staffApi";
 import { useAuth } from "../stores/AuthContext";
 
 // Layar Pickup (wireframes.md #19-#22): scan QR -> verifikasi -> serahkan -> selesaikan.
@@ -19,6 +26,9 @@ export default function PickupPage({ screen }) {
   const [problem, setProblem] = useState(null);
   const [manual, setManual] = useState("");
   const [busy, setBusy] = useState(false);
+  const [query, setQuery] = useState("");
+  const [manualTarget, setManualTarget] = useState(null);
+  const shown = filterPickupOrders(orders, query);
 
   async function verify(raw) {
     if (busy) return;
@@ -38,6 +48,27 @@ export default function PickupPage({ screen }) {
         logout();
         return;
       }
+      setProblem(describePickupError(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Pembeli kehilangan QR: kasir/admin memastikan orangnya, backend mencatatnya di audit log.
+  async function confirmManual() {
+    if (busy || !manualTarget) return;
+    setBusy(true);
+    setProblem(null);
+    try {
+      const res = await verifyPickupManual(token, manualTarget.pickup_id);
+      setManualTarget(null);
+      setVerified(res.data);
+    } catch (err) {
+      if (err?.status === 401) {
+        logout();
+        return;
+      }
+      setManualTarget(null);
       setProblem(describePickupError(err));
     } finally {
       setBusy(false);
@@ -64,6 +95,25 @@ export default function PickupPage({ screen }) {
           }}
           onUnauthorized={logout}
         />
+      );
+    }
+    if (manualTarget) {
+      return (
+        <section className="state" role="alertdialog" aria-labelledby="manual-title">
+          <h1 id="manual-title" className="state__title">
+            Serahkan tanpa QR?
+          </h1>
+          <p className="muted">
+            Pesanan {manualTarget.order_number} atas nama {manualTarget.customer_name}. Pastikan orangnya benar
+            dulu. Tindakan ini dicatat.
+          </p>
+          <button type="button" className="btn btn--block" disabled={busy} onClick={confirmManual}>
+            {busy ? "Memproses…" : "Ya, lanjut serahkan"}
+          </button>
+          <button type="button" className="btn btn--ghost btn--block" disabled={busy} onClick={() => setManualTarget(null)}>
+            Batal
+          </button>
+        </section>
       );
     }
     if (problem) {
@@ -123,6 +173,16 @@ export default function PickupPage({ screen }) {
           <h2 className="page-title">Siap diambil</h2>
           {orders.length > 0 && <span className="count">{orders.length}</span>}
         </div>
+        {orders.length > 0 && (
+          <input
+            className="input"
+            type="search"
+            placeholder="Cari nomor atau nama"
+            aria-label="Cari pesanan siap diambil"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        )}
         {status === "stale" && (
           <p className="muted queue__note" role="status">
             Gagal memperbarui daftar. Mencoba lagi otomatis…
@@ -144,9 +204,10 @@ export default function PickupPage({ screen }) {
             hint="Pesanan yang selesai dimasak muncul di sini otomatis."
           />
         )}
-        {orders.length > 0 && (
+        {orders.length > 0 && shown.length === 0 && <p className="muted state">Tidak ada pesanan yang cocok.</p>}
+        {shown.length > 0 && (
           <ul className="list surface ugroup__list">
-            {orders.map((o) => (
+            {shown.map((o) => (
               <li key={o.pickup_id} className="urow urow--static">
                 <span className="orow__no">{o.order_number}</span>
                 <span className="queue__main">
@@ -158,6 +219,10 @@ export default function PickupPage({ screen }) {
                 {o.verified ? (
                   <button type="button" className="btn btn--sm" onClick={() => setVerified(orderFromRow(o))}>
                     Selesaikan
+                  </button>
+                ) : canManualPickup(user.role) ? (
+                  <button type="button" className="btn btn--sm btn--ghost" onClick={() => setManualTarget(o)}>
+                    Serahkan tanpa QR
                   </button>
                 ) : (
                   <span className="pill">Belum scan</span>
