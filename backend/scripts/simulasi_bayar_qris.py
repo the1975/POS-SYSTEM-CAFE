@@ -37,7 +37,10 @@ def main() -> None:
             .limit(1)
         )
     if payment is None:
-        sys.exit("Pesanan tidak ditemukan.")
+        with get_session_factory()() as db:
+            recent = db.scalars(select(Order).order_by(Order.created_at.desc()).limit(5)).all()
+        daftar = ", ".join(o.order_number for o in recent) or "(belum ada pesanan sama sekali)"
+        sys.exit(f"Pesanan tidak ditemukan. Pesanan terbaru di database: {daftar}")
     if not payment.provider_transaction_id:
         sys.exit("Belum ada tagihan QRIS. Buka halaman pesanan dulu sampai QR tampil.")
 
