@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 // Token tidak ditampilkan sebagai teks: hanya dalam bentuk QR untuk dipindai petugas.
-export default function PickupQr({ token }) {
+export default function PickupQr({ token, alt = "QR pengambilan pesanan" }) {
   const [src, setSrc] = useState(null);
   const [failed, setFailed] = useState(false);
 
@@ -32,6 +32,6 @@ export default function PickupQr({ token }) {
   if (failed) return <p className="muted">QR belum bisa ditampilkan. Muat ulang halaman ini.</p>;
   if (!src) return <span className="pickup__qr skeleton" aria-hidden="true" />;
   return (
-    <img className="pickup__qr" src={src} width="320" height="320" alt="QR pengambilan pesanan" />
+    <img className="pickup__qr" src={src} width="320" height="320" alt={alt} />
   );
 }
