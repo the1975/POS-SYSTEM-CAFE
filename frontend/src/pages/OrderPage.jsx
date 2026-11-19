@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { EmptyState } from "../components/feedback/States";
 import BottomBar from "../components/layout/BottomBar";
 import Header from "../components/layout/Header";
+import CancelOrder from "../features/orders/CancelOrder";
 import PickupQr from "../features/orders/PickupQr";
 import { shouldShowPickupQr } from "../features/orders/pickupQr";
 import { statusLabel } from "../features/orders/statusLabels";
@@ -63,6 +64,10 @@ export default function OrderPage() {
                   Sebutkan nomor {order.order_number} ke kasir dan bayar {formatRupiah(order.total)}.
                 </p>
               </section>
+            )}
+
+            {order.status === "PENDING" && (
+              <CancelOrder orderId={orderId} token={access.token} order={order} onChanged={reload} />
             )}
 
             <ul className="list surface">
