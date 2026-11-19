@@ -94,12 +94,12 @@ export default function CheckoutPage() {
             onChange={() => c.setMethod("CASH")}
             icon={<><rect x="2" y="6" width="20" height="12" rx="2" /><circle cx="12" cy="12" r="2.5" /></>}
           />
-          {/* QRIS belum aktif: pembayarannya dibangun di tahap Payments. */}
           <Option
             value="QRIS"
             title="QRIS"
-            hint="Segera hadir"
-            disabled
+            hint="Bayar lewat e-wallet / m-banking"
+            checked={c.method === "QRIS"}
+            onChange={() => c.setMethod("QRIS")}
             icon={<><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3M21 14v7h-4" /></>}
           />
         </fieldset>
