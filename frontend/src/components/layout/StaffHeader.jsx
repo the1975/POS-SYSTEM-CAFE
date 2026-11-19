@@ -53,6 +53,7 @@ export default function StaffHeader({ title, user, onLogout }) {
               <div className="acct__menu" role="menu">
                 <div className="acct__who">
                   <strong>{user.name}</strong>
+                  {user.email && <span className="muted acct__email">{user.email}</span>}
                   <span className="acct__role">{ROLE_LABEL[user.role] ?? user.role}</span>
                 </div>
                 {others.length > 0 && (

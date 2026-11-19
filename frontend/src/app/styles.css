@@ -729,3 +729,6 @@ a.catnav__item { text-decoration: none; }
 .cancel .btn--block { margin-top: 12px; }
 .btn--danger { color: var(--danger); border-color: var(--danger); }
 .btn--solid-danger { color: #fff; background: var(--danger-grad); }
+
+/* Email di menu akun */
+.acct__email { font-size: 0.8125rem; overflow-wrap: anywhere; }
