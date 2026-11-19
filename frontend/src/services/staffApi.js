@@ -180,3 +180,8 @@ export function getPeakHours(token, { startDate, endDate, signal }) {
     signal,
   });
 }
+
+// Verifikasi tanpa QR (pembeli kehilangan token). Hanya kasir/admin, dicatat di audit log.
+export function verifyPickupManual(token, pickupId) {
+  return apiFetch(`/pickup/${pickupId}/verify-manual`, { method: "POST", headers: authHeader(token) });
+}

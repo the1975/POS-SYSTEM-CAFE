@@ -26,3 +26,15 @@ export const orderFromRow = (row) => ({
   payment_status: null,
   items: row.items,
 });
+
+// Verifikasi manual (tanpa QR) hanya untuk kasir dan admin, sama dengan aturan backend.
+export const canManualPickup = (role) => role === "CASHIER" || role === "ADMIN";
+
+// Cari di daftar siap diambil lewat nomor pesanan atau nama pemesan.
+export function filterPickupOrders(orders, query) {
+  const q = String(query ?? "").trim().toLowerCase();
+  if (!q) return orders;
+  return orders.filter(
+    (o) => o.order_number.toLowerCase().includes(q) || o.customer_name.toLowerCase().includes(q)
+  );
+}
