@@ -253,3 +253,24 @@ def test_other_roles_cannot_use_pickup(client, staff_headers, role):
 @pytest.mark.parametrize("role", ["PICKUP", "CASHIER", "CONTROLLER", "ADMIN"])
 def test_pickup_roles_can_list(client, staff_headers, role):
     assert client.get(f"{API}/pickup/orders", headers=staff_headers(role)).status_code == 200
+
+
+def test_manual_verify_cashier_only_then_complete_and_audited(client, db, menu, staff):
+    from app.modules.audit.model import AuditLog
+
+    order = _ready_order(client, db, menu, staff, "kunci-manual-001")
+    rows = client.get(f"{API}/pickup/orders", headers=staff["pickup"]).json()["data"]
+    row = next(r for r in rows if r["order_number"] == order["order_number"])
+    assert row["verified"] is False
+
+    url = f"{API}/pickup/{row['pickup_id']}/verify-manual"
+    assert client.post(url, headers=staff["pickup"]).status_code == 403
+
+    ok = client.post(url, headers=staff["cashier"])
+    assert ok.status_code == 200
+    assert ok.json()["data"]["order_number"] == order["order_number"]
+
+    done = client.post(f"{API}/pickup/{row['pickup_id']}/complete", headers=staff["cashier"])
+    assert done.status_code == 200
+    log = db.scalar(select(AuditLog).where(AuditLog.action == "PICKUP_MANUAL_VERIFY"))
+    assert log is not None and log.new_value["order_number"] == order["order_number"]

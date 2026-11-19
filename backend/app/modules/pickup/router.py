@@ -28,6 +28,10 @@ PickupUser = Annotated[
 ]
 
 
+# Verifikasi manual (tanpa token) lebih sensitif: hanya kasir dan admin.
+ManualUser = Annotated[User, Depends(require_roles(RoleName.CASHIER, RoleName.ADMIN))]
+
+
 def get_pickup_service(db: Annotated[Session, Depends(get_db)]) -> PickupService:
     return PickupService(PickupRepository(db), OrderRepository(db))
 
@@ -50,6 +54,11 @@ def list_pickup_orders(
 @router.post("/verify", response_model=DataResponse[PickupVerifyOut])
 def verify_pickup(body: PickupVerifyIn, service: ServiceDep, user: PickupUser):
     return DataResponse(data=service.verify(body.pickup_token, user.id))
+
+
+@router.post("/{pickup_id}/verify-manual", response_model=DataResponse[PickupVerifyOut])
+def verify_pickup_manual(pickup_id: uuid.UUID, service: ServiceDep, user: ManualUser):
+    return DataResponse(data=service.verify_manual(pickup_id, user.id))
 
 
 @router.post("/{pickup_id}/complete", response_model=DataResponse[PickupCompleteOut])

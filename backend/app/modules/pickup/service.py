@@ -9,6 +9,7 @@ from sqlalchemy.engine import Row
 
 from app.core.responses import Pagination, build_pagination
 from app.core.security import hash_token
+from app.modules.audit.model import AuditLog
 from app.modules.orders.history_model import OrderStatusHistory
 from app.modules.orders.model import OrderStatus
 from app.modules.orders.repository import OrderRepository
@@ -72,6 +73,42 @@ class PickupService:
         try:
             if not self.pickups.record_verification(pickup.id, user_id, datetime.now(UTC)):
                 raise PickupAlreadyCompletedError  # selesai di tengah jalan
+            self.pickups.commit()
+        except Exception:
+            self.pickups.rollback()
+            raise
+        return PickupVerifyOut(
+            pickup_id=pickup.id,
+            order_number=order.order_number,
+            customer_name=order.customer_name,
+            status=order.status,
+            payment_status=self.orders.latest_payment_status(order.id),
+            items=_items_out(self.pickups.items(order.id)),
+        )
+
+    def verify_manual(self, pickup_id: uuid.UUID, user_id: uuid.UUID) -> PickupVerifyOut:
+        """Verifikasi TANPA token (pembeli kehilangan QR). Petugas yang memastikan orangnya,
+        dan setiap kejadian dicatat di audit log."""
+        pickup = self.pickups.get_pickup_row(pickup_id)
+        if pickup is None:
+            raise PickupNotFoundError
+        if pickup.status == PickupStatus.COMPLETED.value:
+            raise PickupAlreadyCompletedError
+        order = self.pickups.get_order_summary(pickup.order_id)
+        if order is None or order.status not in PICKUP_ORDER_STATUSES:
+            raise PickupInvalidStateError
+        try:
+            if not self.pickups.record_verification(pickup.id, user_id, datetime.now(UTC)):
+                raise PickupAlreadyCompletedError
+            self.pickups.add(
+                AuditLog(
+                    user_id=user_id,
+                    action="PICKUP_MANUAL_VERIFY",
+                    entity_type="pickup",
+                    entity_id=pickup.id,
+                    new_value={"order_number": order.order_number},
+                )
+            )
             self.pickups.commit()
         except Exception:
             self.pickups.rollback()
