@@ -42,6 +42,21 @@ class AnalyticsRepository:
         )
         return Decimal(str(revenue)), int(orders), int(units or 0)
 
+    def gross_profit(self, start: datetime, end: datetime) -> Decimal:
+        """Laba kotor = penjualan item (tanpa pajak) - HPP. Hanya item yang HPP-nya tercatat."""
+        flt = self._paid_in_range(start, end)
+        value = self.db.scalar(
+            select(
+                func.coalesce(
+                    func.sum(OrderItem.subtotal - OrderItem.unit_cost * OrderItem.quantity), 0
+                )
+            )
+            .select_from(OrderItem)
+            .join(Order, Order.id == OrderItem.order_id)
+            .where(*flt, OrderItem.unit_cost.is_not(None))
+        )
+        return Decimal(str(value))
+
     def top_products(self, start: datetime, end: datetime, limit: int) -> list:
         flt = self._paid_in_range(start, end)
         units = func.sum(OrderItem.quantity)

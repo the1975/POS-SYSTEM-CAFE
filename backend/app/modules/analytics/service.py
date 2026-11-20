@@ -44,6 +44,7 @@ class AnalyticsService:
             orders=orders,
             units_sold=units,
             average_order_value=average,
+            gross_profit=self.repo.gross_profit(start_dt, end_dt),
         )
 
     def top_products(

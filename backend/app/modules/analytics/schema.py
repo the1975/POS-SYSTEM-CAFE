@@ -19,8 +19,9 @@ class SummaryOut(BaseModel):
     orders: int
     units_sold: int
     average_order_value: Decimal
+    gross_profit: Decimal  # penjualan item (tanpa pajak) dikurangi HPP
 
-    @field_serializer("revenue", "average_order_value", when_used="json")
+    @field_serializer("revenue", "average_order_value", "gross_profit", when_used="json")
     def _as_number(self, value: Decimal) -> int | float:
         return _money(value)
 

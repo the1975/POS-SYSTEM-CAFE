@@ -147,3 +147,18 @@ def test_invalid_ranges_and_params_rejected(client, staff_headers):
     for limit in (0, 21):
         r = client.get(f"{API}/products/top", params={"limit": limit}, headers=admin)
         assert r.status_code == 422
+
+
+def test_summary_gross_profit_uses_item_cost_without_tax(client, staff_headers, sales, db):
+    from sqlalchemy import update
+
+    db.execute(update(OrderItem).values(unit_cost=Decimal(3000)))
+    db.commit()
+    data = client.get(f"{API}/summary", params=DAY, headers=staff_headers("ADMIN")).json()["data"]
+    # n1: es 2x(8000-3000) + nasi 1x(25000-3000) = 32000; n2: nasi 2x22000 = 44000; n3: es 5000
+    assert data["gross_profit"] == 81000
+
+
+def test_summary_gross_profit_zero_when_cost_unknown(client, staff_headers, sales):
+    data = client.get(f"{API}/summary", params=DAY, headers=staff_headers("ADMIN")).json()["data"]
+    assert data["gross_profit"] == 0
