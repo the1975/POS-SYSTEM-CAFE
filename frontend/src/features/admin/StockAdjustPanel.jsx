@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { adjustStock } from "../../services/staffApi";
+import { adjustStock, setReorderLevel } from "../../services/staffApi";
 import {
   MAX_REASON,
   STOCK_ACTIONS,
@@ -7,6 +7,7 @@ import {
   buildAdjustBody,
   describeStockError,
   isAdjustValid,
+  parseReorderLevel,
   stockAfter,
 } from "./stock";
 
@@ -17,6 +18,9 @@ export default function StockAdjustPanel({ token, item, onBack, onDone, onUnauth
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(null);
+  const [minText, setMinText] = useState(String(item.reorder_level ?? 0));
+  const [minBusy, setMinBusy] = useState(false);
+  const [minNote, setMinNote] = useState("");
 
   const current = item.quantity_available;
   const after = stockAfter(current, actionId, qty);
@@ -38,6 +42,26 @@ export default function StockAdjustPanel({ token, item, onBack, onDone, onUnauth
       }
       setError(describeStockError(err));
       setBusy(false);
+    }
+  }
+
+  async function onSaveMin(e) {
+    e.preventDefault();
+    const level = parseReorderLevel(minText);
+    if (minBusy || level === null) return;
+    setMinBusy(true);
+    setMinNote("");
+    try {
+      await setReorderLevel(token, item.product_id, level);
+      setMinNote("Batas minimum disimpan.");
+    } catch (err) {
+      if (err?.status === 401) {
+        onUnauthorized();
+        return;
+      }
+      setMinNote("Belum tersimpan. Periksa angkanya lalu coba lagi.");
+    } finally {
+      setMinBusy(false);
     }
   }
 
@@ -128,6 +152,34 @@ export default function StockAdjustPanel({ token, item, onBack, onDone, onUnauth
             {busy ? "Menyimpan…" : "Simpan"}
           </button>
         </div>
+      </form>
+
+      <form onSubmit={onSaveMin} noValidate>
+        <div className="field">
+          <label className="field__label" htmlFor="stock-min">
+            Batas minimum
+          </label>
+          <input
+            id="stock-min"
+            className="input"
+            inputMode="numeric"
+            autoComplete="off"
+            value={minText}
+            onChange={(e) => {
+              setMinText(e.target.value);
+              setMinNote("");
+            }}
+          />
+          <p className="muted">Stok tersedia sama dengan atau di bawah angka ini diberi tanda Menipis. Isi 0 untuk mematikan.</p>
+        </div>
+        {minNote && (
+          <p className="muted" role="status">
+            {minNote}
+          </p>
+        )}
+        <button type="submit" className="btn btn--ghost btn--block" disabled={minBusy || parseReorderLevel(minText) === null}>
+          {minBusy ? "Menyimpan…" : "Simpan batas minimum"}
+        </button>
       </form>
     </>
   );
