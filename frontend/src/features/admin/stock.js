@@ -50,7 +50,17 @@ export function buildAdjustBody(actionId, qtyText, reason) {
 
 // Status stok untuk label di daftar.
 export function stockLabel(item) {
-  return item.quantity_available <= 0 ? "Habis" : null;
+  if (item.quantity_available <= 0) return "Habis";
+  if (item.reorder_level > 0 && item.quantity_available <= item.reorder_level) return "Menipis";
+  return null;
+}
+
+// Batas minimum: bilangan bulat 0..100000 (0 = tanpa peringatan). Selain itu null.
+export function parseReorderLevel(text) {
+  const clean = String(text ?? "").trim();
+  if (!/^\d{1,6}$/.test(clean)) return null;
+  const n = Number(clean);
+  return n <= MAX_QTY ? n : null;
 }
 
 // Saat koneksi/server gagal hasilnya tidak pasti: cek angka stok di daftar dulu sebelum mengulang.

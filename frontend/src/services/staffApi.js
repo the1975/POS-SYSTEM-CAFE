@@ -185,3 +185,12 @@ export function getPeakHours(token, { startDate, endDate, signal }) {
 export function verifyPickupManual(token, pickupId) {
   return apiFetch(`/pickup/${pickupId}/verify-manual`, { method: "POST", headers: authHeader(token) });
 }
+
+// Batas minimum stok per produk (0 = tanpa peringatan). Hanya admin.
+export function setReorderLevel(token, productId, level) {
+  return apiFetch(`/inventory/${productId}/reorder-level`, {
+    method: "PATCH",
+    headers: authHeader(token),
+    body: JSON.stringify({ reorder_level: level }),
+  });
+}
