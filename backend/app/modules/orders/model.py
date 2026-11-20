@@ -112,6 +112,8 @@ class OrderItem(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
     product_name_snapshot: Mapped[str] = mapped_column(String(150), nullable=False)
     unit_price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
+    # Snapshot HPP saat order dibuat (laba kotor tetap benar walau HPP produk berubah).
+    unit_cost: Mapped[Decimal | None] = mapped_column(Numeric(12, 2))
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     subtotal: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     status: Mapped[str] = mapped_column(

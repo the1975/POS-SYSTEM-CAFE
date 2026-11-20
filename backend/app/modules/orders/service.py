@@ -132,6 +132,7 @@ class OrderService:
                     # Snapshot: histori tetap benar walau nama/harga produk berubah kemudian.
                     product_name_snapshot=product.name,
                     unit_price=product.price,
+                    unit_cost=product.cost_price,
                     quantity=quantity,
                     subtotal=line_total,
                     status=OrderItemStatus.PENDING.value,
