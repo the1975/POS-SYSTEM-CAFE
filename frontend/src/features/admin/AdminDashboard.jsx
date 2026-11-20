@@ -26,6 +26,13 @@ const kpis = (s) => [
     icon: <><path d="M5 8h11v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8z" /><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3v2M12 3v2" /></>,
   },
   { label: "Rata-rata order", value: formatRupiah(s.average_order_value), icon: <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /> },
+  {
+    label: "Laba kotor",
+    value: formatRupiah(s.gross_profit ?? 0),
+    note: "Penjualan tanpa pajak dikurangi HPP",
+    wide: true,
+    icon: <path d="M3 17l6-6 4 4 8-8M15 7h6v6" />,
+  },
 ];
 
 export default function AdminDashboard({ token, onUnauthorized }) {
@@ -72,12 +79,13 @@ export default function AdminDashboard({ token, onUnauthorized }) {
         <>
           <div className="dash__cards">
             {kpis(summary).map((k) => (
-              <div key={k.label} className="surface dash__card">
+              <div key={k.label} className={`surface dash__card${k.wide ? " dash__card--wide" : ""}`}>
                 <div className="dash__head">
                   <span className="muted">{k.label}</span>
                   <span className="dash__icon"><Svg>{k.icon}</Svg></span>
                 </div>
                 <strong className="dash__value">{k.value}</strong>
+                {k.note && <span className="muted">{k.note}</span>}
               </div>
             ))}
           </div>

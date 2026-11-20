@@ -732,3 +732,6 @@ a.catnav__item { text-decoration: none; }
 
 /* Email di menu akun */
 .acct__email { font-size: 0.8125rem; overflow-wrap: anywhere; }
+
+/* Kartu laba kotor selebar grid */
+.dash__card--wide { grid-column: 1 / -1; }
