@@ -9,7 +9,13 @@ from sqlalchemy.orm import Session
 from app.core.responses import DataResponse, PageResponse
 from app.db.dependencies import get_db
 from app.modules.inventory.admin_repository import InventoryAdminRepository
-from app.modules.inventory.admin_schema import StockAdjustIn, StockAdjustOut, StockItemOut
+from app.modules.inventory.admin_schema import (
+    ReorderLevelIn,
+    ReorderLevelOut,
+    StockAdjustIn,
+    StockAdjustOut,
+    StockItemOut,
+)
 from app.modules.inventory.admin_service import InventoryAdminService
 from app.modules.users.dependencies import require_roles
 from app.modules.users.model import RoleName, User
@@ -44,3 +50,10 @@ def list_stock(
 @router.post("/{product_id}/adjust", response_model=DataResponse[StockAdjustOut])
 def adjust_stock(product_id: uuid.UUID, body: StockAdjustIn, service: ServiceDep, admin: AdminUser):
     return DataResponse(data=service.adjust(product_id, body, admin))
+
+
+@router.patch("/{product_id}/reorder-level", response_model=DataResponse[ReorderLevelOut])
+def set_reorder_level(
+    product_id: uuid.UUID, body: ReorderLevelIn, service: ServiceDep, admin: AdminUser
+):
+    return DataResponse(data=service.set_reorder_level(product_id, body, admin))

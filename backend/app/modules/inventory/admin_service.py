@@ -4,7 +4,14 @@ import uuid
 
 from app.core.responses import Pagination, build_pagination
 from app.modules.inventory.admin_repository import InventoryAdminRepository
-from app.modules.inventory.admin_schema import StockAdjustIn, StockAdjustOut, StockItemOut
+from app.modules.audit.model import AuditLog
+from app.modules.inventory.admin_schema import (
+    ReorderLevelIn,
+    ReorderLevelOut,
+    StockAdjustIn,
+    StockAdjustOut,
+    StockItemOut,
+)
 from app.modules.inventory.exceptions import AdjustExceedsStockError
 from app.modules.inventory.model import StockMovement
 from app.modules.products.exceptions import ProductNotFoundError
@@ -59,4 +66,31 @@ class InventoryAdminService:
             product_id=product_id,
             product_name=product.name,
             quantity_available=self.repo.available_now(product_id) or 0,
+        )
+
+    def set_reorder_level(
+        self, product_id: uuid.UUID, data: ReorderLevelIn, admin: User
+    ) -> ReorderLevelOut:
+        product = self.repo.get_product(product_id)
+        old = self.repo.get_reorder_level(product_id)
+        if product is None or old is None:
+            raise ProductNotFoundError
+        try:
+            self.repo.set_reorder_level(product_id, data.reorder_level)
+            self.repo.add(
+                AuditLog(
+                    user_id=admin.id,
+                    action="UPDATE_REORDER_LEVEL",
+                    entity_type="product",
+                    entity_id=product_id,
+                    old_value={"reorder_level": old},
+                    new_value={"reorder_level": data.reorder_level},
+                )
+            )
+            self.repo.commit()
+        except Exception:
+            self.repo.rollback()
+            raise
+        return ReorderLevelOut(
+            product_id=product_id, product_name=product.name, reorder_level=data.reorder_level
         )

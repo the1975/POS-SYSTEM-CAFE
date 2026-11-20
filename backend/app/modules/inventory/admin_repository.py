@@ -67,6 +67,20 @@ class InventoryAdminRepository:
             select(Inventory.quantity_available).where(Inventory.product_id == product_id)
         )
 
+    def get_reorder_level(self, product_id: uuid.UUID) -> int | None:
+        return self.db.scalar(
+            select(Inventory.reorder_level).where(Inventory.product_id == product_id)
+        )
+
+    def set_reorder_level(self, product_id: uuid.UUID, level: int) -> bool:
+        stmt = (
+            update(Inventory)
+            .where(Inventory.product_id == product_id)
+            .values(reorder_level=level)
+            .execution_options(synchronize_session=False)
+        )
+        return self.db.execute(stmt).rowcount == 1
+
     def add(self, *objects) -> None:
         self.db.add_all(objects)
         self.db.flush()

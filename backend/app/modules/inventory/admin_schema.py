@@ -46,3 +46,13 @@ class StockAdjustOut(BaseModel):
     product_id: uuid.UUID
     product_name: str
     quantity_available: int
+
+
+class ReorderLevelIn(BaseModel):
+    reorder_level: int = Field(ge=0, le=MAX_QTY, description="0 = tanpa peringatan.")
+
+
+class ReorderLevelOut(BaseModel):
+    product_id: uuid.UUID
+    product_name: str
+    reorder_level: int

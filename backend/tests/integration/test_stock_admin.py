@@ -60,3 +60,25 @@ def test_adjust_unknown_or_forbidden(client, menu, staff_headers):
     h = staff_headers("ADMIN")
     no_inv = client.post(f"{API}/inventory/{menu['jus']}/adjust", json=body, headers=h)
     assert no_inv.status_code == 404 and no_inv.json()["error"]["code"] == "PRODUCT_NOT_FOUND"
+
+
+def test_set_reorder_level_shows_in_list_and_is_audited(client, menu, db, staff_headers):
+    from app.modules.audit.model import AuditLog
+
+    h = staff_headers("ADMIN")
+    url = f"{API}/inventory/{menu['es_teh']}/reorder-level"
+    r = client.patch(url, json={"reorder_level": 4}, headers=h)
+    assert r.status_code == 200 and r.json()["data"]["reorder_level"] == 4
+    rows = client.get(f"{API}/inventory?search=teh", headers=h).json()["data"]
+    assert rows[0]["reorder_level"] == 4
+    log = db.scalar(select(AuditLog).where(AuditLog.action == "UPDATE_REORDER_LEVEL"))
+    assert log.old_value == {"reorder_level": 0} and log.new_value == {"reorder_level": 4}
+
+
+def test_set_reorder_level_validation_and_access(client, menu, staff_headers):
+    url = f"{API}/inventory/{menu['es_teh']}/reorder-level"
+    assert client.patch(url, json={"reorder_level": 1}, headers=staff_headers("CASHIER")).status_code == 403
+    h = staff_headers("ADMIN")
+    assert client.patch(url, json={"reorder_level": -1}, headers=h).status_code == 422
+    missing = client.patch(f"{API}/inventory/{menu['jus']}/reorder-level", json={"reorder_level": 2}, headers=h)
+    assert missing.status_code == 404
