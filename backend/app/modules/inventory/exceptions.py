@@ -15,3 +15,10 @@ class ReservationNotActiveError(ConflictError):
 
     def __init__(self) -> None:
         super().__init__("Stok pesanan ini sudah tidak ditahan (kedaluwarsa atau dibatalkan).")
+
+
+class AdjustExceedsStockError(ConflictError):
+    code = "ADJUST_EXCEEDS_STOCK"
+
+    def __init__(self) -> None:
+        super().__init__("Stok tidak cukup untuk dikurangi sebanyak itu.")
