@@ -55,7 +55,6 @@ export default function CartPage() {
             <strong>{formatRupiah(subtotal)}</strong>
           </div>
           {/* Jujur soal angka: total akhir dihitung server dari harga terbaru di database. */}
-          <p className="muted summary__note">Pajak dihitung saat pesanan dibuat.</p>
         </section>
       </main>
       <BottomBar

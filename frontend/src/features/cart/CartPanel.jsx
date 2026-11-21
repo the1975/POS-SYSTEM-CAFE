@@ -29,7 +29,6 @@ export default function CartPanel() {
           <span>Subtotal · {count} item</span>
           <strong>{formatRupiah(subtotal)}</strong>
         </div>
-        <p className="muted summary__note">Pajak dihitung saat pesanan dibuat.</p>
         {items.length > 0 ? (
           <Link to="/pemesanan" className="btn btn--block">
             Checkout

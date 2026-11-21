@@ -95,10 +95,12 @@ export default function OrderPage() {
                   <span>−{formatRupiah(order.discount_amount)}</span>
                 </div>
               )}
-              <div className="summary__row summary__row--item">
-                <span>Pajak</span>
-                <span>{formatRupiah(order.tax_amount)}</span>
-              </div>
+              {Number(order.tax_amount) > 0 && (
+                <div className="summary__row summary__row--item">
+                  <span>Pajak</span>
+                  <span>{formatRupiah(order.tax_amount)}</span>
+                </div>
+              )}
               <div className="summary__row summary__row--total">
                 <span>Total</span>
                 <strong>{formatRupiah(order.total)}</strong>

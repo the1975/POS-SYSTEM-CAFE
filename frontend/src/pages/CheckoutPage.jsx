@@ -117,7 +117,6 @@ export default function CheckoutPage() {
             <span>Subtotal</span>
             <strong>{formatRupiah(subtotal)}</strong>
           </div>
-          <p className="muted summary__note">Pajak dihitung saat pesanan dibuat.</p>
         </section>
       </main>
       <BottomBar
