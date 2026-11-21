@@ -100,7 +100,7 @@ def client(db) -> TestClient:
                 InventoryRepository(db),
                 reservation_timeout_minutes=s.reservation_timeout_minutes,
             ),
-            tax_rate_percent=s.tax_rate_percent,
+            tax_rate_percent=Decimal(10),  # tes memakai pajak 10%, tidak ikut pengaturan .env
             max_quantity_per_item=s.max_quantity_per_item,
         )
 

@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     reservation_timeout_minutes: int = 7
     # Tarif pajak (%) pada order. Nilai kerja sementara; sesuaikan dengan aturan pajak daerah
     # dan konfirmasi ke akuntan sebelum dipakai di produksi.
-    tax_rate_percent: Decimal = Field(default=Decimal(10), ge=0, le=100)
+    tax_rate_percent: Decimal = Field(default=Decimal(0), ge=0, le=100)
     max_quantity_per_item: int = Field(default=20, ge=1, le=999)
     # Kunci rahasia untuk token tracking order. WAJIB di production.
     tracking_token_secret: SecretStr | None = None
