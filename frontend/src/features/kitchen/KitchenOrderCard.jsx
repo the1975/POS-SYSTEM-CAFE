@@ -1,7 +1,15 @@
-import { LATE_MINUTES, canMarkReady, canRemake, elapsedMinutes, formatElapsed, itemStatusLabel } from "./kitchen";
+import {
+  LATE_MINUTES,
+  canMarkReady,
+  canRemake,
+  elapsedMinutes,
+  formatElapsed,
+  itemStatusLabel,
+  markableItems,
+} from "./kitchen";
 
 // Prioritas kartu (wireframes.md #14): nomor order, item, jumlah, status, pewaktu, aksi.
-export default function KitchenOrderCard({ order, now, busy, onStart, onReady, onRemake }) {
+export default function KitchenOrderCard({ order, now, busy, onStart, onReady, onReadyAll, onRemake }) {
   const cooking = order.status === "PREPARING";
   const since = cooking ? order.preparing_at ?? order.confirmed_at : order.confirmed_at;
   const minutes = elapsedMinutes(since, now);
@@ -50,6 +58,12 @@ export default function KitchenOrderCard({ order, now, busy, onStart, onReady, o
           </li>
         ))}
       </ul>
+
+      {cooking && onReadyAll && markableItems(order).length > 1 && (
+        <button type="button" className="btn btn--block" disabled={busy} onClick={() => onReadyAll(order)}>
+          Siap semua
+        </button>
+      )}
 
       {!cooking && (
         <button type="button" className="btn btn--block" disabled={busy} onClick={() => onStart(order)}>

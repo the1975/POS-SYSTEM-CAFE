@@ -4,7 +4,7 @@ import StaffHeader from "../components/layout/StaffHeader";
 import StaffNav from "../components/layout/StaffNav";
 import { describeKitchenError } from "../features/kitchen/errors";
 import KitchenOrderCard from "../features/kitchen/KitchenOrderCard";
-import { splitQueue } from "../features/kitchen/kitchen";
+import { markableItems, splitQueue } from "../features/kitchen/kitchen";
 import RemakePanel from "../features/kitchen/RemakePanel";
 import { useKitchenQueue } from "../features/kitchen/useKitchenQueue";
 import { useNow } from "../features/kitchen/useNow";
@@ -119,6 +119,15 @@ export default function KitchenPage({ screen }) {
                             now={now}
                             busy={busy}
                             onReady={(item) => run(() => markItemReady(token, item.order_item_id))}
+                            onReadyAll={(order) =>
+                              run(async () => {
+                                let res;
+                                for (const item of markableItems(order)) {
+                                  res = await markItemReady(token, item.order_item_id);
+                                }
+                                return res;
+                              })
+                            }
                             onRemake={(order, item) => setRemake({ order, item })}
                           />
                         ) : (

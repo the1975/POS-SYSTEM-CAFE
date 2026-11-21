@@ -50,3 +50,6 @@ export const itemStatusLabel = (status) => ITEM_LABELS[status] ?? status;
 // remake untuk item yang sedang dimasak atau sudah siap (selama order masih PREPARING).
 export const canMarkReady = (item) => item.status === "PREPARING" || item.status === "REMAKE";
 export const canRemake = (item) => item.status === "PREPARING" || item.status === "READY";
+
+// Item yang masih bisa ditandai siap (dipakai tombol "Siap semua").
+export const markableItems = (order) => order.items.filter(canMarkReady);
