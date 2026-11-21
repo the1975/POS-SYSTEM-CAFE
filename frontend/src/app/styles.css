@@ -738,3 +738,9 @@ a.catnav__item { text-decoration: none; }
 
 /* Tombol batal penuh merah gradasi */
 .btn--solid-danger { box-shadow: 0 8px 20px rgba(155, 44, 69, 0.28); }
+
+/* Halaman pesanan: kartu rincian dan QR tampak timbul */
+.ticket ~ .surface,
+.ticket ~ .notice {
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.10), 0 2px 8px rgba(16, 24, 40, 0.06);
+}
