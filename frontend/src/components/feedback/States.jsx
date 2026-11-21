@@ -2,8 +2,8 @@
 
 export function LoadingList({ rows = 6 }) {
   return (
-    <div aria-busy="true" aria-live="polite">
-      <p className="muted">Memuat menu…</p>
+    <div className="loadmenu" aria-busy="true" aria-live="polite">
+      <span className="sr-only">Memuat menu…</span>
       <ul className="pgrid">
         {Array.from({ length: rows }, (_, i) => (
           <li key={i} className="pcard" aria-hidden="true">

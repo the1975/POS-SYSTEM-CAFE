@@ -747,3 +747,14 @@ a.catnav__item { text-decoration: none; }
 
 /* Pencarian di daftar siap diambil: beri jarak atas dan bawah */
 .pickup__search { margin: 8px 0 16px; }
+
+/* Loading menu: tanpa tulisan menempel, ada jarak dari kolom cari, dan kilau halus */
+.loadmenu { margin-top: 16px; }
+@media (prefers-reduced-motion: no-preference) {
+  .loadmenu .skeleton {
+    background: linear-gradient(90deg, var(--line) 25%, #f1f3f5 50%, var(--line) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+}
