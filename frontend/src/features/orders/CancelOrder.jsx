@@ -40,7 +40,7 @@ export default function CancelOrder({ orderId, token, order, onChanged }) {
         </p>
       )}
       {!confirming ? (
-        <button type="button" className="btn btn--ghost btn--danger btn--block" onClick={() => setConfirming(true)}>
+        <button type="button" className="btn btn--solid-danger btn--block" onClick={() => setConfirming(true)}>
           Batalkan pesanan
         </button>
       ) : (

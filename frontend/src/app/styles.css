@@ -735,3 +735,6 @@ a.catnav__item { text-decoration: none; }
 
 /* Kartu laba kotor selebar grid */
 .dash__card--wide { grid-column: 1 / -1; }
+
+/* Tombol batal penuh merah gradasi */
+.btn--solid-danger { box-shadow: 0 8px 20px rgba(155, 44, 69, 0.28); }
