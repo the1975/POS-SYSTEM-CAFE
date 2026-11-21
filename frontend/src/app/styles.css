@@ -744,3 +744,6 @@ a.catnav__item { text-decoration: none; }
 .ticket ~ .notice {
   box-shadow: 0 12px 32px rgba(16, 24, 40, 0.10), 0 2px 8px rgba(16, 24, 40, 0.06);
 }
+
+/* Pencarian di daftar siap diambil: beri jarak atas dan bawah */
+.pickup__search { margin: 8px 0 16px; }

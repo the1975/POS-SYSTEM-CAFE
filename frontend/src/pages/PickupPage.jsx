@@ -175,7 +175,7 @@ export default function PickupPage({ screen }) {
         </div>
         {orders.length > 0 && (
           <input
-            className="input"
+            className="input pickup__search"
             type="search"
             placeholder="Cari nomor atau nama"
             aria-label="Cari pesanan siap diambil"
