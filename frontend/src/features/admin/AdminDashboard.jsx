@@ -58,7 +58,9 @@ export default function AdminDashboard({ token, onUnauthorized }) {
           </button>
         ))}
       </nav>
-      {range && <p className="muted">{rangeLabel(range.startDate, range.endDate)}</p>}
+      {range && range.startDate !== range.endDate && (
+        <p className="muted dash__range">{rangeLabel(range.startDate, range.endDate)}</p>
+      )}
 
       {status === "loading" && <p className="muted state">Memuat laporan…</p>}
       {status === "error" && (

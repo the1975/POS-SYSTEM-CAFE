@@ -768,3 +768,6 @@ a.catnav__item { text-decoration: none; }
   box-shadow: var(--shadow-raised);
 }
 .option:has(input:checked) { box-shadow: 0 0 0 1px var(--accent), var(--shadow-raised); }
+
+/* Rentang tanggal (hanya 7 dan 30 hari) */
+.dash__range { margin-bottom: var(--space-2); font-size: 0.875rem; }
