@@ -100,7 +100,7 @@ export default function AdminPage({ screen }) {
         <AdminNav tabs={ADMIN_TABS} current={tab} onSelect={setTab} />
         {tab === "orders" ? (
           <>
-            <h1 className="page-title">Order</h1>
+            <h1 className="sr-only">Order</h1>
             <AdminOrders
               token={token}
               filters={orderFilters}
@@ -111,14 +111,12 @@ export default function AdminPage({ screen }) {
           </>
         ) : tab === "dashboard" ? (
           <>
-            <h1 className="page-title">Dashboard</h1>
+            <h1 className="sr-only">Dashboard</h1>
             <AdminDashboard token={token} onUnauthorized={logout} />
           </>
         ) : tab === "inventory" ? (
           <>
-            <div className="admin__top">
-              <h1 className="page-title">Stok</h1>
-            </div>
+            <h1 className="sr-only">Stok</h1>
             <AdminStock
               token={token}
               filters={stockFilters}
@@ -129,7 +127,7 @@ export default function AdminPage({ screen }) {
           </>
         ) : tab === "products" ? (
           <>
-            <h1 className="page-title">Produk</h1>
+            <h1 className="sr-only">Produk</h1>
             <Fab label="Tambah produk" onClick={() => setProductPanel({ product: null })} />
             <AdminProducts
               token={token}
@@ -141,7 +139,7 @@ export default function AdminPage({ screen }) {
           </>
         ) : (
           <>
-            <h1 className="page-title">Pengguna</h1>
+            <h1 className="sr-only">Pengguna</h1>
             <Fab label="Tambah pengguna" onClick={() => setUserPanel({ mode: "create" })} />
             <AdminUsers
               token={token}

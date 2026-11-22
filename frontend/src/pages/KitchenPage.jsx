@@ -62,7 +62,7 @@ export default function KitchenPage({ screen }) {
           />
         ) : (
           <>
-            <h1 className="page-title">Antrean dapur</h1>
+            <h1 className="sr-only">Antrean dapur</h1>
             <div className="seg seg--narrow" role="group" aria-label="Tampilan antrean">
               <button type="button" className="seg__item" aria-pressed={active === "waiting"} onClick={() => setTab("waiting")}>
                 Antre · {waiting.length}

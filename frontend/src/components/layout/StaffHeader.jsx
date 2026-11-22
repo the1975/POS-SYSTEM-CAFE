@@ -35,7 +35,7 @@ export default function StaffHeader({ title, user, onLogout }) {
       <div className="container header__inner staff-bar">
         <span className="brand">
           <Logo />
-          {title}
+          <span className="sr-only">{title}</span>
         </span>
         {user && (
           <div className="acct" ref={box}>
