@@ -3,6 +3,9 @@
    Font: Inter bila terpasang, lalu font sistem (tanpa unduhan font = cepat di data seluler). */
 :root {
   color-scheme: light;
+  /* Skala spasi 4px: pakai token ini untuk aturan baru */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px;
+  --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
   --bg: #f8f9fa;
   --surface: #ffffff;
   --text: #111827;
@@ -18,7 +21,7 @@
   --glass: rgba(255, 255, 255, 0.78);
   --lift: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(17, 24, 39, 0.14);
   --r-card: 20px;
-  --r-btn: 14px;
+  --r-btn: 16px;
   --font: "Inter", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
 }
@@ -302,7 +305,7 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .dash__value { font-size: 1.25rem; line-height: 1.3; }
 .dash__title { font-size: 1.125rem; margin: 24px 0 8px; }
 .dash__rank { width: 24px; flex: none; color: var(--muted); }
-.dash__bars { display: flex; align-items: flex-end; gap: 3px; height: 120px; padding: 12px 12px 0; }
+.dash__bars { display: flex; align-items: flex-end; gap: 4px; height: 120px; padding: 12px 12px 0; }
 .dash__bar { flex: 1; min-width: 0; background: var(--accent); border-radius: 4px 4px 0 0; }
 .dash__bar--zero { background: var(--line); height: 2px; }
 .dash__axis { display: flex; justify-content: space-between; padding: 4px 12px 12px; font-size: 0.75rem; color: var(--muted); }
@@ -313,7 +316,7 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
   width: min(688px, calc(100% - 32px)); height: 68px;
   bottom: calc(16px + env(safe-area-inset-bottom));
   display: grid; grid-auto-flow: column; grid-auto-columns: minmax(72px, 1fr);
-  gap: 4px; padding: 6px; overflow-x: auto;
+  gap: 4px; padding: 8px; overflow-x: auto;
   background: var(--glass); border: 1px solid var(--line); border-radius: 24px;
   -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
   box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
@@ -324,9 +327,9 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .catnav__item {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   min-height: 44px; font: inherit; font-size: 0.6875rem; font-weight: 600; cursor: pointer;
-  color: var(--muted); background: transparent; border: 0; border-radius: 18px;
+  color: var(--muted); background: transparent; border: 0; border-radius: 20px;
 }
-.catnav__item svg { width: 22px; height: 22px; }
+.catnav__item svg { width: 24px; height: 24px; }
 .catnav__item[aria-pressed="true"] { color: var(--accent-text); background: var(--accent-grad); font-weight: 700; }
 .container.has-nav { padding-bottom: 112px; }
 .container.has-nav.has-bar { padding-bottom: 192px; }
@@ -336,10 +339,10 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .pgrid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 @media (min-width: 640px) { .pgrid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
 .pcard {
-  display: flex; flex-direction: column; gap: 10px; padding: 10px;
+  display: flex; flex-direction: column; gap: 12px; padding: 12px;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card);
 }
-.pcard__thumb { width: 100%; height: 104px; border-radius: 14px; object-fit: cover; background: var(--tint); }
+.pcard__thumb { width: 100%; height: 104px; border-radius: 16px; object-fit: cover; background: var(--tint); }
 .pcard__thumb--empty { display: grid; place-items: center; font-size: 2.5rem; font-weight: 800; color: var(--accent); }
 .pcard__name { margin: 0; font-size: 0.9375rem; font-weight: 600; line-height: 1.3; }
 .pcard__meta {
@@ -348,7 +351,7 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 }
 .pcard__add {
   display: grid; place-items: center; width: 44px; height: 44px; margin: -4px -4px -4px 0;
-  color: var(--accent-text); background: var(--accent-grad); border: 0; border-radius: 14px; cursor: pointer;
+  color: var(--accent-text); background: var(--accent-grad); border: 0; border-radius: 16px; cursor: pointer;
 }
 .pcard__add svg { width: 20px; height: 20px; }
 .pcard .stepper { width: 100%; justify-content: space-between; }
@@ -356,26 +359,26 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 
 /* ---------- Bar aksi hijau gradasi (keranjang, pemesanan) ---------- */
 .bar__inner {
-  min-height: 60px; padding: 8px 18px; border: 0; border-radius: 18px;
+  min-height: 60px; padding: 8px 20px; border: 0; border-radius: 20px;
   color: var(--accent-text); background: var(--accent-grad); box-shadow: var(--shadow-accent);
   -webkit-backdrop-filter: none; backdrop-filter: none;
 }
 .bar__label { color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; }
 .bar__value { font-size: 1.0625rem; }
 .bar .btn { min-height: 44px; padding: 0; gap: 4px; color: inherit; background: transparent; font-weight: 700; }
-.bar .btn svg { width: 18px; height: 18px; }
+.bar .btn svg { width: 20px; height: 20px; }
 
 /* ---------- Baris keranjang ---------- */
 .cline { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .cline:last-child { border-bottom: 0; }
 .cline__tile {
-  flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 14px;
+  flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px;
   background: var(--tint); color: var(--accent); font-size: 1.375rem; font-weight: 800;
 }
 .cline__body { flex: 1; min-width: 0; }
 
 /* ---------- Pilihan cara bayar (kartu) ---------- */
-.option { position: relative; align-items: center; gap: 14px; min-height: 72px; padding: 12px 16px; border-radius: 18px; }
+.option { position: relative; align-items: center; gap: 16px; min-height: 72px; padding: 12px 16px; border-radius: 20px; }
 .option input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
 .option .option__icon {
   display: grid; place-items: center; flex: none; width: 44px; height: 44px;
@@ -388,7 +391,7 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
   border: 2px solid var(--line); border-radius: 50%; color: transparent;
 }
 .option__check svg { width: 16px; height: 16px; stroke-width: 3; }
-.option:has(input:checked) { padding: 11px 15px; border: 2px solid var(--accent); background: #eef8f3; }
+.option:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: #eef8f3; }
 .option:has(input:checked) .option__check { color: var(--accent-text); background: var(--accent-grad); border-color: transparent; }
 .option:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -406,11 +409,11 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .catnav__item:disabled { opacity: 0.5; cursor: not-allowed; }
 .seg {
   display: flex; gap: 4px; padding: 4px; margin: 16px 0 8px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
 }
 .seg__item {
-  flex: 1; min-height: 40px; font: inherit; font-size: 0.875rem; font-weight: 600; cursor: pointer;
-  color: var(--muted); background: transparent; border: 0; border-radius: 10px;
+  flex: 1; min-height: 44px; font: inherit; font-size: 0.875rem; font-weight: 600; cursor: pointer;
+  color: var(--muted); background: transparent; border: 0; border-radius: 12px;
 }
 .seg__item[aria-pressed="true"] { color: var(--accent-text); background: var(--accent-grad); font-weight: 700; }
 @media (min-width: 640px) { .seg { max-width: 320px; } }
@@ -418,19 +421,19 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 /* ---------- Dashboard admin ---------- */
 .dash__cards { gap: 12px; }
 @media (min-width: 640px) { .dash__cards { grid-template-columns: repeat(4, 1fr); } }
-.dash__card { padding: 14px; gap: 6px; border-radius: 20px; }
+.dash__card { padding: 16px; gap: 8px; border-radius: 20px; }
 .dash__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .dash__head .muted { font-size: 0.8125rem; font-weight: 600; }
 .dash__icon {
   display: grid; place-items: center; flex: none; width: 32px; height: 32px;
   border-radius: 12px; color: var(--accent); background: var(--tint);
 }
-.dash__icon svg { width: 18px; height: 18px; }
+.dash__icon svg { width: 20px; height: 20px; }
 .dash__value { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; }
 .dash__panel { margin-top: 12px; padding: 16px; border-radius: 20px; }
-.dash__panel .dash__title { margin: 0 0 14px; font-size: 1.0625rem; }
+.dash__panel .dash__title { margin: 0 0 16px; font-size: 1.0625rem; }
 .dash__panel .muted { margin: -8px 0 12px; font-size: 0.875rem; }
-.dash__top { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.dash__top { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
 .dash__top li { display: flex; align-items: center; gap: 12px; }
 .dash__top .dash__rank {
   display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px;
@@ -439,21 +442,21 @@ a.chip { display: inline-flex; align-items: center; text-decoration: none; }
 .dash__topbody { flex: 1; min-width: 0; }
 .dash__toprow { display: flex; justify-content: space-between; gap: 8px; font-size: 0.875rem; }
 .dash__toprow .muted { margin: 0; font-size: 0.875rem; }
-.dash__meter { height: 6px; margin-top: 6px; border-radius: 3px; background: #eef2f0; }
-.dash__meter span { display: block; height: 100%; border-radius: 3px; background: var(--accent-grad); }
-.dash__bars { height: 140px; padding: 8px 0 0; gap: 3px; }
-.dash__bar { background: #cdebdd; border-radius: 6px 6px 0 0; }
+.dash__meter { height: 8px; margin-top: 8px; border-radius: 4px; background: #eef2f0; }
+.dash__meter span { display: block; height: 100%; border-radius: 4px; background: var(--accent-grad); }
+.dash__bars { height: 140px; padding: 8px 0 0; gap: 4px; }
+.dash__bar { background: #cdebdd; border-radius: 8px 8px 0 0; }
 .dash__bar--zero { background: var(--line); }
 .dash__bar--peak { background: var(--accent-grad); }
-.dash__axis { padding: 6px 0 0; }
+.dash__axis { padding: 8px 0 0; }
 
 /* ---------- Pindah layar staff: satu baris ringkas ---------- */
 .staff-nav {
-  flex-wrap: nowrap; justify-content: flex-start; gap: 6px; margin: 12px 0 0;
+  flex-wrap: nowrap; justify-content: flex-start; gap: 8px; margin: 12px 0 0;
   overflow-x: auto; scrollbar-width: none;
 }
 .staff-nav::-webkit-scrollbar { display: none; }
-a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
+a.chip { flex: none; padding: 0 16px; font-size: 0.875rem; }
 
 /* ---------- Pager: teks di atas, dua tombol sama lebar ---------- */
 .admin__pager { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -470,13 +473,13 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
   box-shadow: 0 12px 32px rgba(17, 24, 39, 0.14);
 }
-.acct__who { display: grid; gap: 6px; padding: 10px 12px 12px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
+.acct__who { display: grid; gap: 8px; padding: 12px 12px 12px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
 .acct__role {
-  justify-self: start; padding: 2px 10px; font-size: 0.75rem; font-weight: 700;
+  justify-self: start; padding: 2px 12px; font-size: 0.75rem; font-weight: 700;
   color: var(--accent); background: var(--tint); border-radius: 999px;
 }
 .acct__label {
-  margin: 10px 12px 4px; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.06em;
+  margin: 12px 12px 4px; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--muted);
 }
 .acct__item {
@@ -485,21 +488,21 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   color: var(--text); background: transparent; border: 0; border-radius: 12px;
 }
 .acct__item:hover { background: var(--bg); }
-.acct__item--out { margin-top: 6px; color: #9b2c45; }
+.acct__item--out { margin-top: 8px; color: #9b2c45; }
 
 /* ---------- Tombol tambah melayang (kanan bawah) ---------- */
 .fab {
   position: fixed; z-index: 11; right: 16px; bottom: calc(16px + 68px + 16px + env(safe-area-inset-bottom));
   display: grid; place-items: center; width: 56px; height: 56px; padding: 0; cursor: pointer;
-  color: var(--accent-text); background: var(--accent-grad); border: 0; border-radius: 18px;
+  color: var(--accent-text); background: var(--accent-grad); border: 0; border-radius: 20px;
   box-shadow: 0 10px 24px rgba(19, 121, 91, 0.28);
 }
-.fab svg { width: 26px; height: 26px; }
+.fab svg { width: 28px; height: 28px; }
 
 /* ---------- Daftar pengguna per role ---------- */
 .usearch {
-  display: flex; align-items: center; gap: 10px; height: 44px; margin-bottom: 8px; padding: 0 14px;
-  color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  display: flex; align-items: center; gap: 12px; height: 44px; margin-bottom: 8px; padding: 0 16px;
+  color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
 }
 .usearch:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 .usearch svg { width: 20px; height: 20px; flex: none; }
@@ -515,7 +518,7 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 .ugroup__list { padding: 0; overflow: hidden; }
 .ugroup__list li + li { border-top: 1px solid var(--line); }
 .urow {
-  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 10px 16px;
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 12px 16px;
   font: inherit; text-align: left; color: inherit; background: transparent; border: 0; cursor: pointer;
 }
 .urow--off { opacity: 0.65; }
@@ -523,11 +526,11 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%;
   color: var(--accent); background: var(--tint); font-size: 1.125rem; font-weight: 800;
 }
-.urow__go { flex: none; width: 18px; height: 18px; color: var(--muted); }
+.urow__go { flex: none; width: 20px; height: 20px; color: var(--muted); }
 
 /* ---------- Baris produk dan stok ---------- */
-.urow__avatar--sq { border-radius: 14px; }
-.urow .pill { padding: 2px 10px; font-size: 0.75rem; }
+.urow__avatar--sq { border-radius: 16px; }
+.urow .pill { padding: 2px 12px; font-size: 0.75rem; }
 .urow__qty { display: grid; justify-items: end; flex: none; line-height: 1.2; }
 .urow__qty strong { font-size: 1.125rem; font-weight: 800; }
 .urow__qty .muted { font-size: 0.75rem; }
@@ -537,7 +540,7 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 .usearchrow .usearch { flex: 1; min-width: 0; margin-bottom: 0; }
 .ufilter {
   position: relative; display: grid; place-items: center; flex: none; width: 44px; height: 44px; cursor: pointer;
-  color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
 }
 .ufilter svg { width: 20px; height: 20px; }
 .ufilter__dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 4px; background: var(--accent); }
@@ -548,8 +551,8 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   color: var(--accent); background: var(--tint); font-weight: 800; font-variant-numeric: tabular-nums;
 }
 .orow__total { flex: none; }
-.orow__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
-.orow__meta .pill { padding: 2px 10px; font-size: 0.75rem; }
+.orow__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.orow__meta .pill { padding: 2px 12px; font-size: 0.75rem; }
 .orow__refund { margin-left: auto; }
 .sheet { position: fixed; inset: 0; z-index: 40; display: flex; align-items: flex-end; justify-content: center; }
 .sheet__scrim { position: absolute; inset: 0; border: 0; background: rgba(17, 24, 39, 0.42); cursor: pointer; }
@@ -565,9 +568,9 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 .sheet__group legend { padding: 0; margin-bottom: 8px; }
 .sheet__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .sheet__opt {
-  position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 10px;
+  position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px;
   font-size: 0.875rem; font-weight: 600; text-align: center; cursor: pointer;
-  border: 1px solid var(--line); border-radius: 14px;
+  border: 1px solid var(--line); border-radius: 16px;
 }
 .sheet__opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .sheet__opt:has(input:checked) { color: var(--accent-text); background: var(--accent-grad); border-color: transparent; font-weight: 700; }
@@ -578,13 +581,13 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 .titlebar { display: flex; align-items: center; gap: 12px; }
 .titlebar .page-title { margin-bottom: 16px; }
 .count {
-  display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 8px; margin-top: 8px; border-radius: 13px;
+  display: inline-grid; place-items: center; min-width: 28px; height: 28px; padding: 0 8px; margin-top: 8px; border-radius: 12px;
   color: var(--accent); background: var(--tint); font-size: 0.8125rem; font-weight: 800;
 }
 
 /* ---------- Kartu dapur (pewaktu berupa pil) ---------- */
 .kitchen__list--top { margin-top: 12px; }
-.kcard { padding: 18px; border-radius: 20px; }
+.kcard { padding: 20px; border-radius: 20px; }
 .kcard__head { align-items: center; }
 .kcard__no { font-size: 1.375rem; }
 .kcard__time {
@@ -595,7 +598,7 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 
 /* ---------- Pickup: kartu scan ---------- */
 .scancard { display: grid; justify-items: center; gap: 16px; margin-top: 12px; padding: 28px 20px; text-align: center; border-radius: 24px; }
-.scancard__icon { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 22px; color: var(--accent); background: var(--tint); }
+.scancard__icon { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 24px; color: var(--accent); background: var(--tint); }
 .scancard__icon svg { width: 36px; height: 36px; }
 .scancard__title { margin: 0; font-size: 1.375rem; font-weight: 800; }
 .scancard__manual { width: 100%; margin-top: 8px; padding-top: 20px; text-align: left; border-top: 1px solid var(--line); }
@@ -626,14 +629,14 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 @media (min-width: 1100px) {
   body:has(.catnav) { padding-left: 232px; }
   .catnav { width: 232px; padding: 24px 16px; }
-  .catnav__brand { display: flex; align-items: center; gap: 10px; margin: 0 6px 24px; }
+  .catnav__brand { display: flex; align-items: center; gap: 12px; margin: 0 8px 24px; }
   .catnav__logo {
-    display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px;
+    display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px;
     color: var(--accent-text); background: var(--accent-grad); font-weight: 800;
   }
   .catnav__item, .catnav--fit .catnav__item {
-    min-height: 48px; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 0 14px;
-    border-radius: 14px; font-size: 0.9375rem;
+    min-height: 48px; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 0 16px;
+    border-radius: 16px; font-size: 0.9375rem;
   }
   body:has(.catnav) .bar { left: 232px; }
 }
@@ -666,7 +669,7 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
   .seg--narrow { display: none; }
   .kcols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .kcol { display: block; }
-  .kcol__title { display: flex; align-items: center; gap: 10px; margin: 16px 0 0; font-size: 1.125rem; font-weight: 800; }
+  .kcol__title { display: flex; align-items: center; gap: 12px; margin: 16px 0 0; font-size: 1.125rem; font-weight: 800; }
   .kcols .kitchen__list--top { margin-top: 12px; }
 }
 @media (max-width: 1023px) {
@@ -676,21 +679,21 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 .pcard__thumb.skeleton { background: var(--line); }
 
 /* ---------- Logo, tombol kembali bulat, pesanan berjalan ---------- */
-.brand { display: inline-flex; align-items: center; gap: 10px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; }
 .logo {
-  display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 10px;
+  display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 12px;
   color: var(--accent-text); background: var(--accent-grad); font-size: 0.9375rem; font-weight: 800;
 }
 .header__back {
   display: grid; place-items: center; width: 44px; height: 44px; margin: 0 12px 0 0;
   color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 50%;
 }
-.header__back svg { width: 22px; height: 22px; }
+.header__back svg { width: 24px; height: 24px; }
 .activeorder {
   display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 12px 16px;
   color: inherit; text-decoration: none; background: #eef8f3; border: 2px solid var(--accent); border-radius: 20px;
 }
-.activeorder .urow__go { flex: none; width: 18px; height: 18px; color: var(--accent); }
+.activeorder .urow__go { flex: none; width: 20px; height: 20px; color: var(--accent); }
 
 /* Bar tanpa ringkasan: satu tombol selebar bar */
 .bar__inner--solo { justify-content: center; }
@@ -708,12 +711,12 @@ a.chip { flex: none; padding: 0 14px; font-size: 0.875rem; }
 .qa { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
 .qa__btn {
   min-height: 48px; font: inherit; font-weight: 700; cursor: pointer; color: var(--text);
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
 }
 .qa__btn[aria-pressed="true"] { color: var(--accent-text); background: var(--accent-grad); border-color: transparent; }
 .cashchange {
-  display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; font-weight: 700;
-  color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+  display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; font-weight: 700;
+  color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
 }
 .cashchange strong { font-size: 1.625rem; font-weight: 800; }
 .cashchange--ok { color: var(--accent); background: #eef8f3; border-color: transparent; }
