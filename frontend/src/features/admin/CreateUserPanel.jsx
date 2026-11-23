@@ -77,10 +77,10 @@ export default function CreateUserPanel({ token, roles, onBack, onDone, onUnauth
 
   return (
     <>
-      <button type="button" className="link-btn" onClick={onBack}>
-        ← Kembali
+      <button type="button" className="panel__back" onClick={onBack}>
+        <span aria-hidden="true">←</span> Kembali
       </button>
-      <h1 className="page-title">Tambah akun</h1>
+      <h1 className="page-title panel__title">Tambah akun</h1>
 
       <form onSubmit={onSubmit} noValidate>
         {error && (
@@ -88,65 +88,78 @@ export default function CreateUserPanel({ token, roles, onBack, onDone, onUnauth
             <p className="alert__title">{error}</p>
           </div>
         )}
-        <div className="field">
-          <label className="field__label" htmlFor="user-name">
-            Nama
-          </label>
-          <input id="user-name" className="input" maxLength={100} value={form.name} onChange={set("name")} />
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="user-email">
-            Email
-          </label>
-          <input
-            id="user-email"
-            className="input"
-            type="email"
-            inputMode="email"
-            autoCapitalize="none"
-            autoComplete="off"
-            value={form.email}
-            onChange={set("email")}
-          />
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="user-role">
-            Role
-          </label>
-          <select id="user-role" className="input" value={form.roleId} onChange={set("roleId")}>
-            <option value="">Pilih role…</option>
-            {roles.map((r) => (
-              <option key={r.id} value={r.id}>
-                {roleLabel(r.name)}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="user-password">
-            Sandi (minimal {MIN_PASSWORD_LENGTH} karakter)
-          </label>
-          <input
-            id="user-password"
-            className="input"
-            type={showPassword ? "text" : "password"}
-            autoComplete="new-password"
-            autoCapitalize="none"
-            spellCheck={false}
-            maxLength={200}
-            value={form.password}
-            onChange={set("password")}
-          />
-          <div className="pwline">
-            <button type="button" className="btn btn--sm btn--ghost" onClick={generate}>
-              Buat sandi acak
-            </button>
-            <label className="check">
-              <input type="checkbox" checked={showPassword} onChange={(e) => setShowPassword(e.target.checked)} />
-              <span>Tampilkan sandi</span>
+
+        <section className="fcard surface" aria-labelledby="fc-identity">
+          <h2 className="fcard__title" id="fc-identity">
+            Identitas
+          </h2>
+          <div className="field">
+            <label className="field__label" htmlFor="user-name">
+              Nama
             </label>
+            <input id="user-name" className="input" maxLength={100} value={form.name} onChange={set("name")} />
           </div>
-        </div>
+          <div className="field">
+            <label className="field__label" htmlFor="user-email">
+              Email
+            </label>
+            <input
+              id="user-email"
+              className="input"
+              type="email"
+              inputMode="email"
+              autoCapitalize="none"
+              autoComplete="off"
+              value={form.email}
+              onChange={set("email")}
+            />
+          </div>
+        </section>
+
+        <section className="fcard surface" aria-labelledby="fc-access">
+          <h2 className="fcard__title" id="fc-access">
+            Akses
+          </h2>
+          <div className="field">
+            <label className="field__label" htmlFor="user-role">
+              Role
+            </label>
+            <select id="user-role" className="input" value={form.roleId} onChange={set("roleId")}>
+              <option value="">Pilih role…</option>
+              {roles.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {roleLabel(r.name)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="field">
+            <label className="field__label" htmlFor="user-password">
+              Sandi (minimal {MIN_PASSWORD_LENGTH} karakter)
+            </label>
+            <input
+              id="user-password"
+              className="input"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              autoCapitalize="none"
+              spellCheck={false}
+              maxLength={200}
+              value={form.password}
+              onChange={set("password")}
+            />
+            <div className="pwline">
+              <button type="button" className="btn btn--sm btn--ghost" onClick={generate}>
+                Buat sandi acak
+              </button>
+              <label className="check">
+                <input type="checkbox" checked={showPassword} onChange={(e) => setShowPassword(e.target.checked)} />
+                <span>Tampilkan sandi</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
         <div className="row-actions">
           <button type="button" className="btn btn--ghost" disabled={busy} onClick={onBack}>
             Batal

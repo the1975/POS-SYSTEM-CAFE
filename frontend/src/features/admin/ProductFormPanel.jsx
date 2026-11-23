@@ -9,7 +9,7 @@ import {
   emptyProductForm,
   formFromProduct,
   isProductFormValid,
-  isSellingAtLoss,
+  marginInfo,
   moneyHint,
 } from "./products";
 
@@ -72,12 +72,14 @@ export default function ProductFormPanel({ token, product, categories, onBack, o
     );
   }
 
+  const margin = marginInfo(form);
+
   return (
     <>
-      <button type="button" className="link-btn" onClick={onBack}>
-        ← Kembali
+      <button type="button" className="panel__back" onClick={onBack}>
+        <span aria-hidden="true">←</span> Kembali
       </button>
-      <h1 className="page-title">{isEdit ? "Ubah produk" : "Tambah produk"}</h1>
+      <h1 className="page-title panel__title">{isEdit ? "Ubah produk" : "Tambah produk"}</h1>
 
       <form onSubmit={onSubmit} noValidate>
         {error && (
@@ -85,102 +87,132 @@ export default function ProductFormPanel({ token, product, categories, onBack, o
             <p className="alert__title">{error}</p>
           </div>
         )}
-        <div className="field">
-          <label className="field__label" htmlFor="prod-name">
-            Nama produk
+
+        <section className="fcard surface" aria-labelledby="fc-info">
+          <h2 className="fcard__title" id="fc-info">
+            Info produk
+          </h2>
+          <div className="field">
+            <label className="field__label" htmlFor="prod-name">
+              Nama produk
+            </label>
+            <input
+              id="prod-name"
+              className="input"
+              maxLength={MAX_NAME_LENGTH}
+              value={form.name}
+              onChange={set("name")}
+            />
+          </div>
+          <div className="field">
+            <label className="field__label" htmlFor="prod-category">
+              Kategori
+            </label>
+            <select id="prod-category" className="input" value={form.categoryId} onChange={set("categoryId")}>
+              <option value="">Pilih kategori</option>
+              {options.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="field">
+            <label className="field__label" htmlFor="prod-desc">
+              Deskripsi (opsional)
+            </label>
+            <input
+              id="prod-desc"
+              className="input"
+              maxLength={1000}
+              value={form.description}
+              onChange={set("description")}
+            />
+          </div>
+        </section>
+
+        <section className="fcard surface" aria-labelledby="fc-price">
+          <h2 className="fcard__title" id="fc-price">
+            Harga
+          </h2>
+          <div className="fgrid">
+            <div className="field">
+              <label className="field__label" htmlFor="prod-price">
+                Harga jual
+              </label>
+              <div className="money">
+                <span aria-hidden="true">Rp</span>
+                <input
+                  id="prod-price"
+                  className="input"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  placeholder="25000"
+                  value={form.price}
+                  onChange={set("price")}
+                />
+              </div>
+              <p className="muted">{moneyHint(form.price)}</p>
+            </div>
+            <div className="field">
+              <label className="field__label" htmlFor="prod-cost">
+                HPP / modal
+              </label>
+              <div className="money">
+                <span aria-hidden="true">Rp</span>
+                <input
+                  id="prod-cost"
+                  className="input"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  placeholder="15000"
+                  value={form.costPrice}
+                  onChange={set("costPrice")}
+                />
+              </div>
+              <p className="muted">{moneyHint(form.costPrice)}</p>
+            </div>
+          </div>
+          {margin && (
+            <p className={`margin${margin.profit < 0 ? " margin--loss" : ""}`} role="status">
+              {margin.profit < 0 ? "Rugi" : "Laba kotor"} {formatRupiah(Math.abs(margin.profit))} per porsi (
+              {Math.abs(margin.percent)}%)
+            </p>
+          )}
+        </section>
+
+        <section className="fcard surface" aria-labelledby="fc-show">
+          <h2 className="fcard__title" id="fc-show">
+            Tampilan
+          </h2>
+          <div className="field">
+            <label className="field__label" htmlFor="prod-image">
+              Alamat gambar (opsional)
+            </label>
+            <input
+              id="prod-image"
+              className="input"
+              inputMode="url"
+              autoCapitalize="none"
+              maxLength={500}
+              placeholder="/images/nasi-goreng.jpg"
+              value={form.imageUrl}
+              onChange={set("imageUrl")}
+            />
+          </div>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={form.isAvailable}
+              onChange={(e) => setForm((f) => ({ ...f, isAvailable: e.target.checked }))}
+            />
+            <span>Tampil di menu customer</span>
           </label>
-          <input
-            id="prod-name"
-            className="input"
-            maxLength={MAX_NAME_LENGTH}
-            value={form.name}
-            onChange={set("name")}
-          />
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="prod-category">
-            Kategori
-          </label>
-          <select id="prod-category" className="input" value={form.categoryId} onChange={set("categoryId")}>
-            <option value="">Pilih kategori</option>
-            {options.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="prod-price">
-            Harga jual (Rp)
-          </label>
-          <input
-            id="prod-price"
-            className="input"
-            inputMode="numeric"
-            autoComplete="off"
-            placeholder="25000"
-            value={form.price}
-            onChange={set("price")}
-          />
-          <p className="muted">{moneyHint(form.price)}</p>
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="prod-cost">
-            HPP / modal (Rp)
-          </label>
-          <input
-            id="prod-cost"
-            className="input"
-            inputMode="numeric"
-            autoComplete="off"
-            placeholder="15000"
-            value={form.costPrice}
-            onChange={set("costPrice")}
-          />
-          <p className="muted">{moneyHint(form.costPrice)}</p>
-        </div>
-        {isSellingAtLoss(form) && (
-          <p className="muted">Perhatian: harga jual lebih kecil dari modal, jadi tiap terjual rugi.</p>
-        )}
-        <div className="field">
-          <label className="field__label" htmlFor="prod-desc">
-            Deskripsi (opsional)
-          </label>
-          <input
-            id="prod-desc"
-            className="input"
-            maxLength={1000}
-            value={form.description}
-            onChange={set("description")}
-          />
-        </div>
-        <div className="field">
-          <label className="field__label" htmlFor="prod-image">
-            Alamat gambar (opsional)
-          </label>
-          <input
-            id="prod-image"
-            className="input"
-            inputMode="url"
-            autoCapitalize="none"
-            maxLength={500}
-            placeholder="/images/nasi-goreng.jpg"
-            value={form.imageUrl}
-            onChange={set("imageUrl")}
-          />
-        </div>
-        <label className="check">
-          <input
-            type="checkbox"
-            checked={form.isAvailable}
-            onChange={(e) => setForm((f) => ({ ...f, isAvailable: e.target.checked }))}
-          />
-          <span>Tampil di menu customer</span>
-        </label>
-        {!form.isAvailable && (
-          <p className="muted">Produk disembunyikan tidak muncul di menu, tapi order lama tetap aman.</p>
-        )}
+          {!form.isAvailable && (
+            <p className="muted">Produk disembunyikan tidak muncul di menu, tapi order lama tetap aman.</p>
+          )}
+        </section>
+
         <div className="row-actions">
           <button type="button" className="btn btn--ghost" disabled={busy} onClick={onBack}>
             Batal
