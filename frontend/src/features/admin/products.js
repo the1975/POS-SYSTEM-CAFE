@@ -110,3 +110,12 @@ export function describeProductError(err) {
   if (err?.status === 422) return "Periksa isian: nama wajib, harga dan HPP berupa angka.";
   return "Koneksi atau server bermasalah. Periksa daftar produk dulu sebelum mencoba lagi.";
 }
+
+// Laba kotor per porsi dari harga jual dan modal. null bila salah satu belum terisi angka.
+export function marginInfo(form) {
+  const price = parseRupiah(form.price);
+  const cost = parseRupiah(form.costPrice);
+  if (price === null || cost === null || price <= 0) return null;
+  const profit = price - cost;
+  return { profit, percent: Math.round((profit / price) * 100) };
+}

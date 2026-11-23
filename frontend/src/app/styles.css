@@ -786,3 +786,36 @@ a.catnav__item { text-decoration: none; }
   text-align: center; font-size: 0.875rem; color: var(--muted);
 }
 @media (min-width: 640px) { .dash__filter { max-width: 360px; } .dash__filter .seg { max-width: none; } }
+
+/* Form admin: kelompok dalam kartu, kolom input tampak masuk ke permukaan kartu */
+.panel__back {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: 44px; margin: 0 0 var(--space-2); padding: 0 var(--space-4);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  box-shadow: var(--shadow-raised); color: var(--text); font: inherit; font-weight: 600; cursor: pointer;
+}
+.panel__title { padding-top: var(--space-2); }
+.fcard { margin-bottom: var(--space-4); padding: var(--space-5); }
+.fcard__title {
+  margin: 0 0 var(--space-4); font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted);
+}
+.fcard .field { margin-bottom: var(--space-5); }
+.fcard .field:last-child, .fcard > :last-child { margin-bottom: 0; }
+.fcard .field__label { margin-bottom: var(--space-2); font-size: 0.875rem; }
+.fcard .input { background: var(--bg); box-shadow: none; }
+.fcard .input:focus { background: var(--surface); }
+.fcard .check { margin-top: var(--space-4); }
+.fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(144px, 1fr)); gap: var(--space-4); }
+.fgrid .field { margin-bottom: 0; }
+.money { position: relative; }
+.money > span {
+  position: absolute; left: var(--space-4); top: 0; height: 48px;
+  display: flex; align-items: center; color: var(--muted); font-weight: 600; pointer-events: none;
+}
+.money .input { padding-left: var(--space-12); }
+.margin {
+  margin: var(--space-4) 0 0; padding: var(--space-3) var(--space-4); border-radius: var(--space-3);
+  background: var(--tint-flat); color: var(--accent-strong); font-weight: 600;
+}
+.margin--loss { background: #fef3f2; color: var(--danger); }
