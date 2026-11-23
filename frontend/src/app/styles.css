@@ -772,4 +772,17 @@ a.catnav__item { text-decoration: none; }
 .option:has(input:checked) { box-shadow: 0 0 0 1px var(--accent), var(--shadow-raised); }
 
 /* Rentang tanggal (hanya 7 dan 30 hari) */
-.dash__range { margin-bottom: var(--space-2); font-size: 0.875rem; }
+
+/* Pemilih rentang dan tanggalnya satu kartu */
+.dash__filter {
+  margin: 0 0 var(--space-4);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-card); box-shadow: var(--shadow-raised);
+}
+.dash__filter .seg { margin: 0; border: 0; border-radius: var(--r-card); background: transparent; box-shadow: none; }
+.dash__range {
+  margin: 0; padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line);
+  text-align: center; font-size: 0.875rem; color: var(--muted);
+}
+@media (min-width: 640px) { .dash__filter { max-width: 360px; } .dash__filter .seg { max-width: none; } }

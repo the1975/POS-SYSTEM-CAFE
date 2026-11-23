@@ -45,22 +45,24 @@ export default function AdminDashboard({ token, onUnauthorized }) {
 
   return (
     <>
-      <nav className="seg" aria-label="Rentang waktu">
-        {DASHBOARD_RANGES.map((r) => (
-          <button
-            key={r.id}
-            type="button"
-            className="seg__item"
-            aria-pressed={rangeId === r.id}
-            onClick={() => setRangeId(r.id)}
-          >
-            {r.label}
-          </button>
-        ))}
-      </nav>
-      {range && range.startDate !== range.endDate && (
-        <p className="muted dash__range">{rangeLabel(range.startDate, range.endDate)}</p>
-      )}
+      <div className="dash__filter">
+        <nav className="seg" aria-label="Rentang waktu">
+          {DASHBOARD_RANGES.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              className="seg__item"
+              aria-pressed={rangeId === r.id}
+              onClick={() => setRangeId(r.id)}
+            >
+              {r.label}
+            </button>
+          ))}
+        </nav>
+        {range && range.startDate !== range.endDate && (
+          <p className="dash__range">{rangeLabel(range.startDate, range.endDate)}</p>
+        )}
+      </div>
 
       {status === "loading" && <p className="muted state">Memuat laporan…</p>}
       {status === "error" && (
