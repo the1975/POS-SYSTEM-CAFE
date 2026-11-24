@@ -158,7 +158,7 @@ export default function AdminPage({ screen }) {
   return (
     <>
       <StaffHeader title={screen.title} user={user} onLogout={logout} />
-      <main className="container has-nav">{renderBody()}</main>
+      <main className="container has-nav admin-main">{renderBody()}</main>
     </>
   );
 }

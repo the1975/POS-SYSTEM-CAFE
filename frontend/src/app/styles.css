@@ -819,3 +819,6 @@ a.catnav__item { text-decoration: none; }
   background: var(--tint-flat); color: var(--accent-strong); font-weight: 600;
 }
 .margin--loss { background: #fef3f2; color: var(--danger); }
+
+/* Halaman admin: isi tidak menempel ke header (selector kuat supaya tidak tertimpa aturan lain) */
+main.container.admin-main { padding-top: var(--space-6); }
