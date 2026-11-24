@@ -76,9 +76,6 @@ export default function ProductFormPanel({ token, product, categories, onBack, o
 
   return (
     <>
-      <button type="button" className="panel__back" onClick={onBack}>
-        <span aria-hidden="true">←</span> Kembali
-      </button>
       <h1 className="page-title panel__title">{isEdit ? "Ubah produk" : "Tambah produk"}</h1>
 
       <form onSubmit={onSubmit} noValidate>

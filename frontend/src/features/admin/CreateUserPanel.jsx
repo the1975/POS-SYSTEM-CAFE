@@ -77,9 +77,6 @@ export default function CreateUserPanel({ token, roles, onBack, onDone, onUnauth
 
   return (
     <>
-      <button type="button" className="panel__back" onClick={onBack}>
-        <span aria-hidden="true">←</span> Kembali
-      </button>
       <h1 className="page-title panel__title">Tambah akun</h1>
 
       <form onSubmit={onSubmit} noValidate>
